@@ -1,0 +1,168 @@
+#######################################
+# Syntax Coloring Map For DFRobot_IIS2DLPC
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DFRobot_IIS2DLPC	KEYWORD1
+DFRobot_IIS2DLPC_SPI	KEYWORD1
+DFRobot_IIS2DLPC_I2C	KEYWORD1
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+getID	KEYWORD2
+softReset	KEYWORD2
+continRefresh	KEYWORD2
+setFilterPath	KEYWORD2
+setFilterBandwidth	KEYWORD2
+setPowerMode	KEYWORD2
+setDataRate	KEYWORD2
+getDataReadyFlag	KEYWORD2
+setFrDur	KEYWORD2
+setPinInt1Route	KEYWORD2
+setFfThreshold	KEYWORD2
+setPinInt2Route	KEYWORD2
+latchInterrupt	KEYWORD2
+getAllSources	KEYWORD2
+setWakeupDur	KEYWORD2
+setActSleepDur	KEYWORD2
+setWakeupThreshold	KEYWORD2
+setActMode	KEYWORD2
+setRange	KEYWORD2
+enableTapDetectionOnZ	KEYWORD2
+enableTapDetectionOnY	KEYWORD2
+enableTapDetectionOnX	KEYWORD2
+setTapThresholdOnX	KEYWORD2
+setTapThresholdOnY	KEYWORD2
+setTapThresholdOnZ	KEYWORD2
+setTapDur	KEYWORD2
+setTapMode	KEYWORD2
+set6dThreshold	KEYWORD2
+readACCFromX	KEYWORD2
+readACCFromY	KEYWORD2
+readACCFromZ	KEYWORD2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
+HX711_I2C_ADDR	LITERAL1
+PASSWORD	LITERAL1
+BUTTON	LITERAL1
+
+
+
+eHighPerformance	LITERAL1
+eContLowPwr_4	LITERAL1
+eContLowPwr_3	LITERAL1
+eContLowPwr_2	LITERAL1
+eContLowPwr_12bit	LITERAL1
+eSingleLowPwr_4	LITERAL1
+eSingleLowPwr_3	LITERAL1
+eSingleLowPwr_2	LITERAL1
+eSingleLowPwr_12bit	LITERAL1
+eHighPerformanceLowNoise	LITERAL1
+eContLowPwrLowNoise_4	LITERAL1
+eContLowPwrLowNoise_3	LITERAL1
+eContLowPwrLowNoise_2	LITERAL1
+eContLowPwrLowNoise_12bit	LITERAL1
+eSingleLowPwrLowNoise_4	LITERAL1
+eSingleLowPwrLowNoise_3	LITERAL1
+eSingleLowPwrLowNoise_2	LITERAL1
+eSingleLowLowNoisePwr_12bit	LITERAL1
+
+eIIS2DLPC_2g	LITERAL1
+eIIS2DLPC_4g	LITERAL1
+eIIS2DLPC_8g	LITERAL1
+eIIS2DLPC_16g	LITERAL1
+
+eIIS2DLPC_LPF_ON_OUT	LITERAL1
+eIIS2DLPC_USER_OFFSET_ON_OUT	LITERAL1
+eIIS2DLPC_HIGH_PASS_ON_OUT	LITERAL1
+
+eXLowThanTh	LITERAL1
+eXhigherThanTh	LITERAL1
+eYLowThanTh	LITERAL1
+eYhigherThanTh	LITERAL1
+eZLowThanTh	LITERAL1
+eZhigherThanTh	LITERAL1
+eEventError	LITERAL1
+
+eIIS2DLPC_ODR_DIV_2	LITERAL1
+eIIS2DLPC_ODR_DIV_4	LITERAL1
+eIIS2DLPC_ODR_DIV_10	LITERAL1
+eIIS2DLPC_ODR_DIV_20	LITERAL1
+
+eOdr_off	LITERAL1
+eOdr_1hz6_lp_only	LITERAL1
+eOdr_12hz5	LITERAL1
+eOdr_25hz	LITERAL1
+eOdr_50hz	LITERAL1
+eOdr_100hz	LITERAL1
+eOdr_200hz	LITERAL1
+eOdr_400hz	LITERAL1
+eOdr_800hz	LITERAL1
+eOdr_1k6hz	LITERAL1
+eSetSwTrig	LITERAL1
+eSetPinTrig	LITERAL1
+
+eFfTsh_5LSb_FS2g	LITERAL1
+eFfTsh_7LSb_FS2g	LITERAL1
+eFfTsh_8LSb_FS2g	LITERAL1
+eFfTsh_10LSb_FS2g	LITERAL1
+eFfTsh_11LSb_FS2g	LITERAL1
+eFfTsh_13LSb_FS2g	LITERAL1
+eFfTsh_15LSb_FS2g	LITERAL1
+eFfTsh_16LSb_FS2g	LITERAL1
+
+eNoDetection	LITERAL1
+eDetectActInact	LITERAL1
+eDetectStatMotion	LITERAL1
+
+eDoubleTap	LITERAL1
+eFfEvent	LITERAL1
+eWakeupEvent	LITERAL1
+eSingleTap	LITERAL1
+eTnt16d	LITERAL1
+
+eBoot	LITERAL1
+eSleepChange	LITERAL1
+eSleepState	LITERAL1
+
+eOnlySingle	LITERAL1
+eBothSingleDouble	LITERAL1
+
+eDegrees80	LITERAL1
+eDegrees70	LITERAL1
+eDegrees60	LITERAL1
+eDegrees50	LITERAL1
+
+
+
+
+
+
+
+
+
