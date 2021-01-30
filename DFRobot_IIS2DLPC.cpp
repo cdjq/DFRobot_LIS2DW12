@@ -346,7 +346,7 @@ void DFRobot_IIS2DLPC::setActSleepDur(uint8_t dur)
   ret = ret & (~0X0F);
   ret = ret | dur;
   
-    DBG(ret);
+  DBG(ret);
   writeReg(IIS2DLPC_REG_WAKE_UP_DUR,&ret, 1);
   return;
 }
@@ -373,10 +373,9 @@ void DFRobot_IIS2DLPC::setActMode(eSleepOn_t mode)
   writeReg(IIS2DLPC_REG_WAKE_UP_THS,&reg1, 1);
   writeReg(IIS2DLPC_REG_WAKE_UP_DUR,&reg2, 1);
   return;
-
-
-
 }
+
+
 void DFRobot_IIS2DLPC::setWakeupThreshold(uint8_t th){
   uint8_t ret;
   
@@ -693,6 +692,35 @@ float DFRobot_IIS2DLPC::readACCFromZ(){
  // } else{
 
   //}
+}
+bool DFRobot_IIS2DLPC::actDetect()
+{
+
+
+}
+bool DFRobot_IIS2DLPC::freeFallDetect()
+{
+
+}
+bool DFRobot_IIS2DLPC::ia6dDetect()
+{
+
+}
+eOrient_t DFRobot_IIS2DLPC::getOrient()
+{
+
+}
+eTap_t DFRobot_IIS2DLPC::tapDetect()
+{
+
+}
+eTapDir_t DFRobot_IIS2DLPC::getTapDirection()
+{
+
+}
+eWakeupDir_t DFRobot_IIS2DLPC::getWakeupDir()
+{
+
 }
 /*
 void DFRobot_IIS2DLPC::setHFilterMode(eHighPassFilter_t mode){

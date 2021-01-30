@@ -78,7 +78,7 @@ void setup(void){
   acce.setWakeupThreshold(10);
 
   //Set the duration of the sleep state (you need to enter the sleep state for a certain period of time before it can be detected again) 1 LSB = 512 * 1/ODR (data acquisition frequency)
-  acce.setActSleepDur(2);
+  //acce.setActSleepDur(2);
   
   /**！
    Set power mode:

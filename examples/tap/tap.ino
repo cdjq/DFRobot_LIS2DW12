@@ -36,7 +36,7 @@ DFRobot_IIS2DLPC_I2C acce;
 volatile int Flag = 0;
 void interEvent(){
   Flag = 1;
-  Serial.println("Activity Detected------------------------");
+  //Serial.println("Activity Detected------------------------");
 }
 
 

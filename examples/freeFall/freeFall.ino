@@ -119,7 +119,7 @@ void loop(void){
    //Free fall event is detected
    if(source.wakeUp.ffIa){
 
-    Serial.print("free fall detected\r\n");
+    Serial.println("free fall detected\r\n");
     delay(300);
    }
 delay(300);

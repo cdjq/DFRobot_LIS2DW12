@@ -55,6 +55,10 @@ public:
   #define IIS2DLPC_REG_WAKE_UP_DUR  0x35   
   #define IIS2DLPC_REG_FREE_FALL    0x36    /*Free fall event register*/
   #define IIS2DLPC_REG_STATUS_DUP    0x37  /*Interrupt event status register*/
+  #define IIS2DLPC_REG_WAKE_UP_SRC    0x38  /*Wakeup source register*/
+  #define IIS2DLPC_REG_TAP_SRC    0x39  /*Tap source register*/
+  #define IIS2DLPC_REG_SIXD_SRC    0x3A  /*6D source register*/
+  #define IIS2DLPC_REG_ALL_INT_SRC    0x3B  /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously*/
   
   
   #define IIS2DLPC_REG_TAP_THS_X    0x30
@@ -282,10 +286,49 @@ typedef enum {
 */
 typedef enum {
   eDegrees80          = 0,/**<80 degrees.>*/
-  eDegrees70          = 0,/**<.>*/
-  eDegrees60          = 0,/**<.>*/
-  eDegrees50          = 0,/**<.>*/
+  eDegrees70          ,/**<.>*/
+  eDegrees60          ,/**<.>*/
+  eDegrees50          ,/**<.>*/
 } s6dTH_t;
+
+/**
+  Click or double click
+*/
+typedef enum {
+  Single_tap  = 0 ,/**<click>*/
+  double_tap  = 1 ,/**<double click>*/
+} eTap_t
+/**
+  which direction is tap event detected
+*/
+typedef enum {
+  eDirXup = 0,
+  eDirXdown = 1,
+  eDirYup = 2,
+  eDirYdown = 3,
+  eDirZup = 4,
+  eDirZdown = 5,
+}eTapDir_t
+/**
+  which direction is wake up event detected
+*/
+typedef enum {
+  eDirX = 0,
+  eDirY = 1,
+  eDirZ = 2,
+}eWakeupDir_t
+
+/**
+  orientation
+*/
+typedef enum {
+  eXdown = 0 /**<X is now down>*/
+  eXup  = 1 /**<X is now up>*/
+  eYdown = 2 /**<Y is now down>*/
+  eYup = 3  /**<Y is now up>*/
+  eZdown = 4  /**<Z is now down>*/
+  eZup = 5  /**<Z is now up>*/
+} eOrient_t
 public:
     DFRobot_IIS2DLPC();
   
@@ -479,8 +522,14 @@ public:
    * @return Acceleration data(g)
    */
   float readACCFromZ();
+  bool actDetect():
+  bool freeFallDetect():
+  bool ia6dDetect():
+  eOrient_t getOrient():
+  eTap_t tapDetect():
+  eTapDir_t getTapDirection():
+  eWakeupDir_t getWakeupDir():
 
-  
 protected:
   void setTapQuiet(uint8_t quiet);
   void setTapShock(uint8_t shock);

@@ -1,65 +1,168 @@
-# DFRobot alcohol concentration sensor
+# DFRobot_H3LIS200DL
+The H3LIS200DL is a low-power high performance 3-axis linear accelerometer <br>
+belonging to the “nano” family, with digital I2C/SPI <br>
+serial interface standard output. <br>
+The device features ultra-low-power operational <br>
+modes that allow advanced power saving and <br>
+smart sleep-to-wakeup functions.<br>
+The H3LIS200DL has dynamically user selectable full scales of ±100g/±200g and is <br>
+capable of measuring accelerations with output <br>
+data rates from 0.5 Hz to 1 kHz.<br>
+The H3LIS200DL is available in a small thin <br>
+plastic land grid array package (LGA) and is <br>
+guaranteed to operate over an extended <br>
+temperature range from -40 °C to +85 °C.<br>
 
-This RaspberryPi alcohol sensor board can communicate with RaspberryPi via I2C or uart.<br>
-alcohol sensor can measure data from 0-5 PPM.<br>
-alcohol sensor Long service life.<br>
-alcohol sensor Excellent stability and anti-interference.<br>
-alcohol sensor High sensitivity and low power consumption.<br>
-alcohol sensor  Temperature compensation, excellent linear output.<br>
 
-## DFRobot alcohol Library for RaspberryPi
+## DFRobot_H3LIS200DL Library for RaspberryPi
+---------------------------------------------------------
 
-Provide the Raspberry Pi library for the DFRobot_alcohol module.
+Provide an RaspberryPi library to get Three-axis acceleration by reading data from H3LIS200DL.
 
 ## Table of Contents
 
 * [Summary](#summary)
-* [Feature](#feature)
 * [Installation](#installation)
 * [Methods](#methods)
+* [Compatibility](#compatibility)
 * [History](#history)
 * [Credits](#credits)
 
 ## Summary
 
-alcohol module.
-
-## Feature
-
-1. The module has two modes, one is active data acquisition and the other is passive data acquisition. <br>
-2. You can measure the concentration of alcohol in the air. <br>
+Provide an RaspberryPi library to get Three-axis acceleration by reading data from H3LIS200DL.
 
 ## Installation
 
-This Sensor should work with DFRobot_alcohol on RaspberryPi. <br>
-Run the program:
-
-```
-$> python get_alcohol_data.py
-```
+To use this library, first download the library file, paste it into the \Arduino\libraries directory, then open the examples folder and run the demo in the folder.
 
 ## Methods
 
-```py
+```C++
+#include <DFRobot_H3LIS200DL.h>
 
-  def set_mode(self ,mode):
+  def begin(self):
     '''
-      @brief Set mode active or passive
-      @param mode: MEASURE_MODE_AUTOMATIC or MEASURE_MODE_PASSIVE(active or passive)
+      @brief Initialize the function
+      @return Return 0 indicates a successful initialization, while other values indicates failure and return to error code.
+    '''
+      
+
+  def getID(self):
+    '''
+      @brief Get chip id
+      @return Returns the eight-digit serial number
     '''
 
-  def get_alcohol_data(self ,collectnum):
+
+  def setRange(self,range_r):
     '''
-      @brief get the alcohol data,units of PPM
-      @param collectnum: Collect the number
-      @return  alcohol concentration, (PPM)
+      @brief Set the measurement range
+      @param range:Range(g)
+             eOnehundred =  ±100g
+             eTwohundred = ±200g
+    '''
+
+  def setAcquireRate(self, rate):
+    '''
+      @brief Set data measurement rate
+      @param range:rate(g)
+    '''
+
+
+  def setIntOneTh(self,threshold):
+    '''
+      @brief Set the threshold of interrupt source 1 interrupt
+      @param threshold:Threshold(g)
+    '''
+
+
+
+  def setIntTwoTh(self,threshold):
+    '''
+      @brief Set interrupt source 2 interrupt generation threshold
+      @param threshold:Threshold(g)
+    '''
+
+  def enableInterruptEvent(self,source,event):
+    '''
+      @brief Enable interrupt
+      @param source:Interrupt pin selection
+      @param event:Interrupt event selection
+    '''
+
+  def getInt1Event(self,source):
+    '''
+      @brief Check whether the interrupt event'source' is generated in interrupt 1
+      @param source:Interrupt event
+                    eXLowThanTh = 0,/<The acceleration in the x direction is less than the threshold>/
+                    eXhigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
+                    eYLowThanTh,/<The acceleration in the y direction is less than the threshold>/
+                    eYhigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
+                    eZLowThanTh,/<The acceleration in the z direction is less than the threshold>/
+                    eZhigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
+      @return true ：produce
+              false：Interrupt event
+    '''
+
+  def getInt2Event(self,source):
+    '''
+      @brief Check whether the interrupt event'source' is generated in interrupt 2
+      @param source:Interrupt event
+                    eXLowThanTh = 0,/<The acceleration in the x direction is less than the threshold>/
+                    eXhigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
+                    eYLowThanTh,/<The acceleration in the y direction is less than the threshold>/
+                    eYhigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
+                    eZLowThanTh,/<The acceleration in the z direction is less than the threshold>/
+                    eZhigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
+      @return true ：produce
+              false：Interrupt event
+    '''
+
+  def enableSleep(self, enable):
+    '''
+      @brief Enable sleep wake function
+      @param enable:true\false
+      @return 0
+    '''
+
+  def setHFilterMode(self,mode):
+    '''
+      @brief Set data filtering mode
+      @param mode:Four modes
+                eCutoffMode1 = 0,
+                eCutoffMode2,
+                eCutoffMode3,
+                eCutoffMode4,
+                eShutDown,
+    '''
+
+  def readAcceFromXYZ(self):
+    '''
+      @brief Get the acceleration in the three directions of xyz
+      @return Three-axis acceleration 
+              acceleration_x;
+              acceleration_y;
+              acceleration_z;
     '''
 
 ```
+
+## Compatibility
+
+MCU                | Work Well    | Work Wrong   | Untested    | Remarks
+------------------ | :----------: | :----------: | :---------: | -----
+树莓派        |      √       |              |             | 
+
+
+
+
 ## History
 
-September 9, 2020 - Version 1.0 released.
+- data 2021-1-26
+- version V1.0
+
 
 ## Credits
 
-Written by ZhixinLiu(zhixin.liu@dfrobot.com), 2020. (Welcome to our website)
+Written by(li.feng@dfrobot.com), 2021. (Welcome to our [website](https://www.dfrobot.com/))
