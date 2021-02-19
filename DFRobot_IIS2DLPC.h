@@ -29,43 +29,43 @@
 
 #define IIS2DLPC_I2C_ADDR  (0x19)  /*sensor IIC address*/
 
-//#define ERR_OK             0      //ok
-//#define ERR_DATA_BUS      -1      //error in data bus
-//#define ERR_IC_VERSION    -2      //chip version mismatch
+#define ERR_OK             0      //ok
+#define ERR_DATA_BUS      -1      //error in data bus
+#define ERR_IC_VERSION    -2      //chip version mismatch
 
 
 class DFRobot_IIS2DLPC
 {
 public:
-  #define IIS2DLPC_REG_CARD_ID    0x0F     /*The chip id*/
-  #define IIS2DLPC_REG_CTRL_REG1  0x20     /*Control register 1*/
-  #define IIS2DLPC_REG_CTRL_REG4  0x23     /*Control register 2*/
-  #define IIS2DLPC_REG_CTRL_REG2  0x21     /*Control register 3*/
-  #define IIS2DLPC_REG_CTRL_REG3  0x22     /*Control register 4*/
-  #define IIS2DLPC_REG_CTRL_REG5  0x24     /*Control register 5*/
-  #define IIS2DLPC_REG_CTRL_REG6  0x25     /*Control register 6*/
-  #define IIS2DLPC_REG_CTRL_REG7  0x3F     /*Control register 7*/
-  #define IIS2DLPC_REG_STATUS_REG 0x27     /*Status register*/
-  #define IIS2DLPC_REG_OUT_X_L      0x28     /*The low order of the X-axis acceleration register*/
-  #define IIS2DLPC_REG_OUT_X_H      0x29     /*The high point of the X-axis acceleration register*/
-  #define IIS2DLPC_REG_OUT_Y_L      0x2A     /*The low order of the Y-axis acceleration register*/
-  #define IIS2DLPC_REG_OUT_Y_H      0x2B     /*The high point of the Y-axis acceleration register*/
-  #define IIS2DLPC_REG_OUT_Z_L      0x2C     /*The low order of the Z-axis acceleration register*/
-  #define IIS2DLPC_REG_OUT_Z_H      0x2D     /*The high point of the Z-axis acceleration register*/
-  #define IIS2DLPC_REG_WAKE_UP_DUR  0x35   
-  #define IIS2DLPC_REG_FREE_FALL    0x36    /*Free fall event register*/
-  #define IIS2DLPC_REG_STATUS_DUP    0x37  /*Interrupt event status register*/
-  #define IIS2DLPC_REG_WAKE_UP_SRC    0x38  /*Wakeup source register*/
-  #define IIS2DLPC_REG_TAP_SRC    0x39  /*Tap source register*/
-  #define IIS2DLPC_REG_SIXD_SRC    0x3A  /*6D source register*/
-  #define IIS2DLPC_REG_ALL_INT_SRC    0x3B  /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously*/
+  #define REG_CARD_ID    0x0F     /*The chip id*/
+  #define REG_CTRL_REG1  0x20     /*Control register 1*/
+  #define REG_CTRL_REG4  0x23     /*Control register 2*/
+  #define REG_CTRL_REG2  0x21     /*Control register 3*/
+  #define REG_CTRL_REG3  0x22     /*Control register 4*/
+  #define REG_CTRL_REG5  0x24     /*Control register 5*/
+  #define REG_CTRL_REG6  0x25     /*Control register 6*/
+  #define REG_CTRL_REG7  0x3F     /*Control register 7*/
+  #define REG_STATUS_REG 0x27     /*Status register*/
+  #define REG_OUT_X_L      0x28     /*The low order of the X-axis acceleration register*/
+  #define REG_OUT_X_H      0x29     /*The high point of the X-axis acceleration register*/
+  #define REG_OUT_Y_L      0x2A     /*The low order of the Y-axis acceleration register*/
+  #define REG_OUT_Y_H      0x2B     /*The high point of the Y-axis acceleration register*/
+  #define REG_OUT_Z_L      0x2C     /*The low order of the Z-axis acceleration register*/
+  #define REG_OUT_Z_H      0x2D     /*The high point of the Z-axis acceleration register*/
+  #define REG_WAKE_UP_DUR  0x35   
+  #define REG_FREE_FALL    0x36    /*Free fall event register*/
+  #define REG_STATUS_DUP    0x37  /*Interrupt event status register*/
+  #define REG_WAKE_UP_SRC    0x38  /*Wakeup source register*/
+  #define REG_TAP_SRC    0x39  /*Tap source register*/
+  #define REG_SIXD_SRC    0x3A  /*6D source register*/
+  #define REG_ALL_INT_SRC    0x3B  /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously*/
   
   
-  #define IIS2DLPC_REG_TAP_THS_X    0x30
-  #define IIS2DLPC_REG_TAP_THS_Y    0x31
-  #define IIS2DLPC_REG_TAP_THS_Z    0x32
-  #define IIS2DLPC_REG_INT_DUR      0x33
-  #define IIS2DLPC_REG_WAKE_UP_THS  0x34
+  #define REG_TAP_THS_X    0x30
+  #define REG_TAP_THS_Y    0x31
+  #define REG_TAP_THS_Z    0x32
+  #define REG_INT_DUR      0x33
+  #define REG_WAKE_UP_THS  0x34
 /**
   Event detection status register
 */
@@ -139,6 +139,7 @@ typedef struct {
   uint8_t notUse                : 2;
 
 } sAllIntSrc_t;
+
 /**
     all related interrupt function flags routed to the INT pads are reset 
   simultaneously
@@ -160,44 +161,44 @@ public:
 */
 typedef enum{
   
-  eHighPerformance                   = 0x04, 
-  eContLowPwr_4                      = 0x03,
-  eContLowPwr_3                      = 0x02,
-  eContLowPwr_2                      = 0x01,
-  eContLowPwr_12bit                  = 0x00,
-  eSingleLowPwr_4                    = 0x0b,
-  eSingleLowPwr_3                    = 0x0a,
-  eSingleLowPwr_2                    = 0x09,
-  eSingleLowPwr_12bit                = 0x08,
-  eHighPerformanceLowNoise           = 0x14,
-  eContLowPwrLowNoise_4              = 0x13,
-  eContLowPwrLowNoise_3              = 0x12,
-  eContLowPwrLowNoise_2              = 0x11,
-  eContLowPwrLowNoise_12bit          = 0x10,
-  eSingleLowPwrLowNoise_4            = 0x1b,
-  eSingleLowPwrLowNoise_3            = 0x1a,
-  eSingleLowPwrLowNoise_2            = 0x19,
-  eSingleLowLowNoisePwr_12bit        = 0x18,
+  eHighPerformance                   = 0x04, /**<High-Performance Mode>*/
+  eContLowPwr_4                      = 0x03,/**<Continuous measurement,Low-Power Mode 4(14-bit resolution)>*/
+  eContLowPwr_3                      = 0x02,/**<Continuous measurement,Low-Power Mode 3(14-bit resolution)>*/
+  eContLowPwr_2                      = 0x01,/**<Continuous measurement,Low-Power Mode 2(14-bit resolution)>*/
+  eContLowPwr_12bit                  = 0x00,/**<Continuous measurement,Low-Power Mode 1(12-bit resolution)>*/
+  eSingleLowPwr_4                    = 0x0b,/**<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>*/
+  eSingleLowPwr_3                    = 0x0a,/**<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>*/
+  eSingleLowPwr_2                    = 0x09,/**<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>*/
+  eSingleLowPwr_12bit                = 0x08,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>*/
+  eHighPerformanceLowNoise           = 0x14,/**<High-Performance Mode,Low-noise enabled>*/
+  eContLowPwrLowNoise_4              = 0x13,/**<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>*/
+  eContLowPwrLowNoise_3              = 0x12,/**<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>*/
+  eContLowPwrLowNoise_2              = 0x11,/**<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>*/
+  eContLowPwrLowNoise_12bit          = 0x10,/**<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>*/
+  eSingleLowPwrLowNoise_4            = 0x1b,/**<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>*/
+  eSingleLowPwrLowNoise_3            = 0x1a,/**<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>*/
+  eSingleLowPwrLowNoise_2            = 0x19,/**<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>*/
+  eSingleLowLowNoisePwr_12bit        = 0x18,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>*/
 }ePowerMode_t;
 
 /**
   Sensor range
 */
 typedef enum{
-  eIIS2DLPC_2g     = 0, /**<±2g>*/
-  eIIS2DLPC_4g     = 1, /**<±4g>*/
-  eIIS2DLPC_8g     = 2, /**<±8g>*/
-  eIIS2DLPC_16g    = 3, /**< ±16g>*/
+  e2_g     = 0, /**<±2g>*/
+  e4_g     = 1, /**<±4g>*/
+  e8_g     = 2, /**<±8g>*/
+  e16_g    = 3, /**< ±16g>*/
 }eRange_t;
 
 /**
   Filtering mode
 */
 typedef enum {
-  eIIS2DLPC_LPF_ON_OUT         = 0x00,/**<Low pass filter>*/
-  eIIS2DLPC_USER_OFFSET_ON_OUT  = 0x01,
-  eIIS2DLPC_HIGH_PASS_ON_OUT    = 0x10,/**<High pass filter>*/
-} eIIS2DLPC_fds_t;
+  eLpfOnOut        = 0x00,/**<Low pass filter>*/
+  eUserOffsetOnOut = 0x01,
+  eHighPassOnOut   = 0x10,/**<High pass filter>*/
+} eFds_t;
 
 
 
@@ -206,17 +207,17 @@ typedef enum {
    bandwidth of collected data
 */
 typedef enum {
-  eIIS2DLPC_ODR_DIV_2     = 0,/**<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
-  eIIS2DLPC_ODR_DIV_4     = 1,/**<ODR/4 (HP/LP)>*/
-  eIIS2DLPC_ODR_DIV_10    = 2,/**<ODR/10 (HP/LP)>*/
-  eIIS2DLPC_ODR_DIV_20    = 3,/**< ODR/20 (HP/LP)>*/
+  eOdrDiv_2     = 0,/**<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
+  eOdrDiv_4     = 1,/**<ODR/4 (High Power/Low power)>*/
+  eOdrDiv_10    = 2,/**<ODR/10 (HP/LP)>*/
+  eOdrDiv_20    = 3,/**< ODR/20 (HP/LP)>*/
 }eBWfilter_t;
 
 /**
   Data collection rate
 */
 typedef enum {
-  eOdr_off            = 0x00,
+  eOdr_0hz            = 0x00,
   eOdr_1hz6_lp_only   = 0x01,
   eOdr_12hz5          = 0x02,
   eOdr_25hz           = 0x03,
@@ -234,14 +235,14 @@ typedef enum {
   Free fall threshold@ ±2 g FS
 */
 typedef enum {
-  eFfTsh_5LSb_FS2g  = 0,/**<5 LSB>*/
-  eFfTsh_7LSb_FS2g  = 1,/**<7 LSB>*/
-  eFfTsh_8LSb_FS2g  = 2,/**<8 LSB>*/
-  eFfTsh_10LSb_FS2g = 3,/**<10 LSB>*/
-  eFfTsh_11LSb_FS2g = 4,/**<11 LSB>*/
-  eFfTsh_13LSb_FS2g = 5,/**<13 LSB>*/
-  eFfTsh_15LSb_FS2g = 6,/**<15 LSB>*/
-  eFfTsh_16LSb_FS2g = 7,/**<16 LSB>*/
+  eFfTsh5LSbFS2g  = 0,/**<5 LSB>*/
+  eFfTsh7LSbFS2g  = 1,/**<7 LSB>*/
+  eFfTsh8LSbFS2g  = 2,/**<8 LSB>*/
+  eFfTsh10LSbFS2g = 3,/**<10 LSB>*/
+  eFfTsh11LSbFS2g = 4,/**<11 LSB>*/
+  eFfTsh13LSbFS2g = 5,/**<13 LSB>*/
+  eFfTsh15LSbFS2g = 6,/**<15 LSB>*/
+  eFfTsh16LSbFS2g = 7,/**<16 LSB>*/
 } eFfThs_t;
 
 /**
@@ -262,7 +263,7 @@ typedef enum{
   eWakeupEvent = 0x20,/**<Wakeup recognition is routed to INT1 pad>*/
   eSingleTap = 0x40,/**<Single-tap recognition is routed to INT1 pad.>*/
   eTnt16d  = 0x80,/**<6D recognition is routed to INT1 pad>*/
-}eInteEvent_t;
+}eInt1Event_t;
 
 /**
   Interrupt source 2 trigger event setting
@@ -295,43 +296,47 @@ typedef enum {
   Click or double click
 */
 typedef enum {
-  Single_tap  = 0 ,/**<click>*/
-  double_tap  = 1 ,/**<double click>*/
-} eTap_t
+  eSingleClick  = 0 ,/**<click>*/
+  eDoubleClick   ,/**<double click>*/
+  eNoClick,
+} eTap_t;
+
 /**
   which direction is tap event detected
 */
 typedef enum {
-  eDirXup = 0,
-  eDirXdown = 1,
-  eDirYup = 2,
-  eDirYdown = 3,
-  eDirZup = 4,
-  eDirZdown = 5,
-}eTapDir_t
+  eDirXup = 0,  /**<从 X 正方向发生的点击事件>*/
+  eDirXdown = 1,/**<从 X 负方向发生的点击事件>*/
+  eDirYup = 2,/**<从 Y 正方向发生的点击事件>*/
+  eDirYdown = 3,/**<从 Y 负方向发生的点击事件>*/
+  eDirZup = 4,/**<从 Z 正方向发生的点击事件>*/
+  eDirZdown = 5,/**<从 Z 负方向发生的点击事件>*/
+  eDirNone,
+}eTapDir_t;
+
 /**
   which direction is wake up event detected
 */
 typedef enum {
-  eDirX = 0,
-  eDirY = 1,
-  eDirZ = 2,
-}eWakeupDir_t
+  eDirX = 0,/**<X方向的运动唤醒芯片>*/
+  eDirY = 1,/**<Y方向的运动唤醒芯片>*/
+  eDirZ = 2,/**<Z方向的运动唤醒芯片>*/
+  eDirError,
+}eWakeupDir_t;
 
 /**
   orientation
 */
 typedef enum {
-  eXdown = 0 /**<X is now down>*/
-  eXup  = 1 /**<X is now up>*/
-  eYdown = 2 /**<Y is now down>*/
-  eYup = 3  /**<Y is now up>*/
-  eZdown = 4  /**<Z is now down>*/
-  eZup = 5  /**<Z is now up>*/
-} eOrient_t
+  eXdown = 0,/**<X is now down>*/
+  eXup  = 1 ,/**<X is now up>*/
+  eYdown = 2 ,/**<Y is now down>*/
+  eYup = 3 , /**<Y is now up>*/
+  eZdown = 4 , /**<Z is now down>*/
+  eZup = 5 , /**<Z is now up>*/
+} eOrient_t;
 public:
-    DFRobot_IIS2DLPC();
-  
+  DFRobot_IIS2DLPC();
   /**
    * @brief Initialize the function
    * @return Return 0 indicates a successful initialization, while other values indicates failure and return to error code.
@@ -340,7 +345,7 @@ public:
  
   /**
    * @brief Get chip id
-   * @return Returns the eight-digit serial number
+   * @return Returns the 8 bit serial number
    */
   uint8_t getID();
  
@@ -351,87 +356,136 @@ public:
   
   /**
    * @brief Choose whether to continuously let the chip collect data
-   * @param enable: true/false
+   * @param enable  true(持续采集数据)/false(单次采集数据)
    */
   void continRefresh(bool enable);
   
   /**
    * @brief Set the filter processing mode
-   * @param fds: Three modes of filtering
+   * @param fds  Three modes of filtering
+                 eLpfOnOut        = 0x00,/<Low pass filter>/
+                 eUserOffsetOnOut = 0x01,
+                 eHighPassOnOut   = 0x10,/<High pass filter>/
    */
-  void setFilterPath(eIIS2DLPC_fds_t fds);
+  void setFilterPath(eFds_t fds);
 
   /**
    * @brief Set the  bandwidth of the data
-   * @param bw:  bandwidth
+   * @param bw   eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
+                 eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
+                 eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
+                 eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
    */
   void setFilterBandwidth(eBWfilter_t bw);
   
   /**
    * @brief Set power mode
    * @param mode: 16 power modes to choose from
+                 eHighPerformance                   = 0x04, /<High-Performance Mode>/
+                 eContLowPwr_4                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr_3                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr_2                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
+                 eContLowPwr_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr_4                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr_3                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr_2                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise           = 0x14,/<High-Performance Mode,Low-noise enabled>/
+                 eContLowPwrLowNoise_4              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_3              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_2              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise_4           = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise_3           = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise_2           = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr_12bit       = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
    */
   void setPowerMode(ePowerMode_t mode);
   
   /**
    * @brief Chip data collection rate setting
-   * @param mode: 0-1600hz selection
+   * @param mode  0-1600hz selection
+                  eOdr_0hz         
+                  eOdr_1hz6_lp_only
+                  eOdr_12hz5       
+                  eOdr_25hz        
+                  eOdr_50hz        
+                  eOdr_100hz       
+                  eOdr_200hz       
+                  eOdr_400hz       
+                  eOdr_800hz       
+                  eOdr_1k6hz       
+                  eSetSwTrig       
+                  eSetPinTrig      
    */
   void setDataRate(eOdr_t odr);
   
   /**
-   * @brief Duration setting of free fall
-   * @param dur: Free fall duration (0~31), the larger the value, the longer the free fall time is needed to be detected
-      @n 1 LSB = 1 * 1/ODR (measurement frequency)
+   * @brief 自由落体时间
+   * @param dur  Free fall duration (0~31), the larger the value, the longer the free fall time is needed to be detected
+     @n 1 LSB = 1 * 1/ODR (measurement frequency)
+     @n example：
+     |                           High-pass filter cut-off frequency configuration                             |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+     |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
    */
   void setFrDur(uint8_t dur);
   
   /**
-   * @brief Is it ready to acquire acceleration data in three directions?
-   * @return ture\false
-   */
-  bool getDataReadyFlag();
-  
-  /**
    * @brief Set the interrupt source of the int1 pin
-   * @param event: Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
+   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
+                   eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
+                   eFfEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
+                   eWakeupEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
+                   eSingleTap = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
+                   eTnt16d  = 0x80,/<6D recognition is routed to INT1 pad>/
    */
-  void setPinInt1Route(eInteEvent_t event);
+  void setPinInt1Route(eInt1Event_t event);
   
   /**
    * @brief Set interrupt source of int2 pin
-   * @param event: Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
+   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
+                   eBoot = 0x20,/< Boot state routed to INT2 pad.>/
+                   eSleepChange = 0x40,/<Enable routing of SLEEP_STATE on INT2 pad>/
+                   eSleepState  = 0x80,/<Sleep change status routed to INT2 pad>/
    */
   void setPinInt2Route(eInt2Event_t event);
   
   /**
    * @brief Latch interrupt
-   * @param enable: Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
+   * @param enable  Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
       function source signals and interrupts routed to pins (wakeup, single/double-tap).
    */
   void latchInterrupt(bool enable);
   
   /**
-   * @brief Get the status of all events of the chip
-   * @return  A structure that stores event information
-   */
-  sAllSources_t getAllSources();
-  
-  /**
    * @brief Set the wake-up duration
-   * @param dur:Wakeup duration (0~3), a total of three levels
+   * @param dur Wakeup duration (0~3)
+     @n 1 LSB = 1 * 1/ODR (measurement frequency)
+     @n example：
+     |                           High-pass filter cut-off frequency configuration                             |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+     |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
    */
   void setWakeupDur(uint8_t dur);
 
   /**
    * @brief Set the wake-up Threshold
-   * @param th:Wake-up threshold,(0~31)1 LSB = 1/64 of g FS.
+   * @param th:unit(g),数值是在量程之内
    */
-  void setWakeupThreshold(uint8_t th);
+  void setWakeupThreshold(float th);
   
   /**
    * @brief Sets the mode of motion detection
-   * @param th:    eNoDetection     
+   * @param th:    eNoDetection 
                    eDetectActInact  
                    eDetectStatMotion
    */
@@ -439,69 +493,77 @@ public:
   
   /**
    * @brief Set the range
-   * @param range:     eIIS2DLPC_2g     
-                       eIIS2DLPC_4g     
-                       eIIS2DLPC_8g     
-                       eIIS2DLPC_16g 
+   * @param range: e2_g     = 0, /<±2g>/
+                   e4_g     = 1, /<±4g>/
+                   e8_g     = 2, /<±8g>/
+                   e16_g    = 3, /< ±16g>/
    */
   void setRange(eRange_t range);
   
   /**
    * @brief Set to detect click events in the Z direction
-   * @param enable:ture\false
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnZ(bool enable);
   
   /**
    * @brief Set to detect click events in the Y direction
-   * @param enable:ture\false
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnY(bool enable);
 
   /**
    * @brief Set to detect click events in the X direction
-   * @param enable:ture\false
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnX(bool enable);
 
   /**
    * @brief Set the click threshold in the X direction
-   * @param th:Threshold(0~31)
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnX(uint8_t th);
+  void setTapThresholdOnX(float th);
   
   /**
    * @brief Set the click threshold in the Y direction
-   * @param th:Threshold(0~31)
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnY(uint8_t th);
+  void setTapThresholdOnY(float th);
 
   /**
    * @brief Set the click threshold in the Z direction
-   * @param th:Threshold(0~31)
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnZ(uint8_t th);
+  void setTapThresholdOnZ(float th);
   
   /**
-   * @brief Sets the interval between double-clicks
+   * @brief 双击的两次点击之间的间隔时间
    * @param th:1 LSB = 32 * 1/ODR(0~15)
      @n ODR:Data acquisition frequency
+     @n example：
+     |                           High-pass filter cut-off frequency configuration                             |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+     |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
    */
   void setTapDur(uint8_t dur);
   
   /**
    * @brief Set the click detection mode
-   * @param mode:     eOnlySingle
-                      eBothSingleDouble
+   * @param mode:     eOnlySingle   //检测单击
+                      eBothSingleDouble //检测单击和双击
    */
   void setTapMode(sTapMode_t mode);
 
   /**
-   * @brief Set Thresholds for 4D/6D
-   * @param degree:         eDegrees80
-                            eDegrees70
-                            eDegrees60
-                            eDegrees50
+   * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
+   * @param degree:  eDegrees80   80°
+                     eDegrees70   70°
+                     eDegrees60   60°
+                     eDegrees50   50°
    */
   void set6dThreshold(s6dTH_t degree);
 
@@ -509,33 +571,79 @@ public:
    * @brief Read the acceleration in the x direction
    * @return Acceleration data(g)
    */
-  float readACCFromX();
+  float readAccX();
   
   /**
    * @brief Read the acceleration in the y direction
    * @return  Acceleration data(g)
    */
-  float readACCFromY();
+  float readAccY();
   
   /**
    * @brief Read the acceleration in the z direction
    * @return Acceleration data(g)
    */
-  float readACCFromZ();
-  bool actDetect():
-  bool freeFallDetect():
-  bool ia6dDetect():
-  eOrient_t getOrient():
-  eTap_t tapDetect():
-  eTapDir_t getTapDirection():
-  eWakeupDir_t getWakeupDir():
+  float readAccZ();
+  
+  /**
+   * @brief 检测是否有运动产生
+   * @return true(产生运动)/false(传感器未运动)
+   */
+  bool actDetect();
+  
+  /**
+   * @brief 自由落体运动检测
+   * @return true(检测到自由落体运动)/false(未检测到自由落体运动)
+   */
+  bool freeFallDetect();
+  
+  /**
+   * @brief Source of change in position portrait/landscape/face-up/face-down.
+   * @return true( no event detected)/false(a change in position is detected)
+   */
+  bool ia6dDetect();
+  
+  /**
+   * @brief 获取传感器现在的位置
+   * @return    eXdown = 0,/<X is now down>/
+                eXup  = 1 ,/<X is now up>/
+                eYdown = 2 ,/<Y is now down>/
+                eYup = 3 , /<Y is now up>/
+                eZdown = 4 , /<Z is now down>/
+                eZup = 5 , /<Z is now up>/
+   */
+  eOrient_t getOrient();
+  
+  /**
+   * @brief 点击检测
+   * @return   eSingleClick  = 0 ,/<click>/
+               eDoubleClick   ,/<double click>/
+               eNoClick,      //没有点击产生
+                */
+  eTap_t tapDetect();
+  
+  /**
+   * @brief 点击方向的源头检测
+   * @return   eDirXup = 0,  /<从 X 正方向发生的点击事件>/
+               eDirXdown = 1,/<从 X 负方向发生的点击事件>/
+               eDirYup = 2,/<从 Y 正方向发生的点击事件>/
+               eDirYdown = 3,/<从 Y 负方向发生的点击事件>/
+               eDirZup = 4,/<从 Z 正方向发生的点击事件>/
+               eDirZdown = 5,/<从 Z 负方向发生的点击事件>/
+   */
+  eTapDir_t getTapDirection();
+  
+  /**
+   * @brief 点击检测
+   * @return   eDirX = 0,/<X方向的运动唤醒芯片>/
+               eDirY = 1,/<Y方向的运动唤醒芯片>/
+               eDirZ = 2,/<Z方向的运动唤醒芯片>/
+               eDirError,
+   */
+  eWakeupDir_t getWakeupDir();
 
 protected:
-  void setTapQuiet(uint8_t quiet);
-  void setTapShock(uint8_t shock);
-  void set6dFeedData(uint8_t data);
-  void setFfThreshold(eFfThs_t th);
-  void setActSleepDur(uint8_t dur);
+
   virtual uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size) = 0;
   /**
    * @brief Write command into sensor chip 
@@ -545,7 +653,25 @@ protected:
    */
   virtual uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size)= 0; 
   uint8_t _interface = 0;
-  float _range = eIIS2DLPC_2g;
+  float _range = e2_g;
+  int _range1 = 0;
+private:
+  void setTapQuiet(uint8_t quiet);
+  void setTapShock(uint8_t shock);
+  void set6dFeedData(uint8_t data);
+  void setFfThreshold(eFfThs_t th);
+  void setActSleepDur(uint8_t dur);
+  /**
+   * @brief Is it ready to acquire acceleration data in three directions?
+   * @return ture()\false
+   */
+  bool getDataReadyFlag();
+  
+  /**
+   * @brief Get the status of all events of the chip
+   * @return  A structure that stores event information
+   */
+  sAllSources_t getAllSources();
 };
 
 

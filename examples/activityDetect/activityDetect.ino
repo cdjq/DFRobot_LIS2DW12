@@ -1,6 +1,6 @@
 /**！
  * @file activityDetect.ino
- * @brief Motion detection
+ * @brief Motion detection,可以检测到模块是否在移动
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -12,12 +12,23 @@
 
 
 #include <DFRobot_IIS2DLPC.h>
-#if defined(ESP32) || defined(ESP8266)
-#define IIS2DLPC_CS  D5
 
-/* AVR series mainboard */
-#else
-#define IIS2DLPC_CS 2
+//当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象
+/*!
+ * @brief Constructor 
+ * @param pWire I2c controller
+ * @param addr  I2C address(0x18/0x19)
+ */
+DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
+
+
+//当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
+#if defined(ESP32) || defined(ESP8266)
+#define IIS2DLPC_CS  D3
+#elif defined(__AVR__) || defined(ARDUINO_SAM_ZERO)
+#define IIS2DLPC_CS 3
+#elif (defined NRF5)
+#define IIS2DLPC_CS P3
 #endif
 /*!
  * @brief Constructor 
@@ -25,12 +36,9 @@
  * @param spi :SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
-/*!
- * @brief Constructor 
- * @param pWire I2c controller
- * @param addr  I2C address(0x64/0x65/0x660x67)
- */
-DFRobot_IIS2DLPC_I2C acce;
+
+
+
 void setup(void){
 
   Serial.begin(9600);
@@ -45,61 +53,61 @@ void setup(void){
   
   /**！
     Set the sensor measurement range:
-    eIIS2DLPC_2g     
-    eIIS2DLPC_4g     
-    eIIS2DLPC_8g     
-    eIIS2DLPC_16g 
+                   e2_g   /<±2g>/
+                   e4_g   /<±4g>/
+                   e8_g   /<±8g>/
+                   e16_g  /< ±16g>/
   */
-  acce.setRange(DFRobot_IIS2DLPC::eIIS2DLPC_2g);
+  acce.setRange(DFRobot_IIS2DLPC::e2_g);
   
   /**！
     Filter settings:
-    eIIS2DLPC_LPF_ON_OUT(Low pass filter)
-    eIIS2DLPC_USER_OFFSET_ON_OUT(User set data offset)
-    eIIS2DLPC_HIGH_PASS_ON_OUT(High pass filter)
+    eLpfOnOut(Low pass filter)
+    eHighPassOnOut(High pass filter)
   */
-  acce.setFilterPath(DFRobot_IIS2DLPC::eIIS2DLPC_LPF_ON_OUT);
+  acce.setFilterPath(DFRobot_IIS2DLPC::eLpfOnOut);
   
   /**！
     Set bandwidth：
-    eIIS2DLPC_ODR_DIV_2     = 0,
-    eIIS2DLPC_ODR_DIV_4     = 1,
-    eIIS2DLPC_ODR_DIV_10    = 2,
-    eIIS2DLPC_ODR_DIV_20    = 3,
+        eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
+        eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
+        eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
+        eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
   */
-  acce.setFilterBandwidth(DFRobot_IIS2DLPC::eIIS2DLPC_ODR_DIV_4);
+  acce.setFilterBandwidth(DFRobot_IIS2DLPC::eOdrDiv_4);
   
   //Interrupt setting, open when using interrupt
   //attachInterrupt(0,interEvent, CHANGE);
   
-  //Set wake-up duration (0~3), four levels
-  acce.setWakeupDur(2);
-  //Set wakeup threshold，1 LSB = 1/64 of g(0~31)
-  acce.setWakeupThreshold(10);
-
-  //Set the duration of the sleep state (you need to enter the sleep state for a certain period of time before it can be detected again) 1 LSB = 512 * 1/ODR (data acquisition frequency)
-  //acce.setActSleepDur(2);
+  /**!
+     Set the wake-up duration
+     @n 1 LSB = 1 * 1/ODR (measurement frequency)
+   */
+  acce.setWakeupDur(/*duration = */5);
+  //Set wakeup threshold,unit:g
+  //数值是在量程之内
+  acce.setWakeupThreshold(/*threshold = */0.5);
   
   /**！
    Set power mode:
-    eHighPerformance           
-    eContLowPwr_4              
-    eContLowPwr_3              
-    eContLowPwr_2              
-    eContLowPwr_12bit          
-    eSingleLowPwr_4            
-    eSingleLowPwr_3            
-    eSingleLowPwr_2            
-    eSingleLowPwr_12bit        
-    eHighPerformanceLowNoise   
-    eContLowPwrLowNoise_4      
-    eContLowPwrLowNoise_3      
-    eContLowPwrLowNoise_2      
-    eContLowPwrLowNoise_12bit  
-    eSingleLowPwrLowNoise_4    
-    eSingleLowPwrLowNoise_3    
-    eSingleLowPwrLowNoise_2    
-    eSingleLowLowNoisePwr_12bit
+      eHighPerformance              /<High-Performance Mode>/
+      eContLowPwr_4                /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+      eContLowPwr_3                /<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+      eContLowPwr_2                /<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
+      eContLowPwr_12bit            /<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+      eSingleLowPwr_4              /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+      eSingleLowPwr_3              /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+      eSingleLowPwr_2              /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+      eSingleLowPwr_12bit          /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+      eHighPerformanceLowNoise     /<High-Performance Mode,Low-noise enabled>/
+      eContLowPwrLowNoise_4        /<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+      eContLowPwrLowNoise_3        /<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+      eContLowPwrLowNoise_2        /<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+      eContLowPwrLowNoise_12bit    /<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
+      eSingleLowPwrLowNoise_4         /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+      eSingleLowPwrLowNoise_3         /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+      eSingleLowPwrLowNoise_2         /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+      eSingleLowLowNoisePwr_12bit     /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
   acce.setPowerMode(DFRobot_IIS2DLPC::eContLowPwrLowNoise_12bit);
   
@@ -141,14 +149,9 @@ void setup(void){
 }
 
 void loop(void){
-   DFRobot_IIS2DLPC::sAllSources_t source= acce.getAllSources();
    //Motion detected
-   if(source.wakeUp.wuIa){
+   if(acce.actDetect()){
      Serial.println("Activity Detected");
    }
-   if(source.wakeUp.sleepStateIa){
-     Serial.println("Inactivity Detected");
-   }
-
-  delay(300);
+  delay(100);
 }

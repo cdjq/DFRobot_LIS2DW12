@@ -1,6 +1,6 @@
 /**！
- * @file freeFall_interrupt.ino
- * @brief Interrupt detection of free fall
+ * @file freeFallInterrupt.ino
+ * @brief Interrupt detection of free fall,当有自由落体事件产生会在int1/int2产生中断信号
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -11,12 +11,22 @@
  */
 #include <DFRobot_IIS2DLPC.h>
 
-#if defined(ESP32) || defined(ESP8266)
-#define IIS2DLPC_CS  D5
+//当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象
+/*!
+ * @brief Constructor 
+ * @param pWire I2c controller
+ * @param addr  I2C address(0x18/0x19)
+ */
+DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 
-/* AVR series mainboard */
-#else
-#define IIS2DLPC_CS 2
+
+//当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
+#if defined(ESP32) || defined(ESP8266)
+#define IIS2DLPC_CS  D3
+#elif defined(__AVR__) || defined(ARDUINO_SAM_ZERO)
+#define IIS2DLPC_CS 3
+#elif (defined NRF5)
+#define IIS2DLPC_CS P3
 #endif
 /*!
  * @brief Constructor 
@@ -24,17 +34,10 @@
  * @param spi :SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
-/*!
- * @brief Constructor 
- * @param pWire I2c controller
- * @param addr  I2C address(0x64/0x65/0x660x67)
- */
-DFRobot_IIS2DLPC_I2C acce;
 
-volatile int Flag = 0;
+volatile int intFlag = 0;
 void interEvent(){
-  Flag = 1;
-  Serial.println("----------------------interrupt Detected------------------------");
+  intFlag = 1;
 }
 
 void setup(void){
@@ -98,12 +101,12 @@ void setup(void){
   
   /**！
     Set the sensor measurement range:
-    eIIS2DLPC_2g     
-    eIIS2DLPC_4g     
-    eIIS2DLPC_8g     
-    eIIS2DLPC_16g 
+                   e2_g   /<±2g>/
+                   e4_g   /<±4g>/
+                   e8_g   /<±8g>/
+                   e16_g  /< ±16g>/
   */
-  acce.setRange(DFRobot_IIS2DLPC::eIIS2DLPC_2g);
+  acce.setRange(DFRobot_IIS2DLPC::e2_g);
   
   //The duration of free fall (0~31), the larger the value, the longer the free fall time is needed to be detected
   //1 LSB = 1 * 1/ODR (measurement frequency)
@@ -124,16 +127,13 @@ void setup(void){
 }
 
 void loop(void){
-   if(Flag == 1){
-   //Get the status of all events
-   DFRobot_IIS2DLPC::sAllSources_t source= acce.getAllSources();
+   if(intFlag == 1){
    //Free fall event is detected
-   if(source.wakeUp.ffIa){
-
-    Serial.println("free fall detected\r\n");
-    delay(300);
+   if(acce.freeFallDetect()){
+      Serial.println("free fall detected");
+      delay(300);
    }
-    Flag = 0;
+    intFlag = 0;
    }
 
 }

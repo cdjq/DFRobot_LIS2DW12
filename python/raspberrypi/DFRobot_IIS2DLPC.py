@@ -15,7 +15,7 @@ import serial
 import time
 import smbus
 import spidev
-from gpio import GPIO
+#from gpio import GPIO
 import numpy as np
 
 I2C_MODE                  = 0x01
@@ -38,7 +38,68 @@ class SPI:
     return []
   def readData(self, cmd):
     return self._bus.readbytes(cmd)
+
+import RPi.GPIO as RPIGPIO
+
+RPIGPIO.setmode(RPIGPIO.BCM)
+RPIGPIO.setwarnings(False)
+
+class GPIO:
+
+  HIGH = RPIGPIO.HIGH
+  LOW = RPIGPIO.LOW
+
+  OUT = RPIGPIO.OUT
+  IN = RPIGPIO.IN
+
+  RISING = RPIGPIO.RISING
+  FALLING = RPIGPIO.FALLING
+  BOTH = RPIGPIO.BOTH
+
+  def __init__(self, pin, mode, defaultOut = HIGH):
+    self._pin = pin
+    self._fInt = None
+    self._intDone = True
+    self._intMode = None
+    if mode == self.OUT:
+      RPIGPIO.setup(pin, mode)
+      if defaultOut == self.HIGH:
+        RPIGPIO.output(pin, defaultOut)
+      else:
+        RPIGPIO.output(pin, self.LOW)
+    else:
+      RPIGPIO.setup(pin, self.IN, pull_up_down = RPIGPIO.PUD_UP)
+
+  def setOut(self, level):
+    if level:
+      RPIGPIO.output(self._pin, self.HIGH)
+    else:
+      RPIGPIO.output(self._pin, self.LOW)
+
+  def _intCB(self, status):
+    if self._intDone:
+      self._intDone = False
+      time.sleep(0.02)
+      if self._intMode == self.BOTH:
+        self._fInt()
+      elif self._intMode == self.RISING and self.read() == self.HIGH:
+        self._fInt()
+      elif self._intMode == self.FALLING and self.read() == self.LOW:
+        self._fInt()
+      self._intDone = True
+
+  def setInterrupt(self, mode, cb):
+    if mode != self.RISING and mode != self.FALLING and mode != self.BOTH:
+      return
+    self._intMode = mode
+    RPIGPIO.add_event_detect(self._pin, mode, self._intCB)
+    self._fInt = cb
+
+  def read(self):
+    return RPIGPIO.input(self._pin)
   
+  def cleanup(self):
+    RPIGPIO.cleanup()
 class DFRobot_IIS2DLPC(object):
 
 
@@ -779,186 +840,11 @@ class DFRobot_IIS2DLPC(object):
     reg = self.read_reg(regester)
     if(reg & 0x01) > 0:
       return acce.DIR_Z
-    else(reg & 0x02) > 0:
+    elif(reg & 0x02) > 0:
       return acce.DIR_y
-    else(reg & 0x04) > 0:
+    elif(reg & 0x04) > 0:
       return acce.DIR_X
-  # '''
-    # @brief Set interrupt source 2 interrupt generation threshold
-    # @param threshold:Threshold(g)
-  # '''
-  # def setIntTwoTh(self,threshold):
-    # reg = (threshold * 128)/self.__range
-    # # print(reg)
-    # self.write_reg(self.H3LIS200DL_REG_INT2_THS,reg)
-  
-  # '''
-    # @brief Enable interrupt
-    # @param source:Interrupt pin selection
-    # @param event:Interrupt event selection
-  # '''
-  # def enableInterruptEvent(self,source,event):
-    # reg = 0
-    # regester1 = self.H3LIS200DL_REG_INT1_CFG;
-    # regester2 = self.H3LIS200DL_REG_INT2_CFG;
-    # if(self.__uart_i2c == SPI_MODE):
-      # regester1 = self.H3LIS200DL_REG_INT1_CFG | 0x80;
-      # regester2 = self.H3LIS200DL_REG_INT2_CFG | 0x80;
-    
-    # if source == self.eINT1:
-      # reg = self.read_reg(regester1)
-    # else:
-      # reg = self.read_reg(regester2)
-    # if self.__reset == 1:
-       # reg = 0
-       # self.__reset = 0
-    # if event == self.E_X_LOWTHAN_TH:
-      # reg = reg | 0x01
-    # elif event == self.E_X_HIGHERTHAN_TH:
-      # reg = reg | 0x02
-    # elif event == self.E_Y_LOWTHAN_TH:
-      # reg = reg | 0x04
-    # elif event == self.E_Y_HIGHERTHAN_TH:
-      # reg = reg | 0x08
-    # elif event == self.E_Z_LOWTHAN_TH:
-      # reg = reg | 0x10      
-    # elif event == self.E_Z_HIGHERTHAN_TH:
-      # reg = reg | 0x20
-      
-    # # print(reg)
-    # if source == self.eINT1:
-      # self.write_reg(self.H3LIS200DL_REG_INT1_CFG,reg)
-    # else:
-      # self.write_reg(self.H3LIS200DL_REG_INT2_CFG,reg)
 
-  # '''
-    # @brief Check whether the interrupt event'source' is generated in interrupt 1
-    # @param source:Interrupt event
-                  # eXLowThanTh = 0,/<The acceleration in the x direction is less than the threshold>/
-                  # eXhigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
-                  # eYLowThanTh,/<The acceleration in the y direction is less than the threshold>/
-                  # eYhigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
-                  # eZLowThanTh,/<The acceleration in the z direction is less than the threshold>/
-                  # eZhigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
-    # @return true ：produce
-            # false：Interrupt event
-  # '''
-  # def getInt1Event(self,source):
-    # regester = self.H3LIS200DL_REG_INT1_SRC;
-    # if(self.__uart_i2c == SPI_MODE):
-      # regester  = self.H3LIS200DL_REG_INT1_SRC | 0x80;
-    # reg = self.read_reg(regester)
-      # # print(reg & (1 << source))
-      # # print(1 << source)
-    # if (reg & (1 << source)) >= 1:
-        # # print("true")
-         # return True
-    # else:
-        # # print("false")
-         # return False
-         
-  # '''
-    # @brief Check whether the interrupt event'source' is generated in interrupt 2
-    # @param source:Interrupt event
-                  # eXLowThanTh = 0,/<The acceleration in the x direction is less than the threshold>/
-                  # eXhigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
-                  # eYLowThanTh,/<The acceleration in the y direction is less than the threshold>/
-                  # eYhigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
-                  # eZLowThanTh,/<The acceleration in the z direction is less than the threshold>/
-                  # eZhigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
-    # @return true ：produce
-            # false：Interrupt event
-  # '''
-  # def getInt2Event(self,source):
-    # regester = self.H3LIS200DL_REG_INT2_SRC;
-    # if(self.__uart_i2c == SPI_MODE):
-      # regester  = self.H3LIS200DL_REG_INT2_SRC | 0x80;
-    # reg = self.read_reg(regester)
-      # # print(reg & (1 << source))
-      # # print(1 << source)
-    # if (reg & (1 << source)) >= 1:
-        # # print("true")
-         # return True
-    # else:
-        # # print("false")
-         # return False
-  # '''
-    # @brief Enable sleep wake function
-    # @param enable:true\false
-    # @return 0
-  # '''
-  # def enableSleep(self, enable):
-    # reg = 0
-    # if enable == True:
-      # reg = 3
-    # else:
-      # reg = 0
-    # self.write_reg(self.H3LIS200DL_REG_CTRL_REG5,reg)
-    # return 0
-
-  
-  
-  # '''
-    # @brief Set data filtering mode
-    # @param mode:Four modes
-              # eCutoffMode1 = 0,
-              # eCutoffMode2,
-              # eCutoffMode3,
-              # eCutoffMode4,
-              # eShutDown,
-  # '''
-  # def setHFilterMode(self,mode):
-    # regester = self.H3LIS200DL_REG_CTRL_REG2;
-    # if(self.__uart_i2c == SPI_MODE):
-      # regester  = self.H3LIS200DL_REG_CTRL_REG2 | 0x80; 
-    # reg = self.read_reg(regester)
-    # if mode == self.E_SHUTDOWN:
-      # reg = reg & (~0x10)
-      # return 0
-    # else:
-      # reg = reg | 0x10
-    # reg = reg & (~3)
-    # reg = reg | mode
-    # self.write_reg(self.H3LIS200DL_REG_CTRL_REG2,reg)
-  
-  # '''
-    # @brief Get the acceleration in the three directions of xyz
-    # @return Three-axis acceleration 
-            # acceleration_x;
-            # acceleration_y;
-            # acceleration_z;
-  # '''
-  # def readAcceFromXYZ(self):
-    # regester = self.H3LIS200DL_REG_STATUS_REG
-    # if(self.__uart_i2c == SPI_MODE):
-      # regester  = self.H3LIS200DL_REG_STATUS_REG | 0x80; 
-    # reg = self.read_reg(regester)
-     # # reg = 1
-    # data1 = [0]
-    # data2 = [0]
-    # data3 = [0]
-    # offset = 0
-    # if(reg & 0x01) == 1:
-        # if(self.__uart_i2c == SPI_MODE):
-		       # offset = 0x80
-     
-        # data1[0] = self.read_reg(self.H3LIS200DL_REG_OUT_X+offset)
-        # data2[0] = self.read_reg(self.H3LIS200DL_REG_OUT_Y+offset)
-        # data3[0] = self.read_reg(self.H3LIS200DL_REG_OUT_Z+offset)
-        # data1[0] = np.int8(data1[0])
-        # data2[0] = np.int8(data2[0])
-        # data3[0] = np.int8(data3[0])
-                   # # struct.unpack("b", b"\x81")
-       # # if()
-        # # print(data1)
-        # # print(data2)
-        # # print(data3)
-    # # if(x > )
-    # x = (data1[0]*self.__range)/128
-    # y = (data2[0]*self.__range)/128
-    # z = (data3[0]*self.__range)/128
-      
-    # return x,y,z
 '''
   @brief An example of an i2c interface module
 '''

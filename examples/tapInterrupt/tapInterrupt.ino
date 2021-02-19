@@ -1,6 +1,6 @@
 /**！
- * @file getAcceleration.ino
- * @brief Get the acceleration in x, y, z directions
+ * @file tapInterrupt.ino
+ * @brief Click interrupt detection
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -12,6 +12,7 @@
 
 
 #include <DFRobot_IIS2DLPC.h>
+
 //当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象
 /*!
  * @brief Constructor 
@@ -35,6 +36,12 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
  * @param spi :SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
+volatile int intFlag = 0;
+void interEvent(){
+  intFlag = 1;
+}
+
+
 void setup(void){
 
   Serial.begin(9600);
@@ -46,25 +53,8 @@ void setup(void){
   Serial.println(acce.getID(),HEX);
   //Chip soft reset
   acce.softReset();
-  //Set whether to collect data continuously
-  acce.continRefresh(true);
-  
-  /**！
-    Set the sensor data collection rate:
-    eOdr_0hz         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
-  */
-  acce.setDataRate(DFRobot_IIS2DLPC::eOdr_50hz);
+  //Interrupt setting, open when using interrupt
+  attachInterrupt(0,interEvent, CHANGE);
   
   /**！
     Set the sensor measurement range:
@@ -74,23 +64,6 @@ void setup(void){
                    e16_g  /< ±16g>/
   */
   acce.setRange(DFRobot_IIS2DLPC::e2_g);
-  
-  
-  /**！
-    Filter settings:
-    eLpfOnOut(Low pass filter)
-    eHighPassOnOut(High pass filter)
-  */
-  acce.setFilterPath(DFRobot_IIS2DLPC::eLpfOnOut);
-  
-  /**！
-    Set bandwidth：
-        eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
-        eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
-        eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
-        eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
-  */
-  acce.setFilterBandwidth(DFRobot_IIS2DLPC::eOdrDiv_4);
   
   /**！
    Set power mode:
@@ -113,22 +86,89 @@ void setup(void){
       eSingleLowPwrLowNoise_2         /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
       eSingleLowLowNoisePwr_12bit     /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_IIS2DLPC::eContLowPwrLowNoise_2);
+  acce.setPowerMode(DFRobot_IIS2DLPC::eContLowPwrLowNoise_12bit);
+
+  /**！
+    Set the sensor data collection rate:
+    eOdr_0hz         
+    eOdr_1hz6_lp_only
+    eOdr_12hz5       
+    eOdr_25hz        
+    eOdr_50hz        
+    eOdr_100hz       
+    eOdr_200hz       
+    eOdr_400hz       
+    eOdr_800hz       
+    eOdr_1k6hz       
+    eSetSwTrig       
+    eSetPinTrig      
+  */
+  acce.setDataRate(DFRobot_IIS2DLPC::eOdr_800hz);
+  //Enable click detection in the X direction
+  acce.enableTapDetectionOnZ(true);
+  //Enable click detection in Y direction
+  acce.enableTapDetectionOnY(true);
+  //Enable click detection in the Z direction
+  acce.enableTapDetectionOnX(true);
+  //The threshold setting in the X direction 
+  //Threshold(g),Can only be used in the range of ±2g
+  acce.setTapThresholdOnX(/*Threshold = */0.2);
+  //The threshold setting in the Y direction   //Threshold(g),Can only be used in the range of ±2g
+  acce.setTapThresholdOnY(/*Threshold = */0.2);
+  //The threshold setting in the Z direction   //Threshold(g),Can only be used in the range of ±2g)
+  acce.setTapThresholdOnZ(/*Threshold = */0.2);
   
+  //Set the interval of double-clicking, 1 LSB = 32 * 1/ODR (0~15) (data acquisition frequency)
+  acce.setTapDur(7);
+  
+  /**！
+    Set click detection mode:
+    eOnlySingle(single click)
+    eBothSingleDouble(Single click and double click)
+  */
+  acce.setTapMode(DFRobot_IIS2DLPC::eBothSingleDouble);
+  
+  /**！
+    Set the interrupt source of the int1 pin:
+    eDoubleTap(Double click)
+    eFfEvent(Free fall)
+    eWakeupEvent(wake)
+    eSingleTap(single-Click)
+    eTnt16d(Orientation change check)
+  */
+
+  acce.setPinInt1Route(DFRobot_IIS2DLPC::eSingleTap);
+  acce.setPinInt1Route(DFRobot_IIS2DLPC::eDoubleTap);
   delay(1000);
 }
 
 void loop(void){
+  if(intFlag == 1){
+   //Click detected
+     DFRobot_IIS2DLPC:: eTap_t tapEvent = acce.tapDetect();
+     DFRobot_IIS2DLPC::eTapDir_t dir = acce.getTapDirection();
+     if(tapEvent  == DFRobot_IIS2DLPC::eSingleClick){
+         Serial.print("single click Detected :");
+     }
+     if(tapEvent  == DFRobot_IIS2DLPC::eDoubleClick){  
+         Serial.print("Double Tap Detected :");
+     }
+     
+     if(dir == DFRobot_IIS2DLPC::eDirXup){
+       Serial.println("Click it in the positive direction of x");
+     }else if(dir == DFRobot_IIS2DLPC::eDirXdown){
+       Serial.println("Click it in the negative direction of x");
+     }else if(dir == DFRobot_IIS2DLPC::eDirYup){
+       Serial.println("Click it in the positive direction of y");
+     }else if(dir == DFRobot_IIS2DLPC::eDirYdown){
+       Serial.println("Click it in the negative direction of y");
+     }else if(dir == DFRobot_IIS2DLPC::eDirZup){
+       Serial.println("Click it in the positive direction of z");
+     }else if(dir == DFRobot_IIS2DLPC::eDirZdown){
+       Serial.println("Click it in the negative direction of z");
+     }
+     
+     intFlag = 0;
    
-    Serial.print("Acceleration x: "); //print acceleration
-    //Read the acceleration in the x direction
-    Serial.print(acce.readAccX());
-    Serial.print(" mg \ty: ");
-    //Read the acceleration in the y direction
-    Serial.print(acce.readAccY());
-    Serial.print(" mg \tz: ");
-    //Read the acceleration in the z direction
-    Serial.print(acce.readAccZ());
-    Serial.println(" mg");
-    delay(300);
+  }
 }

@@ -11,12 +11,22 @@
  */
 #include <DFRobot_IIS2DLPC.h>
 
-#if defined(ESP32) || defined(ESP8266)
-#define IIS2DLPC_CS  D5
+//当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象
+/*!
+ * @brief Constructor 
+ * @param pWire I2c controller
+ * @param addr  I2C address(0x18/0x19)
+ */
+DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 
-/* AVR series mainboard */
-#else
-#define IIS2DLPC_CS 2
+
+//当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
+#if defined(ESP32) || defined(ESP8266)
+#define IIS2DLPC_CS  D3
+#elif defined(__AVR__) || defined(ARDUINO_SAM_ZERO)
+#define IIS2DLPC_CS 3
+#elif (defined NRF5)
+#define IIS2DLPC_CS P3
 #endif
 /*!
  * @brief Constructor 
@@ -24,12 +34,7 @@
  * @param spi :SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
-/*!
- * @brief Constructor 
- * @param pWire I2c controller
- * @param addr  I2C address(0x64/0x65/0x660x67)
- */
-DFRobot_IIS2DLPC_I2C acce;
+
 void setup(void){
 
   Serial.begin(9600);
@@ -69,8 +74,7 @@ void setup(void){
   
   /**！
     Set the sensor data collection rate:
-    
-    eOdr_off         
+    eOdr_0hz         
     eOdr_1hz6_lp_only
     eOdr_12hz5       
     eOdr_25hz        
@@ -87,12 +91,12 @@ void setup(void){
   
   /**！
     Set the sensor measurement range:
-    eIIS2DLPC_2g     
-    eIIS2DLPC_4g     
-    eIIS2DLPC_8g     
-    eIIS2DLPC_16g 
+                   e2_g   /<±2g>/
+                   e4_g   /<±4g>/
+                   e8_g   /<±8g>/
+                   e16_g  /< ±16g>/
   */
-  acce.setRange(DFRobot_IIS2DLPC::eIIS2DLPC_2g);
+  acce.setRange(DFRobot_IIS2DLPC::e2_g);
   
   //The duration of free fall (0~31), the larger the value, the longer the free fall time is needed to be detected
   //1 LSB = 1 * 1/ODR (measurement frequency)
@@ -109,18 +113,16 @@ void setup(void){
   acce.setPinInt1Route(DFRobot_IIS2DLPC::eFfEvent);
   //Latch interrupt
   acce.latchInterrupt(true);
-  delay(1000);
+  delay(100);
 }
 
 void loop(void){
 
-   //Get the status of all events
-   DFRobot_IIS2DLPC::sAllSources_t source= acce.getAllSources();
    //Free fall event is detected
-   if(source.wakeUp.ffIa){
+   if(acce.freeFallDetect()){
 
-    Serial.println("free fall detected\r\n");
-    delay(300);
+      Serial.println("free fall detected");
+      delay(300);
    }
-delay(300);
+//delay(300);
 }

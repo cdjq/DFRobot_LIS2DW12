@@ -1,6 +1,6 @@
 /**！
  * @file tap.ino
- * @brief Single click and double click detection
+ * @brief Single click and double click detection,
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -13,13 +13,22 @@
 
 #include <DFRobot_IIS2DLPC.h>
 
+//当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象
+/*!
+ * @brief Constructor 
+ * @param pWire I2c controller
+ * @param addr  I2C address(0x18/0x19)
+ */
+DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 
+
+//当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
-#define IIS2DLPC_CS  D5
-
-/* AVR series mainboard */
-#else
-#define IIS2DLPC_CS 2
+#define IIS2DLPC_CS  D3
+#elif defined(__AVR__) || defined(ARDUINO_SAM_ZERO)
+#define IIS2DLPC_CS 3
+#elif (defined NRF5)
+#define IIS2DLPC_CS P3
 #endif
 /*!
  * @brief Constructor 
@@ -27,18 +36,6 @@
  * @param spi :SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
-/*!
- * @brief Constructor 
- * @param pWire I2c controller
- * @param addr  I2C address(0x64/0x65/0x660x67)
- */
-DFRobot_IIS2DLPC_I2C acce;
-volatile int Flag = 0;
-void interEvent(){
-  Flag = 1;
-  //Serial.println("Activity Detected------------------------");
-}
-
 
 void setup(void){
 
@@ -54,12 +51,12 @@ void setup(void){
   
   /**！
     Set the sensor measurement range:
-    eIIS2DLPC_2g     
-    eIIS2DLPC_4g     
-    eIIS2DLPC_8g     
-    eIIS2DLPC_16g 
+                   e2_g   /<±2g>/
+                   e4_g   /<±4g>/
+                   e8_g   /<±8g>/
+                   e16_g  /< ±16g>/
   */
-  acce.setRange(DFRobot_IIS2DLPC::eIIS2DLPC_2g);
+  acce.setRange(DFRobot_IIS2DLPC::e2_g);
   
   /**！
    Set power mode:
@@ -86,7 +83,7 @@ void setup(void){
 
   /**！
     Set the sensor data collection rate:
-    eOdr_off         
+    eOdr_0hz         
     eOdr_1hz6_lp_only
     eOdr_12hz5       
     eOdr_25hz        
@@ -106,16 +103,17 @@ void setup(void){
   acce.enableTapDetectionOnY(true);
   //Enable click detection in the Z direction
   acce.enableTapDetectionOnX(true);
-  //The threshold setting in the X direction is similar to the sensitivity of detection, the larger the value, the less sensitive (0~31)
-  acce.setTapThresholdOnX(4);
-  //The threshold setting in the Y direction is similar to the sensitivity of detection, the larger the value, the less sensitive (0~31)
-  acce.setTapThresholdOnY(4);
-  //The threshold setting in the Z direction is similar to the sensitivity of detection, the larger the value, the less sensitive (0~31)
-  acce.setTapThresholdOnZ(4);
+  //The threshold setting in the X direction 
+  //Threshold(g),Can only be used in the range of ±2g
+  acce.setTapThresholdOnX(/*Threshold = */0.5);
+  //The threshold setting in the Y direction   //Threshold(g),Can only be used in the range of ±2g
+  acce.setTapThresholdOnY(/*Threshold = */0.5);
+  //The threshold setting in the Z direction   //Threshold(g),Can only be used in the range of ±2g)
+  acce.setTapThresholdOnZ(/*Threshold = */0.5);
   
   
   //Set the interval of double-clicking, 1 LSB = 32 * 1/ODR (0~15) (data acquisition frequency)
-  acce.setTapDur(7);
+  acce.setTapDur(3);
   
   /**！
     Set click detection mode:
@@ -128,7 +126,7 @@ void setup(void){
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
     eFfEvent(Free fall)
-    eWakeupEvent(wake)
+    eWakeupEvent(wake up)
     eSingleTap(single-Click)
     eTnt16d(Orientation change check)
   */
@@ -138,34 +136,32 @@ void setup(void){
 }
 
 void loop(void){
-   DFRobot_IIS2DLPC::sAllSources_t source= acce.getAllSources();
    //Click detected
-   if(source.tapSrc.singleTap){
-     Serial.print ("Tap Detected :");
-     Serial.print(source.tapSrc.tapSign ?  "positive" : "negative");
-     if(source.tapSrc.xtap){
-       Serial.println("on x");
-     }
-     if(source.tapSrc.ytap){
-       Serial.println("on y");
-     }
-     if(source.tapSrc.ztap){
-       Serial.println("on z");
-     }
+   DFRobot_IIS2DLPC:: eTap_t tapEvent = acce.tapDetect();
+   DFRobot_IIS2DLPC::eTapDir_t dir = acce.getTapDirection();
+   uint8_t tap = 0;
+   if(tapEvent  == DFRobot_IIS2DLPC::eSingleClick){
+       Serial.print("single click Detected :");
+       tap = 1;
    }
-   
-   //Double tap detected
-   if(source.tapSrc.doubleTap){
-     Serial.print("Double Tap Detected :");
-     Serial.print(source.tapSrc.tapSign ?  "positive" : "negative");
-     if(source.tapSrc.xtap){
-       Serial.println("on x");
-     }
-     if(source.tapSrc.ytap){
-       Serial.println("on y");
-     }
-     if(source.tapSrc.ztap){
-       Serial.println("on z");
-     }
+   if(tapEvent  == DFRobot_IIS2DLPC::eDoubleClick){  
+       Serial.print("Double Tap Detected :");
+       tap = 1;
    }
+   if(tap == 1){
+       if(dir == DFRobot_IIS2DLPC::eDirXup){
+         Serial.println("Click it in the positive direction of x");
+       }else if(dir == DFRobot_IIS2DLPC::eDirXdown){
+         Serial.println("Click it in the negative direction of x");
+       }else if(dir == DFRobot_IIS2DLPC::eDirYup){
+         Serial.println("Click it in the positive direction of y");
+       }else if(dir == DFRobot_IIS2DLPC::eDirYdown){
+         Serial.println("Click it in the negative direction of y");
+       }else if(dir == DFRobot_IIS2DLPC::eDirZup){
+         Serial.println("Click it in the positive direction of z");
+       }else if(dir == DFRobot_IIS2DLPC::eDirZdown){
+         Serial.println("Click it in the negative direction of z");
+       }
+   tap = 0;
+}
 }
