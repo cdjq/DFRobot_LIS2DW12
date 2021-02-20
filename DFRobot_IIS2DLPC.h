@@ -19,7 +19,7 @@
 #endif
 #include <Wire.h>
 #include <SPI.h>
-//#define ENABLE_DBG
+#define ENABLE_DBG
 
 #ifdef ENABLE_DBG
 #define DBG(...) {Serial.print("["); Serial.print(__FUNCTION__); Serial.print("(): "); Serial.print(__LINE__); Serial.print(" ] "); Serial.println(__VA_ARGS__);}
@@ -538,9 +538,9 @@ public:
   
   /**
    * @brief 双击的两次点击之间的间隔时间
-   * @param th:1 LSB = 32 * 1/ODR(0~15)
+   * @param th 1 LSB = 32 * 1/ODR(0~15)
      @n ODR:Data acquisition frequency
-     @n example：
+     @n example 
      |                           High-pass filter cut-off frequency configuration                             |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
@@ -553,7 +553,7 @@ public:
   
   /**
    * @brief Set the click detection mode
-   * @param mode:     eOnlySingle   //检测单击
+   * @param mode     eOnlySingle   //检测单击
                       eBothSingleDouble //检测单击和双击
    */
   void setTapMode(sTapMode_t mode);

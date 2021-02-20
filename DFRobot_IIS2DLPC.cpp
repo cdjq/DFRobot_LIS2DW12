@@ -59,10 +59,7 @@ void DFRobot_IIS2DLPC::softReset()
     regester  = REG_CTRL_REG2 | 0x80;
   }
   readReg(regester,&reg, 1);
-  
-  
   reg =  reg | (1<<6);
-  
   DBG(reg);
   writeReg(REG_CTRL_REG2,&reg,1);
 
