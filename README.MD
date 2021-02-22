@@ -366,7 +366,7 @@ microbit        |      √       |              |             |
 FireBeetle-M0        |      √       |              |             | 
 raspberry pi 3      |      √       |              |             | 
 
-MCU                | Work Well    | Work Wrong  | Remarks
+CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
 LIS2DW12       |      √       |              |             
 IIS2DLPC      |      √       |              |              
