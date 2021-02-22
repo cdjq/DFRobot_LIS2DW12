@@ -17,7 +17,7 @@ data rates from 10 Hz to 800 Hz.<br>
 
 
 
-## DFRobot_IIS2DLPC Library for Arduino
+## DFRobot_LIS2DW12 Library for Arduino
 ---------------------------------------------------------
 
 Provide an Arduino library to get Three-axis acceleration by reading data from IIS2DLPC and LIS2DW12.
