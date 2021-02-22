@@ -16,7 +16,7 @@ is capable of measuring accelerations with output
 data rates from 10 Hz to 800 Hz.<br>
 
 
-## DFRobot_IIS2DLPC Library for RaspberryPi
+## DFRobot_LIS2DW12 Library for RaspberryPi
 ---------------------------------------------------------
 
 Provide an RaspberryPi library to get Three-axis acceleration by reading data from LIS2DW12 and IIS2DLPC.
@@ -363,7 +363,7 @@ MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 raspberry pi 3             |      √         |            |             | 
 
 
-MCU                | Work Well    | Work Wrong  | Remarks
+CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
 LIS2DW12       |      √       |              |             
 IIS2DLPC      |      √       |              |              
