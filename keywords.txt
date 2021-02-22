@@ -6,9 +6,11 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-DFRobot_IIS2DLPC	KEYWORD1
+DFRobot_LIS2DW12	KEYWORD1
 DFRobot_IIS2DLPC_SPI	KEYWORD1
 DFRobot_IIS2DLPC_I2C	KEYWORD1
+DFRobot_LIS2DW12_I2C	KEYWORD1
+DFRobot_LIS2DW12_SPI	KEYWORD1
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
