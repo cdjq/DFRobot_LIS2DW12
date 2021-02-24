@@ -1,6 +1,7 @@
 /**！
  * @file tap.ino
  * @brief Single click and double click detection,
+ * @n 在使用SPI时片选引脚可以通过 LIS2DW12_CS 的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -25,26 +26,25 @@ DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_LIS2DW12_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
-#define LIS2DW12  D3
+#define LIS2DW12_CS  D3
 #elif defined(__AVR__) || defined(ARDUINO_SAM_ZERO)
-#define LIS2DW12 3
+#define LIS2DW12_CS 3
 #elif (defined NRF5)
-#define LIS2DW12 P3
+#define LIS2DW12_CS P3
 #endif
 /*!
  * @brief Constructor 
- * @param cs : Chip selection pinChip selection pin
- * @param spi :SPI controller
+ * @param cs  Chip selection pinChip selection pin
+ * @param spi SPI controller
  */
-//DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12);
-
+//DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS);
 
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -115,6 +115,13 @@ void setup(void){
   
   
   //Set the interval of double-clicking, 1 LSB = 32 * 1/ODR (0~15) (data acquisition frequency)
+  // |                                       参数与时间之间的线性关系                                         |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+  // |--------------------------------------------------------------------------------------------------------|
   acce.setTapDur(3);
   
   /**！
@@ -133,37 +140,38 @@ void setup(void){
     eTnt16d(Orientation change check)
   */
   acce.setPinInt1Route(DFRobot_LIS2DW12::eDoubleTap);
-
   delay(1000);
+
 }
 
 void loop(void){
-   //Click detected
-   DFRobot_LIS2DW12:: eTap_t tapEvent = acce.tapDetect();
-   DFRobot_LIS2DW12::eTapDir_t dir = acce.getTapDirection();
-   uint8_t tap = 0;
-   if(tapEvent  == DFRobot_LIS2DW12::eSingleClick){
-       Serial.print("single click Detected :");
-       tap = 1;
-   }
-   if(tapEvent  == DFRobot_LIS2DW12::eDoubleClick){  
-       Serial.print("Double Tap Detected :");
-       tap = 1;
-   }
-   if(tap == 1){
-       if(dir == DFRobot_LIS2DW12::eDirXup){
-         Serial.println("Click it in the positive direction of x");
-       }else if(dir == DFRobot_LIS2DW12::eDirXdown){
-         Serial.println("Click it in the negative direction of x");
-       }else if(dir == DFRobot_LIS2DW12::eDirYup){
-         Serial.println("Click it in the positive direction of y");
-       }else if(dir == DFRobot_LIS2DW12::eDirYdown){
-         Serial.println("Click it in the negative direction of y");
-       }else if(dir == DFRobot_LIS2DW12::eDirZup){
-         Serial.println("Click it in the positive direction of z");
-       }else if(dir == DFRobot_LIS2DW12::eDirZdown){
-         Serial.println("Click it in the negative direction of z");
-       }
-   tap = 0;
-}
+  //Click detected
+  DFRobot_LIS2DW12:: eTap_t tapEvent = acce.tapDetect();
+  //点击方向的源头检测
+  DFRobot_LIS2DW12::eTapDir_t dir = acce.getTapDirection();
+  uint8_t tap = 0;
+  if(tapEvent  == DFRobot_LIS2DW12::eSingleClick){
+      Serial.print("single click Detected :");
+      tap = 1;
+  }
+  if(tapEvent  == DFRobot_LIS2DW12::eDoubleClick){  
+      Serial.print("Double Tap Detected :");
+      tap = 1;
+  }
+  if(tap == 1){
+      if(dir == DFRobot_LIS2DW12::eDirXup){
+        Serial.println("Click it in the positive direction of x");
+      }else if(dir == DFRobot_LIS2DW12::eDirXdown){
+        Serial.println("Click it in the negative direction of x");
+      }else if(dir == DFRobot_LIS2DW12::eDirYup){
+        Serial.println("Click it in the positive direction of y");
+      }else if(dir == DFRobot_LIS2DW12::eDirYdown){
+        Serial.println("Click it in the negative direction of y");
+      }else if(dir == DFRobot_LIS2DW12::eDirZup){
+        Serial.println("Click it in the positive direction of z");
+      }else if(dir == DFRobot_LIS2DW12::eDirZdown){
+        Serial.println("Click it in the negative direction of z");
+      }
+      tap = 0;
+  }
 }

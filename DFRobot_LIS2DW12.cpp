@@ -16,7 +16,7 @@
 DFRobot_LIS2DW12::DFRobot_LIS2DW12(){
 }
 
-int DFRobot_LIS2DW12::begin(void){
+uint8_t DFRobot_LIS2DW12::begin(void){
   uint8_t identifier = 0; 
   
   uint8_t regData = 0x02;
@@ -225,23 +225,6 @@ void DFRobot_LIS2DW12::setRange(eRange_t range){
   
 }
 
-bool DFRobot_LIS2DW12::getDataReadyFlag(){
-  uint8_t ret;
-  
-  uint8_t regester = REG_STATUS_REG;
-  if(_interface == 1){
-    regester  = REG_STATUS_REG | 0x80;
-  }
-  readReg(regester,&ret, 1);
-  //Serial.println(ret);
-  //DBG(ret);
-  if(ret & 0x01){
-    return true;
-  } else {
-    return false;
-  }
-}
-
 void DFRobot_LIS2DW12::setFrDur(uint8_t dur){
   uint8_t reg1 = 0;
   uint8_t reg2 = 0;
@@ -392,20 +375,7 @@ void DFRobot_LIS2DW12::setWakeupThreshold(float th){
   writeReg(REG_WAKE_UP_THS,&ret, 1);
   return;
 }
-DFRobot_LIS2DW12::sAllSources_t DFRobot_LIS2DW12::getAllSources()
-{
-  uint8_t ret[5];
-  sAllSources_t source;
-  uint8_t regester = REG_STATUS_DUP;
-  if(_interface == 1){
-    regester  = REG_STATUS_DUP | 0x80;
-  }
-  readReg(regester,(uint8_t*)&source, 5);
-  
-  
-  //&source = (sAllSources_t *)ret;
-  return source;
-}
+
 void DFRobot_LIS2DW12::latchInterrupt(bool enable){
 
   uint8_t ret;
@@ -849,7 +819,7 @@ DFRobot_IIS2DLPC_I2C::DFRobot_IIS2DLPC_I2C(TwoWire * pWire,uint8_t addr)
   _pWire = pWire;
 }
 
-int DFRobot_IIS2DLPC_I2C::begin(void)
+uint8_t DFRobot_IIS2DLPC_I2C::begin(void)
 {
   _pWire->begin();
   
@@ -899,7 +869,7 @@ DFRobot_IIS2DLPC_SPI::DFRobot_IIS2DLPC_SPI(uint8_t cs,SPIClass *pSpi)
   _cs = cs;
 }
 
-int DFRobot_IIS2DLPC_SPI::begin(void){
+uint8_t DFRobot_IIS2DLPC_SPI::begin(void){
 
   _pSpi->begin();
   uint8_t regData = 0x2;
@@ -960,7 +930,7 @@ DFRobot_LIS2DW12_I2C::DFRobot_LIS2DW12_I2C(TwoWire * pWire,uint8_t addr)
   _pWire = pWire;
 }
 
-int DFRobot_LIS2DW12_I2C::begin(void)
+uint8_t DFRobot_LIS2DW12_I2C::begin(void)
 {
   _pWire->begin();
   
@@ -1010,7 +980,7 @@ DFRobot_LIS2DW12_SPI::DFRobot_LIS2DW12_SPI(uint8_t cs,SPIClass *pSpi)
   _cs = cs;
 }
 
-int DFRobot_LIS2DW12_SPI::begin(void){
+uint8_t DFRobot_LIS2DW12_SPI::begin(void){
 
   _pSpi->begin();
   uint8_t regData = 0x2;

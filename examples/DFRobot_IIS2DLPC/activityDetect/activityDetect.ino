@@ -1,6 +1,7 @@
 /**！
  * @file activityDetect.ino
  * @brief Motion detection,可以检测到模块是否在移动
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -32,19 +33,17 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 #endif
 /*!
  * @brief Constructor 
- * @param cs : Chip selection pinChip selection pin
- * @param spi :SPI controller
+ * @param cs Chip selection pinChip selection pin
+ * @param spi SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
-
-
 
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -56,7 +55,7 @@ void setup(void){
                    e2_g   /<±2g>/
                    e4_g   /<±4g>/
                    e8_g   /<±8g>/
-                   e16_g  /< ±16g>/
+                   e16_g  /<±16g>/
   */
   acce.setRange(DFRobot_LIS2DW12::e2_g);
   
@@ -82,11 +81,19 @@ void setup(void){
   /**!
      Set the wake-up duration
      @n 1 LSB = 1 * 1/ODR (measurement frequency)
+     |                                       参数与时间之间的线性关系                                         |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+     |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
    */
-  acce.setWakeupDur(/*duration = */5);
+  acce.setWakeupDur(/*duration = */2);
+  
   //Set wakeup threshold,unit:g
   //数值是在量程之内
-  acce.setWakeupThreshold(/*threshold = */0.5);
+  acce.setWakeupThreshold(/*threshold = */0.2);
   
   /**！
    Set power mode:

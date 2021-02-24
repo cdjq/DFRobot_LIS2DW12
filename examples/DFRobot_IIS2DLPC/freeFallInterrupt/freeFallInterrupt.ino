@@ -1,6 +1,7 @@
 /**！
  * @file freeFallInterrupt.ino
  * @brief Interrupt detection of free fall,当有自由落体事件产生会在int1/int2产生中断信号
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -30,12 +31,12 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 #endif
 /*!
  * @brief Constructor 
- * @param cs : Chip selection pinChip selection pin
- * @param spi :SPI controller
+ * @param cs Chip selection pinChip selection pin
+ * @param spi SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
 
-volatile int intFlag = 0;
+volatile uint8_t intFlag = 0;
 void interEvent(){
   intFlag = 1;
 }
@@ -45,7 +46,7 @@ void setup(void){
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -136,6 +137,13 @@ void setup(void){
   
   //The duration of free fall (0~31), the larger the value, the longer the free fall time is needed to be detected
   //1 LSB = 1 * 1/ODR (measurement frequency)
+  // |                                       参数与时间之间的线性关系                                         |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+  // |--------------------------------------------------------------------------------------------------------|
   acce.setFrDur(0x06);
   
   /**！
@@ -153,6 +161,7 @@ void setup(void){
 }
 
 void loop(void){
+   
    if(intFlag == 1){
    //Free fall event is detected
    if(acce.freeFallDetect()){
@@ -161,5 +170,4 @@ void loop(void){
    }
     intFlag = 0;
    }
-
 }

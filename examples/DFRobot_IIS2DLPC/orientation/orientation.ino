@@ -1,6 +1,7 @@
 /**！
  * @file orientation.ino
  * @brief Detect the movement of the module in six directions. When the module turns from another direction to a certain direction, an event will be triggered and then detected
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -32,8 +33,8 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 #endif
 /*!
  * @brief Constructor 
- * @param cs : Chip selection pinChip selection pin
- * @param spi :SPI controller
+ * @param cs Chip selection pinChip selection pin
+ * @param spi SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
 void setup(void){
@@ -41,7 +42,7 @@ void setup(void){
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -121,7 +122,7 @@ void setup(void){
 
 void loop(void){
 
-   //Changes detected in six directions
+   //check Changes detected in six directions
    if(acce.ia6dDetect()){
      
      Serial.print("6D Or. switched to ");

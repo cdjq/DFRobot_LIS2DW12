@@ -1,6 +1,7 @@
 /**！
  * @file getAcceleration.ino
- * @brief Get the acceleration in x, y, z directions
+ * @brief Get the acceleration in x, y, z directions,范围(±2g/±4g/±8g/±16g)
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -32,16 +33,17 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 #endif
 /*!
  * @brief Constructor 
- * @param cs : Chip selection pinChip selection pin
- * @param spi :SPI controller
+ * @param cs Chip selection pinChip selection pin
+ * @param spi SPI controller
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
+
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -121,13 +123,13 @@ void setup(void){
 
 void loop(void){
    
-    Serial.print("Acceleration x: "); //print acceleration
+    Serial.print("Acceleration x: ");
     //Read the acceleration in the x direction
     Serial.print(acce.readAccX());
-    Serial.print(" mg \ty: ");
+    Serial.print(" mg \t  y:");
     //Read the acceleration in the y direction
     Serial.print(acce.readAccY());
-    Serial.print(" mg \tz: ");
+    Serial.print(" mg \t  z:");
     //Read the acceleration in the z direction
     Serial.print(acce.readAccZ());
     Serial.println(" mg");

@@ -1,7 +1,8 @@
 /**！
  * @file wakeUp.ino
  * @brief Wake up the sensor from sleep, and get 
-   @n the movement in which direction wakes up the sensor
+ * @n the movement in which direction wakes up the sensor
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -21,7 +22,6 @@
  * @param addr  I2C address(0x18/0x19)
  */
 DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
-
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
@@ -44,6 +44,7 @@ void setup(void){
   while(acce.begin()){
      delay(1000);
      Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -109,16 +110,20 @@ void setup(void){
   */
   acce.setFilterPath(DFRobot_LIS2DW12::eLpfOnOut);
   
-  /**!
-     Set the wake-up duration
-     1 LSB = 1 * 1/ODR (measurement frequency)
-     range：0~3
-   */
+
+  //Set the wake-up duration
+  //1 LSB = 1 * 1/ODR (measurement frequency)
+  // |                                       参数与时间之间的线性关系                                         |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+  // |--------------------------------------------------------------------------------------------------------|
   acce.setWakeupDur(2);
   //Set wakeup threshold,unit:g
   //数值是在量程之内
   acce.setWakeupThreshold(0.5);
-  
   
   /**！
     Set the interrupt source of the int1 pin:
@@ -138,6 +143,7 @@ void loop(void){
    //Wake-up event detected
    if(acce.actDetect()){
      Serial.println("Wake-Up event on");
+     //唤醒的运动方向检测
      DFRobot_LIS2DW12::eWakeupDir_t dir  = acce.getWakeupDir();
      if(dir == DFRobot_LIS2DW12::eDirX){
        Serial.println("x  direction");

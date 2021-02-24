@@ -1,6 +1,7 @@
 /**！
  * @file tapInterrupt.ino
  * @brief Click interrupt detection
+ * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -37,7 +38,7 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
  */
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
 
-volatile int intFlag = 0;
+volatile uint8_t intFlag = 0;
 void interEvent(){
   intFlag = 1;
 }
@@ -146,6 +147,13 @@ void setup(void){
   acce.setTapThresholdOnZ(/*Threshold = */0.2);
   
   //Set the interval of double-clicking, 1 LSB = 32 * 1/ODR (0~15) (data acquisition frequency)
+  // |                                       参数与时间之间的线性关系                                         |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
+  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+  // |--------------------------------------------------------------------------------------------------------|
+  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+  // |--------------------------------------------------------------------------------------------------------|
   acce.setTapDur(7);
   
   /**！

@@ -1,5 +1,5 @@
 # DFRobot_LIS2DW12
-  The IIS2DLPC is an ultra-low-power high-performance 
+The IIS2DLPC is an ultra-low-power high-performance 
 three-axis linear accelerometer with digital I²C/SPI 
 output interface which leverages on the robust and 
 mature manufacturing processes already used for the 
@@ -9,12 +9,12 @@ The IIS2DLPC has user-selectable full scales of
 accelerations with output data rates from 1.6 Hz to 
 1600 Hz.<br>
 
-The LIS2HH12 is an ultra-low-power high performance three-axis linear accelerometer 
-belonging to the “pico” family.<br>
-The LIS2HH12 has full scales of 2g/4g/8g and 
-is capable of measuring accelerations with output 
-data rates from 10 Hz to 800 Hz.<br>
-
+The LIS2DW12 is an ultra-low-power high-performance three-axis linear
+accelerometer belonging to the “femto” family which leverages on the robust and
+mature manufacturing processes already used for the production of micromachined
+accelerometers.
+The LIS2DW12 has user-selectable full scales of ±2g/±4g/±8g/±16g and is capable of
+measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 
 
 ## DFRobot_LIS2DW12 Library for Arduino
@@ -46,11 +46,12 @@ To use this library, first download the library file, paste it into the \Arduino
 ```C++
 
   DFRobot_LIS2DW12();
+  
   /**
    * @brief Initialize the function
    * @return Return 0 indicates a successful initialization, while other values indicates failure and return to error code.
    */
-  int begin(void);
+  uint8_t begin(void);
  
   /**
    * @brief Get chip id
@@ -73,7 +74,6 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief Set the filter processing mode
    * @param fds  Three modes of filtering
                  eLpfOnOut        = 0x00,/<Low pass filter>/
-                 eUserOffsetOnOut = 0x01,
                  eHighPassOnOut   = 0x10,/<High pass filter>/
    */
   void setFilterPath(eFds_t fds);
@@ -130,16 +130,16 @@ To use this library, first download the library file, paste it into the \Arduino
   void setDataRate(eOdr_t odr);
   
   /**
-   * @brief 自由落体时间
+   * @brief 设置自由落体时间
    * @param dur  Free fall duration (0~31), the larger the value, the longer the free fall time is needed to be detected
      @n 1 LSB = 1 * 1/ODR (measurement frequency)
      @n example：
-     |                           High-pass filter cut-off frequency configuration                             |
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setFrDur(uint8_t dur);
@@ -176,12 +176,12 @@ To use this library, first download the library file, paste it into the \Arduino
    * @param dur Wakeup duration (0~3)
      @n 1 LSB = 1 * 1/ODR (measurement frequency)
      @n example：
-     |                           High-pass filter cut-off frequency configuration                             |
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setWakeupDur(uint8_t dur);
@@ -246,23 +246,23 @@ To use this library, first download the library file, paste it into the \Arduino
   void setTapThresholdOnZ(float th);
   
   /**
-   * @brief 双击的两次点击之间的间隔时间
-   * @param th:1 LSB = 32 * 1/ODR(0~15)
+   * @brief 设置双击的两次点击之间的间隔时间
+   * @param th 1 LSB = 32 * 1/ODR(0~15)
      @n ODR:Data acquisition frequency
-     @n example：
-     |                           High-pass filter cut-off frequency configuration                             |
+     @n example 
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setTapDur(uint8_t dur);
   
   /**
    * @brief Set the click detection mode
-   * @param mode:     eOnlySingle   //检测单击
+   * @param mode     eOnlySingle   //检测单击
                       eBothSingleDouble //检测单击和双击
    */
   void setTapMode(sTapMode_t mode);
@@ -314,36 +314,36 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief 获取传感器现在的位置
-   * @return    eXdown = 0,/<X is now down>/
-                eXup  = 1 ,/<X is now up>/
+   * @return    eXdown = 0 ,/<X is now down>/
+                eXup   = 1 ,/<X is now up>/
                 eYdown = 2 ,/<Y is now down>/
-                eYup = 3 , /<Y is now up>/
-                eZdown = 4 , /<Z is now down>/
-                eZup = 5 , /<Z is now up>/
+                eYup   = 3 ,/<Y is now up>/
+                eZdown = 4 ,/<Z is now down>/
+                eZup   = 5 ,/<Z is now up>/
    */
   eOrient_t getOrient();
   
   /**
    * @brief 点击检测
    * @return   eSingleClick  = 0 ,/<click>/
-               eDoubleClick   ,/<double click>/
-               eNoClick,      //没有点击产生
+               eDoubleClick      ,/<double click>/
+               eNoClick,          //没有点击产生
                 */
   eTap_t tapDetect();
   
   /**
    * @brief 点击方向的源头检测
-   * @return   eDirXup = 0,  /<从 X 正方向发生的点击事件>/
+   * @return   eDirXup   = 0,/<从 X 正方向发生的点击事件>/
                eDirXdown = 1,/<从 X 负方向发生的点击事件>/
-               eDirYup = 2,/<从 Y 正方向发生的点击事件>/
+               eDirYup   = 2,/<从 Y 正方向发生的点击事件>/
                eDirYdown = 3,/<从 Y 负方向发生的点击事件>/
-               eDirZup = 4,/<从 Z 正方向发生的点击事件>/
+               eDirZup   = 4,/<从 Z 正方向发生的点击事件>/
                eDirZdown = 5,/<从 Z 负方向发生的点击事件>/
    */
   eTapDir_t getTapDirection();
   
   /**
-   * @brief 点击检测
+   * @brief 唤醒的运动方向检测
    * @return   eDirX = 0,/<X方向的运动唤醒芯片>/
                eDirY = 1,/<Y方向的运动唤醒芯片>/
                eDirZ = 2,/<Z方向的运动唤醒芯片>/

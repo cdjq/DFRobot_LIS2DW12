@@ -10,13 +10,10 @@
  * @https://github.com/DFRobot/DFRobot_LIS2DW12
  */
 
-#ifndef DFROBOT_IIS2DLPC_H
-#define DFROBOT_IIS2DLPC_H
-#if ARDUINO >= 100
+#ifndef DFROBOT_LIS2DW12_H
+#define DFROBOT_LIS2DW12_H
  #include "Arduino.h"
-#else
- #include "WProgram.h"
-#endif
+
 #include <Wire.h>
 #include <SPI.h>
 //#define ENABLE_DBG
@@ -27,25 +24,26 @@
 #define DBG(...)
 #endif
 
-#define LIS2DW12_I2C_ADDR  (0x19)  /*sensor IIC address*/
+#define LIS2DW12_I2C_ADDR  (0x19)  /*LIS2DW12 IIC address*/
+#define IIS2DLPC_I2C_ADDR  (0x19)  /*IIS2DLPC IIC address*/
 
-#define ERR_OK             0      //ok
-#define ERR_DATA_BUS      -1      //error in data bus
-#define ERR_IC_VERSION    -2      //chip version mismatch
+#define ERR_OK              0      //ok
+#define ERR_DATA_BUS       -1      //error in data bus
+#define ERR_IC_VERSION     -2      //chip version mismatch
 
 
 class DFRobot_LIS2DW12
 {
 public:
-  #define REG_CARD_ID    0x0F     /*The chip id*/
-  #define REG_CTRL_REG1  0x20     /*Control register 1*/
-  #define REG_CTRL_REG4  0x23     /*Control register 2*/
-  #define REG_CTRL_REG2  0x21     /*Control register 3*/
-  #define REG_CTRL_REG3  0x22     /*Control register 4*/
-  #define REG_CTRL_REG5  0x24     /*Control register 5*/
-  #define REG_CTRL_REG6  0x25     /*Control register 6*/
-  #define REG_CTRL_REG7  0x3F     /*Control register 7*/
-  #define REG_STATUS_REG 0x27     /*Status register*/
+  #define REG_CARD_ID      0x0F     /*The chip id*/
+  #define REG_CTRL_REG1    0x20     /*Control register 1*/
+  #define REG_CTRL_REG4    0x23     /*Control register 2*/
+  #define REG_CTRL_REG2    0x21     /*Control register 3*/
+  #define REG_CTRL_REG3    0x22     /*Control register 4*/
+  #define REG_CTRL_REG5    0x24     /*Control register 5*/
+  #define REG_CTRL_REG6    0x25     /*Control register 6*/
+  #define REG_CTRL_REG7    0x3F     /*Control register 7*/
+  #define REG_STATUS_REG   0x27     /*Status register*/
   #define REG_OUT_X_L      0x28     /*The low order of the X-axis acceleration register*/
   #define REG_OUT_X_H      0x29     /*The high point of the X-axis acceleration register*/
   #define REG_OUT_Y_L      0x2A     /*The low order of the Y-axis acceleration register*/
@@ -53,105 +51,18 @@ public:
   #define REG_OUT_Z_L      0x2C     /*The low order of the Z-axis acceleration register*/
   #define REG_OUT_Z_H      0x2D     /*The high point of the Z-axis acceleration register*/
   #define REG_WAKE_UP_DUR  0x35   
-  #define REG_FREE_FALL    0x36    /*Free fall event register*/
-  #define REG_STATUS_DUP    0x37  /*Interrupt event status register*/
-  #define REG_WAKE_UP_SRC    0x38  /*Wakeup source register*/
-  #define REG_TAP_SRC    0x39  /*Tap source register*/
-  #define REG_SIXD_SRC    0x3A  /*6D source register*/
-  #define REG_ALL_INT_SRC    0x3B  /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously*/
+  #define REG_FREE_FALL    0x36     /*Free fall event register*/
+  #define REG_STATUS_DUP   0x37     /*Interrupt event status register*/
+  #define REG_WAKE_UP_SRC  0x38     /*Wakeup source register*/
+  #define REG_TAP_SRC      0x39     /*Tap source register*/
+  #define REG_SIXD_SRC     0x3A     /*6D source register*/
+  #define REG_ALL_INT_SRC  0x3B     /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously*/
   
-  
-  #define REG_TAP_THS_X    0x30
-  #define REG_TAP_THS_Y    0x31
-  #define REG_TAP_THS_Z    0x32
-  #define REG_INT_DUR      0x33
-  #define REG_WAKE_UP_THS  0x34
-/**
-  Event detection status register
-*/
-typedef struct {
-  uint8_t drdy                       : 1;
-  uint8_t ffIa                      : 1;
-  uint8_t ia6d                     : 1;
-  uint8_t singleTap                 : 1;
-  uint8_t doubleTap                 : 1;
-  uint8_t sleepStateIa             : 1;
-  uint8_t drdyt  : 1;
-  uint8_t ovr                        : 1;
-
-} sStatusDup_t;
-
-/**
-Wakeup source register
-*/
-typedef struct {
-  uint8_t zwu                       : 1;
-  uint8_t ywu                       : 1;
-  uint8_t xwu                       : 1;
-  uint8_t wuIa                      : 1;
-  uint8_t sleepStateIa             : 1;
-  uint8_t ffIa                      : 1;
-  uint8_t notUse                : 2;
-
-} sWakeUpSrc_t;
-
-/**
-  Tap source register
-*/
-typedef struct {
-
-  uint8_t ztap                      : 1;
-  uint8_t ytap                      : 1;
-  uint8_t xtap                      : 1;
-  uint8_t tapSign                   : 1;
-  uint8_t doubleTap                 : 1;
-  uint8_t singleTap                 : 1;
-  uint8_t tapIa                     : 1;
-  uint8_t notUse                : 1;
-
-} sTapSrc_t;
-
-/**
-  6D source register
-*/
-typedef struct {
-  uint8_t xl                         : 1;
-  uint8_t xh                         : 1;
-  uint8_t yl                         : 1;
-  uint8_t yh                         : 1;
-  uint8_t zl                         : 1;
-  uint8_t zh                         : 1;
-  uint8_t ia6d                     : 1;
-  uint8_t notUse                : 1;
-} sSixdSrc_t;
-
-/**
-    all related interrupt function flags routed to the INT pads are reset 
-  simultaneously
-*/
-typedef struct {
-  uint8_t ffIa                      : 1;
-  uint8_t wuIa                      : 1;
-  uint8_t singleTap                 : 1;
-  uint8_t doubleTap                 : 1;
-  uint8_t ia6d                     : 1;
-  uint8_t sleepChangeIa            : 1;
-  uint8_t notUse                : 2;
-
-} sAllIntSrc_t;
-
-/**
-    all related interrupt function flags routed to the INT pads are reset 
-  simultaneously
-*/
-typedef struct {
-  sStatusDup_t   status;
-  sWakeUpSrc_t  wakeUp;
-  sTapSrc_t      tapSrc;
-  sSixdSrc_t     sixdSrc;
-  sAllIntSrc_t  allIntSrc;
-}sAllSources_t;
-
+  #define REG_TAP_THS_X    0x30     /*4D configuration enable and TAP threshold configuration .*/
+  #define REG_TAP_THS_Y    0x31     /*Threshold for tap recognition @ FS = ±2 g on Y direction*/
+  #define REG_TAP_THS_Z    0x32     /*Threshold for tap recognition @ FS = ±2 g on Z direction*/
+  #define REG_INT_DUR      0x33     /*Interrupt duration registe*/
+  #define REG_WAKE_UP_THS  0x34     /*Wakeup threshold register*/
 
 public:
 
@@ -196,18 +107,14 @@ typedef enum{
 */
 typedef enum {
   eLpfOnOut        = 0x00,/**<Low pass filter>*/
-  eUserOffsetOnOut = 0x01,
   eHighPassOnOut   = 0x10,/**<High pass filter>*/
 } eFds_t;
-
-
-
 
 /**
    bandwidth of collected data
 */
 typedef enum {
-  eOdrDiv_2     = 0,/**<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
+  eOdrDiv_2     = 0,/**<ODR/2 >*/
   eOdrDiv_4     = 1,/**<ODR/4 (High Power/Low power)>*/
   eOdrDiv_10    = 2,/**<ODR/10 (HP/LP)>*/
   eOdrDiv_20    = 3,/**< ODR/20 (HP/LP)>*/
@@ -235,14 +142,14 @@ typedef enum {
   Free fall threshold@ ±2 g FS
 */
 typedef enum {
-  eFfTsh5LSbFS2g  = 0,/**<5 LSB>*/
-  eFfTsh7LSbFS2g  = 1,/**<7 LSB>*/
-  eFfTsh8LSbFS2g  = 2,/**<8 LSB>*/
-  eFfTsh10LSbFS2g = 3,/**<10 LSB>*/
-  eFfTsh11LSbFS2g = 4,/**<11 LSB>*/
-  eFfTsh13LSbFS2g = 5,/**<13 LSB>*/
-  eFfTsh15LSbFS2g = 6,/**<15 LSB>*/
-  eFfTsh16LSbFS2g = 7,/**<16 LSB>*/
+  eFfTsh5LSbFS2g  = 0, /**<5 LSB>*/
+  eFfTsh7LSbFS2g  = 1, /**<7 LSB>*/
+  eFfTsh8LSbFS2g  = 2, /**<8 LSB>*/
+  eFfTsh10LSbFS2g = 3, /**<10 LSB>*/
+  eFfTsh11LSbFS2g = 4, /**<11 LSB>*/
+  eFfTsh13LSbFS2g = 5, /**<13 LSB>*/
+  eFfTsh15LSbFS2g = 6, /**<15 LSB>*/
+  eFfTsh16LSbFS2g = 7, /**<16 LSB>*/
 } eFfThs_t;
 
 /**
@@ -258,18 +165,18 @@ typedef enum {
   Interrupt source 1 trigger event setting
 */
 typedef enum{
-  eDoubleTap = 0x08,/**< Double-tap recognition is routed to INT1 pad>*/
-  eFfEvent = 0x10,/**< Free-fall recognition is routed to INT1 pad>*/
+  eDoubleTap   = 0x08,/**< Double-tap recognition is routed to INT1 pad>*/
+  eFfEvent     = 0x10,/**< Free-fall recognition is routed to INT1 pad>*/
   eWakeupEvent = 0x20,/**<Wakeup recognition is routed to INT1 pad>*/
-  eSingleTap = 0x40,/**<Single-tap recognition is routed to INT1 pad.>*/
-  eTnt16d  = 0x80,/**<6D recognition is routed to INT1 pad>*/
+  eSingleTap   = 0x40,/**<Single-tap recognition is routed to INT1 pad.>*/
+  eTnt16d      = 0x80,/**<6D recognition is routed to INT1 pad>*/
 }eInt1Event_t;
 
 /**
   Interrupt source 2 trigger event setting
 */
 typedef enum{
-  eBoot = 0x20,/**< Boot state routed to INT2 pad.>*/
+  eBoot        = 0x20,/**< Boot state routed to INT2 pad.>*/
   eSleepChange = 0x40,/**<Enable routing of SLEEP_STATE on INT2 pad>*/
   eSleepState  = 0x80,/**<Sleep change status routed to INT2 pad>*/
 }eInt2Event_t;
@@ -279,17 +186,17 @@ typedef enum{
 */
 typedef enum {
   eOnlySingle          = 0,/**<Only detect click events.>*/
-  eBothSingleDouble   = 1,/**<Both single-click and double-click events are detected.>*/
+  eBothSingleDouble    = 1,/**<Both single-click and double-click events are detected.>*/
 } sTapMode_t;
 
 /**
-  位置检测
+  位置检测角度转变阈值
 */
 typedef enum {
   eDegrees80          = 0,/**<80 degrees.>*/
-  eDegrees70          ,/**<.>*/
-  eDegrees60          ,/**<.>*/
-  eDegrees50          ,/**<.>*/
+  eDegrees70             ,/**<70 degrees.>*/
+  eDegrees60             ,/**<60 degrees.>*/
+  eDegrees50             ,/**<50 degrees.>*/
 } s6dTH_t;
 
 /**
@@ -297,7 +204,7 @@ typedef enum {
 */
 typedef enum {
   eSingleClick  = 0 ,/**<click>*/
-  eDoubleClick   ,/**<double click>*/
+  eDoubleClick      ,/**<double click>*/
   eNoClick,
 } eTap_t;
 
@@ -337,11 +244,12 @@ typedef enum {
 } eOrient_t;
 public:
   DFRobot_LIS2DW12();
+  
   /**
    * @brief Initialize the function
    * @return Return 0 indicates a successful initialization, while other values indicates failure and return to error code.
    */
-  int begin(void);
+  uint8_t begin(void);
  
   /**
    * @brief Get chip id
@@ -364,7 +272,6 @@ public:
    * @brief Set the filter processing mode
    * @param fds  Three modes of filtering
                  eLpfOnOut        = 0x00,/<Low pass filter>/
-                 eUserOffsetOnOut = 0x01,
                  eHighPassOnOut   = 0x10,/<High pass filter>/
    */
   void setFilterPath(eFds_t fds);
@@ -421,16 +328,16 @@ public:
   void setDataRate(eOdr_t odr);
   
   /**
-   * @brief 自由落体时间
+   * @brief 设置自由落体时间
    * @param dur  Free fall duration (0~31), the larger the value, the longer the free fall time is needed to be detected
      @n 1 LSB = 1 * 1/ODR (measurement frequency)
      @n example：
-     |                           High-pass filter cut-off frequency configuration                             |
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setFrDur(uint8_t dur);
@@ -467,12 +374,12 @@ public:
    * @param dur Wakeup duration (0~3)
      @n 1 LSB = 1 * 1/ODR (measurement frequency)
      @n example：
-     |                           High-pass filter cut-off frequency configuration                             |
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setWakeupDur(uint8_t dur);
@@ -537,16 +444,16 @@ public:
   void setTapThresholdOnZ(float th);
   
   /**
-   * @brief 双击的两次点击之间的间隔时间
+   * @brief 设置双击的两次点击之间的间隔时间
    * @param th 1 LSB = 32 * 1/ODR(0~15)
      @n ODR:Data acquisition frequency
      @n example 
-     |                           High-pass filter cut-off frequency configuration                             |
+     |                                       参数与时间之间的线性关系                                         |
      |--------------------------------------------------------------------------------------------------------|
      |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
      |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
+     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   void setTapDur(uint8_t dur);
@@ -605,36 +512,36 @@ public:
   
   /**
    * @brief 获取传感器现在的位置
-   * @return    eXdown = 0,/<X is now down>/
-                eXup  = 1 ,/<X is now up>/
+   * @return    eXdown = 0 ,/<X is now down>/
+                eXup   = 1 ,/<X is now up>/
                 eYdown = 2 ,/<Y is now down>/
-                eYup = 3 , /<Y is now up>/
-                eZdown = 4 , /<Z is now down>/
-                eZup = 5 , /<Z is now up>/
+                eYup   = 3 ,/<Y is now up>/
+                eZdown = 4 ,/<Z is now down>/
+                eZup   = 5 ,/<Z is now up>/
    */
   eOrient_t getOrient();
   
   /**
    * @brief 点击检测
    * @return   eSingleClick  = 0 ,/<click>/
-               eDoubleClick   ,/<double click>/
-               eNoClick,      //没有点击产生
+               eDoubleClick      ,/<double click>/
+               eNoClick,          //没有点击产生
                 */
   eTap_t tapDetect();
   
   /**
    * @brief 点击方向的源头检测
-   * @return   eDirXup = 0,  /<从 X 正方向发生的点击事件>/
+   * @return   eDirXup   = 0,/<从 X 正方向发生的点击事件>/
                eDirXdown = 1,/<从 X 负方向发生的点击事件>/
-               eDirYup = 2,/<从 Y 正方向发生的点击事件>/
+               eDirYup   = 2,/<从 Y 正方向发生的点击事件>/
                eDirYdown = 3,/<从 Y 负方向发生的点击事件>/
-               eDirZup = 4,/<从 Z 正方向发生的点击事件>/
+               eDirZup   = 4,/<从 Z 正方向发生的点击事件>/
                eDirZdown = 5,/<从 Z 负方向发生的点击事件>/
    */
   eTapDir_t getTapDirection();
   
   /**
-   * @brief 点击检测
+   * @brief 唤醒的运动方向检测
    * @return   eDirX = 0,/<X方向的运动唤醒芯片>/
                eDirY = 1,/<Y方向的运动唤醒芯片>/
                eDirZ = 2,/<Z方向的运动唤醒芯片>/
@@ -644,70 +551,99 @@ public:
 
 protected:
 
-  virtual uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size) = 0;
   /**
-   * @brief Write command into sensor chip 
-   * @param reg  
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief read data from sensor chip register
+   * @param reg chip register 
+   * @param pBuf  buf for store data to read 
+   * @param size  number of data to read
+   * @return 成功读数据的个数
+   */
+  virtual uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size) = 0;
+  
+  /**
+   * @brief Write data to sensor register 
+   * @param reg register
+   * @param pBuf  buf for store data to write 
+   * @param size  The number of the data in pBuf
+   * @return 成功发送数据的个数
    */
   virtual uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size)= 0; 
   uint8_t _interface = 0;
-  float _range = e2_g;
-  int _range1 = 0;
+  float   _range     = e2_g;
+  uint8_t _range1    = 0;
 private:
-  void setTapQuiet(uint8_t quiet);
-  void setTapShock(uint8_t shock);
-  void set6dFeedData(uint8_t data);
-  void setFfThreshold(eFfThs_t th);
-  void setActSleepDur(uint8_t dur);
+
   /**
-   * @brief Is it ready to acquire acceleration data in three directions?
-   * @return ture()\false
+   * @brief set quiet time after a tap detection: this register represents
+     @n the time after the first detected tap in which there must not be any overthreshold event.
+   * @param quiet quiet time
    */
-  bool getDataReadyFlag();
+  void setTapQuiet(uint8_t quiet);
   
   /**
-   * @brief Get the status of all events of the chip
-   * @return  A structure that stores event information
+   * @brief Set the maximum time of an over-threshold signal detection to be recognized as a tap event.
+   * @param shock  shock time
    */
-  sAllSources_t getAllSources();
+  void setTapShock(uint8_t shock);
+  
+  /**
+   * @brief Set 6d filtered data source
+   * @param data 0: ODR/2 low pass filtered data sent to 6D interrupt function (default)
+                 1: LPF2 output data sent to 6D interrupt function)
+   */
+  void set6dFeedData(uint8_t data);
+  
+  /**
+   * @brief Set Free-fall threshold
+   * @param th threshold
+   */
+  void setFfThreshold(eFfThs_t th);
+  
+  /**
+   * @brief Set duration to go in sleep mode.
+   * @param dur  duration
+   */
+  void setActSleepDur(uint8_t dur);
 };
-
-
 
 class DFRobot_IIS2DLPC_I2C : public DFRobot_LIS2DW12{
 public:
   /*!
    * @brief Constructor 
    * @param pWire I2c controller
-   * @param addr  I2C address(0x64/0x65/0x660x67)
+   * @param addr  I2C address(0x19/0x18)
    */
-  DFRobot_IIS2DLPC_I2C(TwoWire * pWire = &Wire,uint8_t addr = LIS2DW12_I2C_ADDR);
+  DFRobot_IIS2DLPC_I2C(TwoWire * pWire = &Wire,uint8_t addr = IIS2DLPC_I2C_ADDR);
   /**
    * @brief init function
    * @return Return 1 if initialization succeeds, otherwise return non-zero and error code.
    */
-  int begin(void);
-private:
+  uint8_t begin(void);
+
+protected:
 
   /**
-   * @brief Write command into sensor chip 
-   * @param 
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief read data from sensor chip register
+   * @param reg chip register 
+   * @param pBuf  buf for store data to read 
+   * @param size  number of data to read
+   * @return 成功读数据的个数
    */
-    uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  
   /**
-   * @brief Write command into sensor chip 
-   * @param reg  
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief Write data to sensor register 
+   * @param reg register
+   * @param pBuf  buf for store data to write 
+   * @param size  The number of the data in pBuf
+   * @return 成功发送数据的个数
    */
-    uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+  uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+private:
     uint8_t _deviceAddr;
     TwoWire *_pWire;
 };
+
 class DFRobot_IIS2DLPC_SPI : public DFRobot_LIS2DW12{
 
 public:
@@ -722,59 +658,70 @@ public:
    * @brief init function
    * @return Return 1 if initialization succeeds, otherwise return non-zero and error code.
    */
-  int begin(void);
+  uint8_t begin(void);
 protected:
 
   /**
-   * @brief Write command into sensor chip 
-   * @param 
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief read data from sensor chip register
+   * @param reg chip register 
+   * @param pBuf  buf for store data to read 
+   * @param size  number of data to read
+   * @return 成功读数据的个数
    */
-    uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  
   /**
-   * @brief Write command into sensor chip 
-   * @param reg  
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief Write data to sensor register 
+   * @param reg register
+   * @param pBuf  buf for store data to write 
+   * @param size  The number of the data in pBuf
+   * @return 成功发送数据的个数
    */
-    uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+  uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
 private:
     SPIClass *_pSpi;
     uint8_t _cs = 0;
 };
+
 class DFRobot_LIS2DW12_I2C : public DFRobot_LIS2DW12{
 public:
   /*!
    * @brief Constructor 
    * @param pWire I2c controller
-   * @param addr  I2C address(0x64/0x65/0x660x67)
+   * @param addr  I2C address(0x19/0x18)
    */
   DFRobot_LIS2DW12_I2C(TwoWire * pWire = &Wire,uint8_t addr = LIS2DW12_I2C_ADDR);
+  
   /**
    * @brief init function
    * @return Return 1 if initialization succeeds, otherwise return non-zero and error code.
    */
-  int begin(void);
-private:
+  uint8_t begin(void);
+
+protected:
+  
+  /**
+   * @brief read data from sensor chip register
+   * @param reg chip register 
+   * @param pBuf  buf for store data to read 
+   * @param size  number of data to read
+   * @return 成功读数据的个数
+   */
+  uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
 
   /**
-   * @brief Write command into sensor chip 
-   * @param 
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief Write data to sensor register 
+   * @param reg register
+   * @param pBuf  buf for store data to write 
+   * @param size  The number of the data in pBuf
+   * @return 成功发送数据的个数
    */
-    uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
-  /**
-   * @brief Write command into sensor chip 
-   * @param reg  
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
-   */
-    uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+  uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+private:
     uint8_t _deviceAddr;
     TwoWire *_pWire;
 };
+
 class DFRobot_LIS2DW12_SPI : public DFRobot_LIS2DW12{
 
 public:
@@ -789,23 +736,26 @@ public:
    * @brief init function
    * @return Return 1 if initialization succeeds, otherwise return non-zero and error code.
    */
-  int begin(void);
+  uint8_t begin(void);
 protected:
 
   /**
-   * @brief Write command into sensor chip 
-   * @param 
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief read data from sensor chip register
+   * @param reg chip register 
+   * @param pBuf  buf for store data to read 
+   * @param size  number of data to read
+   * @return 成功读数据的个数
    */
-    uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  uint8_t readReg(uint8_t reg,uint8_t * pBuf ,size_t size);
+  
   /**
-   * @brief Write command into sensor chip 
-   * @param reg  
-   * @param data  Data included in command
-   * @param size  The number of the byte of command
+   * @brief Write data to sensor register 
+   * @param reg register
+   * @param pBuf  buf for store data to write 
+   * @param size  The number of the data in pBuf
+   * @return 成功发送数据的个数
    */
-    uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
+  uint8_t  writeReg(uint8_t reg,const void *pBuf,size_t size); 
 private:
     SPIClass *_pSpi;
     uint8_t _cs = 0;
