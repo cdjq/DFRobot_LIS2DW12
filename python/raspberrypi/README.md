@@ -277,20 +277,19 @@ To use this library, first download the library file, paste it into the \Arduino
     
   '''
     @brief Read the acceleration in the x direction
-    @return Acceleration data(g)
+    @return Acceleration data from x(mg)
   '''
   read_acc_x(self):
 
-
   '''
     @brief Read the acceleration in the y direction
-    @return  Acceleration data(g)
+    @return  Acceleration data from y(mg)
   '''
   read_acc_y(self):
 
   '''
     @brief Read the acceleration in the z direction
-    @return Acceleration data(g)
+    @return Acceleration data from z(mg)
   '''
   read_acc_z(self):
   

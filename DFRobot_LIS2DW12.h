@@ -476,19 +476,19 @@ public:
 
   /**
    * @brief Read the acceleration in the x direction
-   * @return Acceleration data(g)
+   * @return  Acceleration data from x(mg)
    */
   float readAccX();
   
   /**
    * @brief Read the acceleration in the y direction
-   * @return  Acceleration data(g)
+   * @return  Acceleration data from y(mg)
    */
   float readAccY();
   
   /**
    * @brief Read the acceleration in the z direction
-   * @return Acceleration data(g)
+   * @return  Acceleration data from z(mg)
    */
   float readAccZ();
   

@@ -696,7 +696,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_CTRL_REG7,reg)
   '''
     @brief Read the acceleration in the x direction
-    @return Acceleration data(g)
+    @return Acceleration data from x(mg)
   '''
   def read_acc_x(self):
     reg1 = self.read_reg(self.REG_OUT_X_L)
@@ -707,7 +707,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Read the acceleration in the y direction
-    @return  Acceleration data(g)
+    @return  Acceleration data from y(mg)
   '''
   def read_acc_y(self):
     reg1 = self.read_reg(self.REG_OUT_Y_L)
@@ -718,7 +718,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Read the acceleration in the z direction
-    @return Acceleration data(g)
+    @return Acceleration data from z(mg)
   '''
   def read_acc_z(self):
     reg1 = self.read_reg(self.REG_OUT_Z_L)
