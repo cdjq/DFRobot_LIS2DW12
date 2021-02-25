@@ -127,7 +127,6 @@ void setup(void){
 void loop(void){
    //Free fall event is detected
    if(acce.freeFallDetect()){
-
       Serial.println("free fall detected");
       delay(300);
    }
