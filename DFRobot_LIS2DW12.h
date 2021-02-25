@@ -50,7 +50,7 @@ public:
   #define REG_OUT_Y_H      0x2B     /*The high point of the Y-axis acceleration register*/
   #define REG_OUT_Z_L      0x2C     /*The low order of the Z-axis acceleration register*/
   #define REG_OUT_Z_H      0x2D     /*The high point of the Z-axis acceleration register*/
-  #define REG_WAKE_UP_DUR  0x35   
+  #define REG_WAKE_UP_DUR  0x35     /*Wakeup and sleep duration configuration register (r/w).*/
   #define REG_FREE_FALL    0x36     /*Free fall event register*/
   #define REG_STATUS_DUP   0x37     /*Interrupt event status register*/
   #define REG_WAKE_UP_SRC  0x38     /*Wakeup source register*/
