@@ -178,9 +178,8 @@ void DFRobot_LIS2DW12::setDataRate(eOdr_t odr){
   DBG(ret);
   writeReg(REG_CTRL_REG3,&ret, 1);
   return ;
-
-
 }
+
 void DFRobot_LIS2DW12::setRange(eRange_t range){
   uint8_t reg = 0;
   

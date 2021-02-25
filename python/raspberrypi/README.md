@@ -9,12 +9,12 @@ The IIS2DLPC has user-selectable full scales of
 accelerations with output data rates from 1.6 Hz to 
 1600 Hz.<br>
 
-The LIS2HH12 is an ultra-low-power high performance three-axis linear accelerometer 
-belonging to the “pico” family.<br>
-The LIS2HH12 has full scales of 2g/4g/8g and 
-is capable of measuring accelerations with output 
-data rates from 10 Hz to 800 Hz.<br>
-
+The LIS2DW12 is an ultra-low-power high-performance three-axis linear
+accelerometer belonging to the “femto” family which leverages on the robust and
+mature manufacturing processes already used for the production of micromachined
+accelerometers.
+The LIS2DW12 has user-selectable full scales of ±2g/±4g/±8g/±16g and is capable of
+measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 
 ## DFRobot_LIS2DW12 Library for RaspberryPi
 ---------------------------------------------------------

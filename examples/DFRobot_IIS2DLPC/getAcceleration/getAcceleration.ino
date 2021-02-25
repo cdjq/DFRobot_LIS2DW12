@@ -11,7 +11,6 @@
  * @https://github.com/DFRobot/DFRobot_LIS2DW12
  */
 
-
 #include <DFRobot_LIS2DW12.h>
 
 //当你使用I2C通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_I2C构造对象

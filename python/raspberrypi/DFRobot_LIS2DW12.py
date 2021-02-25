@@ -15,134 +15,49 @@ import serial
 import time
 import smbus
 import spidev
-#from gpio import GPIO
 import numpy as np
-
+import RPi.GPIO as RPIGPIO
 I2C_MODE                  = 0x01
 SPI_MODE                  = 0x02
-class SPI:
 
-  MODE_1 = 1
-  MODE_2 = 2
-  MODE_3 = 3
-  MODE_4 = 4
-  def __init__(self, bus, dev, speed = 100000, mode = MODE_4):
-    self._bus = spidev.SpiDev()
-    self._bus.open(0, 0)
-    self._bus.no_cs = True
-    self._bus.max_speed_hz = speed
-    #self._bus.threewire  = True
-  def transfer(self, buf):
-    if len(buf):
-      return self._bus.writebytes(buf)
-    return []
-  def readData(self, cmd):
-    return self._bus.readbytes(cmd)
-
-import RPi.GPIO as RPIGPIO
-
-RPIGPIO.setmode(RPIGPIO.BCM)
-RPIGPIO.setwarnings(False)
-
-class GPIO:
-
-  HIGH = RPIGPIO.HIGH
-  LOW = RPIGPIO.LOW
-
-  OUT = RPIGPIO.OUT
-  IN = RPIGPIO.IN
-
-  RISING = RPIGPIO.RISING
-  FALLING = RPIGPIO.FALLING
-  BOTH = RPIGPIO.BOTH
-
-  def __init__(self, pin, mode, defaultOut = HIGH):
-    self._pin = pin
-    self._fInt = None
-    self._intDone = True
-    self._intMode = None
-    if mode == self.OUT:
-      RPIGPIO.setup(pin, mode)
-      if defaultOut == self.HIGH:
-        RPIGPIO.output(pin, defaultOut)
-      else:
-        RPIGPIO.output(pin, self.LOW)
-    else:
-      RPIGPIO.setup(pin, self.IN, pull_up_down = RPIGPIO.PUD_UP)
-
-  def setOut(self, level):
-    if level:
-      RPIGPIO.output(self._pin, self.HIGH)
-    else:
-      RPIGPIO.output(self._pin, self.LOW)
-
-  def _intCB(self, status):
-    if self._intDone:
-      self._intDone = False
-      time.sleep(0.02)
-      if self._intMode == self.BOTH:
-        self._fInt()
-      elif self._intMode == self.RISING and self.read() == self.HIGH:
-        self._fInt()
-      elif self._intMode == self.FALLING and self.read() == self.LOW:
-        self._fInt()
-      self._intDone = True
-
-  def setInterrupt(self, mode, cb):
-    if mode != self.RISING and mode != self.FALLING and mode != self.BOTH:
-      return
-    self._intMode = mode
-    RPIGPIO.add_event_detect(self._pin, mode, self._intCB)
-    self._fInt = cb
-
-  def read(self):
-    return RPIGPIO.input(self._pin)
-  
-  def cleanup(self):
-    RPIGPIO.cleanup()
 class DFRobot_LIS2DW12(object):
-
-
-  REG_CARD_ID   = 0x0F     #/*The chip id*/
-  REG_CTRL_REG1 = 0x20     #/*Control register 1*/
-  REG_CTRL_REG4 = 0x23     #/*Control register 2*/
-  REG_CTRL_REG2 = 0x21     #/*Control register 3*/
-  REG_CTRL_REG3 = 0x22     #/*Control register 4*/
-  REG_CTRL_REG5 = 0x24     #/*Control register 5*/
-  REG_CTRL_REG6 = 0x25     #/*Control register 6*/
-  REG_CTRL_REG7 = 0x3F     #/*Control register 7*/
-  REG_STATUS_REG = 0x27    # /*Status register*/
-  REG_OUT_X_L   =   0x28    # /*The low order of the X-axis acceleration register*/
-  REG_OUT_X_H   =   0x29     #/*The high point of the X-axis acceleration register*/
-  REG_OUT_Y_L   =   0x2A     #/*The low order of the Y-axis acceleration register*/
-  REG_OUT_Y_H    =  0x2B     #/*The high point of the Y-axis acceleration register*/
-  REG_OUT_Z_L    =  0x2C     #/*The low order of the Z-axis acceleration register*/
-  REG_OUT_Z_H    =  0x2D     #/*The high point of the Z-axis acceleration register*/
-  REG_WAKE_UP_DUR = 0x35   
-  REG_FREE_FALL  =  0x36    #/*Free fall event register*/
-  REG_STATUS_DUP  =  0x37    #  /*Interrupt event status register*/
-  REG_STATUS_DUP  =  0x37  # /*Interrupt event status register*/
-  REG_WAKE_UP_SRC =   0x38  # /*Wakeup source register*/
-  REG_TAP_SRC  =  0x39  # /*Tap source register*/
-  REG_SIXD_SRC  =  0x3A  # /*6D source register*/
-  REG_ALL_INT_SRC  =  0x3B  # /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously
+  REG_CARD_ID      = 0x0F     #/*The chip id*/
+  REG_CTRL_REG1    = 0x20     #/*Control register 1*/
+  REG_CTRL_REG4    = 0x23     #/*Control register 2*/
+  REG_CTRL_REG2    = 0x21     #/*Control register 3*/
+  REG_CTRL_REG3    = 0x22     #/*Control register 4*/
+  REG_CTRL_REG5    = 0x24     #/*Control register 5*/
+  REG_CTRL_REG6    = 0x25     #/*Control register 6*/
+  REG_CTRL_REG7    = 0x3F     #/*Control register 7*/
+  REG_STATUS_REG   = 0x27     # /*Status register*/
+  REG_OUT_X_L      = 0x28     # /*The low order of the X-axis acceleration register*/
+  REG_OUT_X_H      = 0x29     #/*The high point of the X-axis acceleration register*/
+  REG_OUT_Y_L      = 0x2A     #/*The low order of the Y-axis acceleration register*/
+  REG_OUT_Y_H      = 0x2B     #/*The high point of the Y-axis acceleration register*/
+  REG_OUT_Z_L      = 0x2C     #/*The low order of the Z-axis acceleration register*/
+  REG_OUT_Z_H      = 0x2D     #/*The high point of the Z-axis acceleration register*/
+  REG_WAKE_UP_DUR  = 0x35     #/*Wakeup and sleep duration configuration register (r/w).*/
+  REG_FREE_FALL    = 0x36     #/*Free fall event register*/
+  REG_STATUS_DUP   = 0x37     # /*Interrupt event status register*/
+  REG_STATUS_DUP   = 0x37     # /*Interrupt event status register*/
+  REG_WAKE_UP_SRC  = 0x38     # /*Wakeup source register*/
+  REG_TAP_SRC      = 0x39     # /*Tap source register*/
+  REG_SIXD_SRC     = 0x3A     # /*6D source register*/
+  REG_ALL_INT_SRC  = 0x3B     # /*Reading this register, all related interrupt function flags routed to the INT pads are reset simultaneously
   
   REG_TAP_THS_X  =  0x30
   REG_TAP_THS_Y  =  0x31
   REG_TAP_THS_Z  =  0x32
   REG_INT_DUR    =  0x33
   REG_WAKE_UP_THS = 0x34
-  __m_flag   = 0                # mode flag
-  __count    = 0                # acquisition count    
-  __txbuf        = [0]          # i2c send buffer
-  __uart_i2c     =  0
+  
   __range =  0.061
   __reset = 0
   __range_d = 0
   '''
    Power mode
   '''
-  HIGH_PERFORMANCE                   = 0X04 #High-Performance Mode
+  HIGH_PERFORMANCE                   = 0X04#High-Performance Mode
   CONT_LOWPWR_4                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
   CONT_LOWPWR_3                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
   CONT_LOWPWR_2                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
@@ -167,13 +82,12 @@ class DFRobot_LIS2DW12(object):
   RANGE_2G     = 2   #/**<±2g>*/
   RANGE_4G     = 4   #/**<±4g>*/
   RANGE_8G     = 8   #/**<±8g>*/
-  RANGE_16G    = 16   #/**< ±16g>*/
+  RANGE_16G    = 16  #/**< ±16g>*/
   
   '''
     Filtering mode
   '''
   LPF_ON_OUT         = 0x00 #/**<Low pass filter>*/
-  USER_OFFSET_ON_OUT  = 0x01
   HIGH_PASS_ON_OUT    = 0x10 #/**<High pass filter>*/
 
   '''
@@ -223,39 +137,39 @@ class DFRobot_LIS2DW12(object):
   '''
   Interrupt source 1 trigger event setting
   '''
-  DOUBLE_TAP = 0x08 #/**< Double-tap recognition is routed to INT1 pad>*/
-  FF_EVENT = 0x10 #/**< Free-fall recognition is routed to INT1 pad>*/
+  DOUBLE_TAP = 0x08   #/**< Double-tap recognition is routed to INT1 pad>*/
+  FF_EVENT = 0x10     #/**< Free-fall recognition is routed to INT1 pad>*/
   WAKEUP_EVENT = 0x20 #/**<Wakeup recognition is routed to INT1 pad>*/
-  SINGLE_TAP = 0x40  #/**<Single-tap recognition is routed to INT1 pad.>*/
-  TNT_16D  = 0x80  #/**<6D recognition is routed to INT1 pad>*/
+  SINGLE_TAP = 0x40   #/**<Single-tap recognition is routed to INT1 pad.>*/
+  TNT_16D  = 0x80     #/**<6D recognition is routed to INT1 pad>*/
 
   '''
   Interrupt source 2 trigger event setting
   '''
 
-  BOOT = 0x20 #/**< Boot state routed to INT2 pad.>*/
-  SLEEP_CHANGE = 0x40  #/**<Enable routing of SLEEP_STATE on INT2 pad>*/
+  BOOT = 0x20         #/**< Boot state routed to INT2 pad.>*/
+  SLEEP_CHANGE = 0x40 #/**<Enable routing of SLEEP_STATE on INT2 pad>*/
   SLEEP_STATE  = 0x80 # /**<Sleep change status routed to INT2 pad>*/
   
   '''
   Click or double click
   '''
-  SINGLE_CLICK  = 0#/**<Click>*/
-  DOUBLE_CLICK  = 1#/**<double click>*/
-  NO_CLICK    = 2#/**<no click>*/
+  SINGLE_CLICK  = 0  #/**<Click>*/
+  DOUBLE_CLICK  = 1  #/**<double click>*/
+  NO_CLICK      = 2  #/**<no click>*/
   
   #which direction is tap event detected
-  DIR_X_UP = 0#在X 正方向发生的点击事件
-  DIR_X_DOWN = 1#在X 负方向发生的点击事件
-  DIR_Y_UP = 2#在Y 正方向发生的点击事件
-  DIR_Y_DOWN = 3#在Y 负方向发生的点击事件
-  DIR_Z_UP = 4#在Z 正方向发生的点击事件
-  DIR_Z_DOWN = 5#在Z 负方向发生的点击事件
+  DIR_X_UP   = 0 #在X 正方向发生的点击事件
+  DIR_X_DOWN = 1 #在X 负方向发生的点击事件
+  DIR_Y_UP   = 2 #在Y 正方向发生的点击事件
+  DIR_Y_DOWN = 3 #在Y 负方向发生的点击事件
+  DIR_Z_UP   = 4 #在Z 正方向发生的点击事件
+  DIR_Z_DOWN = 5 #在Z 负方向发生的点击事件
   
   #which direction is wake up event detected
-  DIR_X = 0#X方向的运动唤醒芯片
-  DIR_Y = 1#Y方向的运动唤醒芯片
-  DIR_Z = 2#Z方向的运动唤醒芯片
+  DIR_X = 0 #X方向的运动唤醒芯片
+  DIR_Y = 1 #Y方向的运动唤醒芯片
+  DIR_Z = 2 #Z方向的运动唤醒芯片
   
   
   #Click detection mode
@@ -272,24 +186,15 @@ class DFRobot_LIS2DW12(object):
   DEGREES_50          = 3 #/**<.>*/
   
   #orientation
-  X_DOWN = 0 #/**<X is now down>*/
-  X_UP  = 1 #/**<X is now up>*/
-  Y_DOWN = 2 #/**<Y is now down>*/
-  Y_UP = 3  #/**<Y is now up>*/
+  X_DOWN = 0  #/**<X is now down>*/
+  X_UP   = 1  #/**<X is now up>*/
+  Y_DOWN = 2  #/**<Y is now down>*/
+  Y_UP   = 3  #/**<Y is now up>*/
   Z_DOWN = 4  #/**<Z is now down>*/
-  Z_UP = 5  #/**<Z is now up>*/
+  Z_UP   = 5  #/**<Z is now up>*/
 
-
-  ERROR                     = -1
-  def __init__(self ,bus ,Baud):
+  def __init__(self):
     __reset = 1
-    if bus != 0:
-      self.i2cbus = smbus.SMBus(bus)
-      self.__uart_i2c = I2C_MODE;
-    else:
-      self.__uart_i2c = SPI_MODE
-
-
 
   '''
     @brief Initialize the function
@@ -297,10 +202,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def begin(self):
     identifier = 0 
-    if(self.__uart_i2c == SPI_MODE):
-      identifier = self.read_reg(self.REG_CARD_ID + 0x80)  
-    else:
-      identifier = self.read_reg(self.REG_CARD_ID)
+    identifier = self.read_reg(self.REG_CARD_ID)
     #print(identifier)
     if identifier == 0x44:
       #print("identifier = :")
@@ -313,22 +215,16 @@ class DFRobot_LIS2DW12(object):
     @brief Get chip id
     @return Returns the eight-digit serial number
   '''
-  def get_ID(self):
+  def get_id(self):
     identifier = 0 
-    if(self.__uart_i2c == SPI_MODE):
-      identifier = self.read_reg(self.REG_CARD_ID + 0x80)  
-    else:
-      identifier = self.read_reg(self.REG_CARD_ID)
+    identifier = self.read_reg(self.REG_CARD_ID)
     return identifier
   '''
     @brief Software reset to restore the value of all registers to the default value
   '''
   def soft_reset(self):
     reg = 0
-    regester = self.REG_CTRL_REG2
-    if(self.__uart_i2c == SPI_MODE):
-      regester = self.REG_CTRL_REG2 | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG2)
     reg = reg | (1<<6)
     #print(reg)
     self.write_reg(self.REG_CTRL_REG2,reg)
@@ -343,10 +239,7 @@ class DFRobot_LIS2DW12(object):
                  RANGE_16G    #/**< ±16g>*/
   '''
   def set_range(self,range_r):
-    regester = self.REG_CTRL_REG6;
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_CTRL_REG6 | 0x80;
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG6)
     self.__range_d = range_r
     if range_r == self.RANGE_2G:
       #print("2g")
@@ -365,8 +258,6 @@ class DFRobot_LIS2DW12(object):
       self._range = 0.488
       reg = reg &(~(3<<4))
       reg = reg | (3<<4)
-    #print("set_range")
-    #print(reg)
     self.write_reg(self.REG_CTRL_REG6,reg)
     
   '''
@@ -374,10 +265,7 @@ class DFRobot_LIS2DW12(object):
     @param enable  True(持续采集数据)/False(单次采集数据)
   '''
   def contin_refresh(self,enable):
-    regester = self.REG_CTRL_REG2
-    if(self.__uart_i2c == SPI_MODE):
-      regester = self.REG_CTRL_REG2 | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG2)
     if enable == True:
        reg = reg | (1<<3)
     else:
@@ -388,14 +276,10 @@ class DFRobot_LIS2DW12(object):
     @brief Set the filter processing mode
     @param fds  Three modes of filtering
                 LPF_ON_OUT        = 0x00,/<Low pass filter>/
-                USER_OFFSET_ON_OUT = 0x01,
                 HIGH_PASS_ON_OUT   = 0x10,/<High pass filter>/
   '''
   def set_filter_path(self,fds):
-    regester1 = self.REG_CTRL_REG6
-    if(self.__uart_i2c == SPI_MODE):
-      regester1 = self.REG_CTRL_REG6 | 0x80
-    reg = self.read_reg(regester1)
+    reg = self.read_reg(self.REG_CTRL_REG6)
     enable = fds & 0x10
     if(enable > 0):
        enable = 1
@@ -403,11 +287,7 @@ class DFRobot_LIS2DW12(object):
     reg = reg | (enable << 3)
     #print(reg)
     self.write_reg(self.REG_CTRL_REG6,reg)
-    
-    regester2 = self.REG_CTRL_REG7
-    if(self.__uart_i2c == SPI_MODE):
-      regester2 = self.REG_CTRL_REG7 | 0x80
-    reg = self.read_reg(regester2)
+    reg = self.read_reg(self.REG_CTRL_REG7)
     enable = (fds & 0x10)
     if(enable > 0):
       enable = 1
@@ -424,10 +304,7 @@ class DFRobot_LIS2DW12(object):
                 ODR_DIV_20    = 3,/< ODR/20 (HP/LP)>/
   '''
   def set_filter_bandwidth(self,bw):
-    regester = self.REG_CTRL_REG6
-    if(self.__uart_i2c == SPI_MODE):
-      regester = self.REG_CTRL_REG6 | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG6)
     reg = reg & (~(3 << 6))
     reg = reg | (bw << 6)
     #print(reg)
@@ -456,20 +333,13 @@ class DFRobot_LIS2DW12(object):
                    SINGLE_LOWLOWNOISEPWR_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
   def set_power_mode(self,mode):
-    regester1 = self.REG_CTRL_REG1
-    if(self.__uart_i2c == SPI_MODE):
-      regester1 = self.REG_CTRL_REG1 | 0x80
-    reg = self.read_reg(regester1)
+    reg = self.read_reg(self.REG_CTRL_REG1)
     reg = reg & (~0x0f)
     reg = reg | (mode & 0xf)
     self.write_reg(self.REG_CTRL_REG1,reg)
     #print("set_power_mode")
     #print(reg)
-    regester2 = self.REG_CTRL_REG6
-    if(self.__uart_i2c == SPI_MODE):
-      regester2 = self.REG_CTRL_REG6 | 0x80
-    
-    reg = self.read_reg(regester2)
+    reg = self.read_reg(self.REG_CTRL_REG6)
     enable = mode >> 4
     reg = reg & (~(1 << 2))
     reg = reg | (enable << 2)
@@ -493,20 +363,13 @@ class DFRobot_LIS2DW12(object):
                  SETPINTRIG         = 0X22
   '''
   def set_data_rate(self, odr):
-    regester1 = self.REG_CTRL_REG1;
-    if(self.__uart_i2c == SPI_MODE):
-      regester1  = self.REG_CTRL_REG1 | 0x80
-    reg = self.read_reg(regester1)
+    reg = self.read_reg(self.REG_CTRL_REG1)
     reg = reg & (~(0xf << 4))
     reg = reg | (odr << 4)
     #print("set_data_rate")
     #print(reg)
     self.write_reg(self.REG_CTRL_REG1,reg)
-    
-    regester2 = self.REG_CTRL_REG3
-    if(self.__uart_i2c == SPI_MODE):
-      regester2  = self.REG_CTRL_REG3 | 0x80
-    reg = self.read_reg(regester2)
+    reg = self.read_reg(self.REG_CTRL_REG3)
     enable = (odr&0x30) >> 4
     
     reg = reg & (~3)
@@ -528,13 +391,8 @@ class DFRobot_LIS2DW12(object):
     |--------------------------------------------------------------------------------------------------------|
   '''
   def set_ff_Dur(self,dur):
-    regester1 = self.REG_WAKE_UP_DUR
-    regester2 = self.REG_FREE_FALL
-    if(self.__uart_i2c == SPI_MODE):
-      regester1  = self.REG_WAKE_UP_DUR | 0x80
-      regester1  = self.REG_FREE_FALL | 0x80
-    reg1 = self.read_reg(regester1)
-    reg2 = self.read_reg(regester2)
+    reg1 = self.read_reg(self.REG_WAKE_UP_DUR)
+    reg2 = self.read_reg(self.REG_FREE_FALL)
     
     reg1 = reg1 & (~0x80)
     reg2 = reg2 & (~0xf8)
@@ -544,47 +402,34 @@ class DFRobot_LIS2DW12(object):
     #print(reg2)
     self.write_reg(self.REG_FREE_FALL,reg2)
     self.set_ff_threshold(self.FFTSH_10LSB_FS2G)
-    
+  '''
+    @brief Set Free-fall threshold
+    @param th threshold
+  '''
   def set_ff_threshold(self,th):
-    regester = self.REG_FREE_FALL;
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_FREE_FALL | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_FREE_FALL)
     reg = reg & (~0x07)
     reg = reg | (th & 0x07)
     #print(reg)
     self.write_reg(self.REG_FREE_FALL,reg)
   
   '''
-  @brief Set the interrupt source of the int1 pin
-  @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
-              DOUBLE_TAP = 0x08 #/**< Double-tap recognition is routed to INT1 pad>*/
-              FF_EVENT = 0x10 #/**< Free-fall recognition is routed to INT1 pad>*/
-              WAKEUP_EVENT = 0x20 #/**<Wakeup recognition is routed to INT1 pad>*/
-              SINGLE_TAP = 0x40  #/**<Single-tap recognition is routed to INT1 pad.>*/
-              TNT_16D  = 0x80  #/**<6D recognition is routed to INT1 pad>*/
-
+    @brief Set the interrupt source of the int1 pin
+    @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
+                DOUBLE_TAP = 0x08 #/**< Double-tap recognition is routed to INT1 pad>*/
+                FF_EVENT = 0x10 #/**< Free-fall recognition is routed to INT1 pad>*/
+                WAKEUP_EVENT = 0x20 #/**<Wakeup recognition is routed to INT1 pad>*/
+                SINGLE_TAP = 0x40  #/**<Single-tap recognition is routed to INT1 pad.>*/
+                TNT_16D  = 0x80  #/**<6D recognition is routed to INT1 pad>*/
+    
   '''
   def set_int1_route(self,event):
-    regester1 = self.REG_CTRL_REG4
-    regester2 = self.REG_CTRL_REG5
-    regester3 = self.REG_CTRL_REG7
-    if(self.__uart_i2c == SPI_MODE):
-      regester1  = self.REG_CTRL_REG4 | 0x80
-      regester2  = self.REG_CTRL_REG5 | 0x80
-      regester3  = self.REG_CTRL_REG7 | 0x80
-    reg1 = self.read_reg(regester1)
-    reg2 = self.read_reg(regester2)
-    reg3 = self.read_reg(regester3)
-    
+    reg1 = self.read_reg(self.REG_CTRL_REG4)
+    reg2 = self.read_reg(self.REG_CTRL_REG5)
+    reg3 = self.read_reg(self.REG_CTRL_REG7)
     reg3 = reg3 & (~0x20)
     reg3 = reg3 | 0x20
-    
     reg1 = reg1 | event
-    #print(event)
-    #print("set_int1_route")
-    #print(reg1)
-    #print(reg3)
     self.write_reg(self.REG_CTRL_REG4,reg1)
     self.write_reg(self.REG_CTRL_REG7,reg3)
     
@@ -603,26 +448,22 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_wakeup_dur(self,dur):
     
-    regester = self.REG_WAKE_UP_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_DUR | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_DUR)
     reg = reg & (~0x60)
     reg = reg | ((dur << 5) & 0x60)
     
     #print(reg)
     self.write_reg(self.REG_WAKE_UP_DUR,reg)
-  
+  '''
+    @brief Set duration to go in sleep mode.
+    @param dur  duration
+  '''
   def set_act_sleep_dur(self,dur):
-    regester = self.REG_WAKE_UP_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_DUR | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_DUR)
     
     dur = dur & 0x0f
     reg = reg & (~0x0f)
     reg = reg | dur
-    
     #print(reg)
     self.write_reg(self.REG_WAKE_UP_DUR,reg)
 
@@ -633,19 +474,12 @@ class DFRobot_LIS2DW12(object):
                    DETECT_STATMOTION   = 3 #/**<Detect Motion>*/
   '''
   def set_act_mode(self,mode):
-    regester1 = self.REG_WAKE_UP_THS
-    regester2 = self.REG_WAKE_UP_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester1  = self.REG_WAKE_UP_THS | 0x80
-      regester2  = self.REG_WAKE_UP_DUR | 0x80
-    reg1 = self.read_reg(regester1)
-    reg2 = self.read_reg(regester2)
-    
+    reg1 = self.read_reg(self.REG_WAKE_UP_THS)
+    reg2 = self.read_reg(self.REG_WAKE_UP_DUR)
     reg1 = reg1 & (~0x01)
     reg2 = reg2 & (~0x02)
     reg1 = reg1 | (mode & 0x01)
     reg2 = reg2 | (mode & 0x02)
-    
     #print(reg1)
     #print(reg2)
     self.write_reg(self.REG_WAKE_UP_THS,reg1)
@@ -657,10 +491,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_wakeup_threshold(self,th):
     th1 = (float(th)/self.__range_d) * 64
-    regester = self.REG_WAKE_UP_THS
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_THS | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_THS)
     reg = reg &(~0x3f)
     #print(int(th1))
     reg = reg | (int(th1) & 0x3f)
@@ -672,10 +503,7 @@ class DFRobot_LIS2DW12(object):
      function source signals and interrupts routed to pins (wakeup, single/double-tap).
   '''
   def latch_interrupt(self,enable):
-    regester = self.REG_CTRL_REG3
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_CTRL_REG3 | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG3)
     reg = reg & (~0x10)
     reg = reg | (enable << 4)
     self.write_reg(self.REG_CTRL_REG3,reg)
@@ -685,10 +513,7 @@ class DFRobot_LIS2DW12(object):
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_z(self, enable):
-    regester = self.REG_TAP_THS_Z
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_Z | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_Z)
     reg = reg & (~(1<<5))
     reg = reg | (enable << 5)
     #print("enable_tap_detection_on_z")
@@ -700,10 +525,7 @@ class DFRobot_LIS2DW12(object):
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_y(self, enable):
-    regester = self.REG_TAP_THS_Z
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_Z | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_Z)
     reg = reg & (~(1<<6))
     reg = reg | (enable << 6)
     #print("enable_tap_detection_on_y")
@@ -715,10 +537,7 @@ class DFRobot_LIS2DW12(object):
     @param enable:Ture(使能点击检)\False(禁用点击检)
   '''
   def enable_tap_detection_on_x(self, enable):
-    regester = self.REG_TAP_THS_Z
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_Z | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_Z)
     reg = reg & (~(1<<7))
     reg = reg | (enable << 7)
     #print("enable_tap_detection_on_x")
@@ -732,11 +551,7 @@ class DFRobot_LIS2DW12(object):
   def set_tap_threshold_on_x(self,th):
     
     th1 = (float(th)/self.__range_d) * 32
-    regester = self.REG_TAP_THS_X
-    #print(int(th1))
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_X | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_X)
     reg = reg & (~0x1f)
     reg = reg | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_x")
@@ -749,10 +564,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_tap_threshold_on_y(self,th):
     th1 = (float(th)/self.__range_d) * 32
-    regester = self.REG_TAP_THS_Y
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_Y | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_Y)
     reg = reg & (~0x1f)
     reg = reg | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_y")
@@ -765,10 +577,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_tap_threshold_on_z(self,th):
     th1 = (float(th)/self.__range_d) * 32
-    regester = self.REG_TAP_THS_Z
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_Z | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_Z)
     reg = reg & (~0x1f)
     reg = reg | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_z")
@@ -789,10 +598,7 @@ class DFRobot_LIS2DW12(object):
     |--------------------------------------------------------------------------------------------------------|
   '''
   def set_tap_dur(self,dur):
-    regester = self.REG_INT_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_INT_DUR | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_INT_DUR)
     reg = reg & (~0xf0)
     reg = reg | (dur << 4)
     #print("set_tap_dur")
@@ -800,24 +606,26 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_INT_DUR,reg)
     self.set_tap_quiet(2);
     self.set_tap_shock(2);
-    
+  '''
+    @brief set quiet time after a tap detection: this register represents
+    @n the time after the first detected tap in which there must not be any overthreshold event.
+    @param quiet quiet time
+  '''
   def set_tap_quiet(self,quiet):
-    regester = self.REG_INT_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_INT_DUR | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_INT_DUR)
     reg = reg & (~0x0C)
     quiet = quiet & 0x03
     reg = reg | (quiet<<2)
     #print("set_tap_quiet")
     #print(reg)
     self.write_reg(self.REG_INT_DUR,reg)
-    
+  
+  '''
+    @brief Set the maximum time of an over-threshold signal detection to be recognized as a tap event.
+    @param shock  shock time
+  '''
   def set_tap_shock(self,shock):
-    regester = self.REG_INT_DUR
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_INT_DUR | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_INT_DUR)
     reg = reg & (~0x03)
     shock = shock & 0x03
     reg = reg | (shock)
@@ -831,10 +639,7 @@ class DFRobot_LIS2DW12(object):
                      BOTH_SINGLE_DOUBLE //检测单击和双击
   '''
   def set_tap_mode(self,mode):
-    regester = self.REG_WAKE_UP_THS
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_THS | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_THS)
     reg = reg & (~0x80)
     reg = reg | (mode << 7)
     #print("set_tap_mode")
@@ -849,10 +654,7 @@ class DFRobot_LIS2DW12(object):
                     DEGREES_50   50°
   '''
   def set_6d_threshold(self,degree):
-    regester = self.REG_TAP_THS_X
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_TAP_THS_X | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_TAP_THS_X)
     reg = reg & (~0x60)
     reg = reg | (degree << 5)
     #print("set_6d_threshold")
@@ -868,16 +670,9 @@ class DFRobot_LIS2DW12(object):
                   SLEEP_STATE  = 0x80,/<Sleep change status routed to INT2 pad>/
   '''
   def set_int2_route(self,event):
-    regester1 = self.REG_CTRL_REG4
-    regester2 = self.REG_CTRL_REG5
-    regester3 = self.REG_CTRL_REG7
-    if(self.__uart_i2c == SPI_MODE):
-      regester1  = self.REG_CTRL_REG4 | 0x80
-      regester2  = self.REG_CTRL_REG5 | 0x80
-      regester3  = self.REG_CTRL_REG7 | 0x80
-    reg1 = self.read_reg(regester1)
-    reg2 = self.read_reg(regester2)
-    reg3 = self.read_reg(regester3)
+    reg1 = self.read_reg(self.REG_CTRL_REG4)
+    reg2 = self.read_reg(self.REG_CTRL_REG5)
+    reg3 = self.read_reg(self.REG_CTRL_REG7)
     
     reg3 = reg3 & (~0x20)
     reg3 = reg3 | 0x20
@@ -887,12 +682,14 @@ class DFRobot_LIS2DW12(object):
     #print(reg3)
     self.write_reg(self.REG_CTRL_REG5,reg2)
     self.write_reg(self.REG_CTRL_REG7,reg3)
-    
+
+  '''
+    @brief Set 6d filtered data source
+    @param data 0: ODR/2 low pass filtered data sent to 6D interrupt function (default)
+                1: LPF2 output data sent to 6D interrupt function)
+  '''
   def set_6d_feed_data(self,data):
-    regester = self.REG_CTRL_REG7
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_CTRL_REG7 | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_CTRL_REG7)
     reg = reg & (~1)
     reg = reg | data
     print(reg)
@@ -902,11 +699,8 @@ class DFRobot_LIS2DW12(object):
     @return Acceleration data(g)
   '''
   def read_acc_x(self):
-    regester = self.REG_OUT_X_L
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_OUT_X_L | 0x80
-    reg1 = self.read_reg(regester)
-    reg2 = self.read_reg(regester+1)
+    reg1 = self.read_reg(self.REG_OUT_X_L)
+    reg2 = self.read_reg(self.REG_OUT_X_L+1)
     acc_x = np.int8(reg2)*256 + np.int8(reg1)
     acc_x = acc_x * self.__range
     return acc_x
@@ -916,11 +710,8 @@ class DFRobot_LIS2DW12(object):
     @return  Acceleration data(g)
   '''
   def read_acc_y(self):
-    regester = self.REG_OUT_Y_L
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_OUT_Y_L | 0x80
-    reg1 = self.read_reg(regester)
-    reg2 = self.read_reg(regester+1)
+    reg1 = self.read_reg(self.REG_OUT_Y_L)
+    reg2 = self.read_reg(self.REG_OUT_Y_L+1)
     acc_y = np.int8(reg2)*256 + np.int8(reg1)
     acc_y = acc_y * self.__range
     return acc_y
@@ -930,11 +721,8 @@ class DFRobot_LIS2DW12(object):
     @return Acceleration data(g)
   '''
   def read_acc_z(self):
-    regester = self.REG_OUT_Z_L
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_OUT_Z_L | 0x80
-    reg1 = self.read_reg(regester)
-    reg2 = self.read_reg(regester+1)
+    reg1 = self.read_reg(self.REG_OUT_Z_L)
+    reg2 = self.read_reg(self.REG_OUT_Z_L+1)
     acc_z = np.int8(reg2)*256 + np.int8(reg1)
     acc_z = acc_z * self.__range
     return acc_z
@@ -944,10 +732,7 @@ class DFRobot_LIS2DW12(object):
     @return True(产生运动)/False(传感器未运动)
   '''
   def act_detect(self):
-    regester = self.REG_WAKE_UP_SRC
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_SRC | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_SRC)
     if(reg & 0x08) > 0:
       return True
     else:
@@ -958,10 +743,7 @@ class DFRobot_LIS2DW12(object):
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
   def free_fall_detect(self):
-    regester = self.REG_WAKE_UP_SRC
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_SRC | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_SRC)
     if(reg & 0x20) > 0:
       return True
     return False
@@ -970,10 +752,7 @@ class DFRobot_LIS2DW12(object):
     @return True( no event detected)/False(a change in position is detected)
   '''
   def ia6d_detect(self):
-    regester = self.REG_SIXD_SRC
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_SIXD_SRC | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_SIXD_SRC)
     if(reg & 0x40) > 0:
       return True
     else:
@@ -989,10 +768,7 @@ class DFRobot_LIS2DW12(object):
                Z_UP = 5  #/**<Z is now up>*/
   '''
   def get_orient(self):
-   regester = self.REG_SIXD_SRC
-   if(self.__uart_i2c == SPI_MODE):
-     regester  = self.REG_SIXD_SRC | 0x80
-   reg = self.read_reg(regester)
+   reg = self.read_reg(self.REG_SIXD_SRC)
    if(reg & 0x1) > 0:
      return self.X_DOWN
    elif(reg & 0x2) > 0:
@@ -1007,6 +783,7 @@ class DFRobot_LIS2DW12(object):
      return self.Z_UP
    else:
      return 0xff
+     
   '''
     @brief 点击检测
     @return   SINGLE_CLICK  = 0 ,/<click>/
@@ -1014,10 +791,7 @@ class DFRobot_LIS2DW12(object):
               NO_CLICK,      //没有点击产生
   '''
   def tap_detect(self):
-   regester = self.REG_TAP_SRC
-   if(self.__uart_i2c == SPI_MODE):
-     regester  = self.REG_TAP_SRC | 0x80
-   reg = self.read_reg(regester)
+   reg = self.read_reg(self.REG_TAP_SRC)
    #print(reg)
    if(reg & 0x20) > 0:
      return self.SINGLE_CLICK
@@ -1037,10 +811,7 @@ class DFRobot_LIS2DW12(object):
                 DIR_Z_DOWN = 5#在Z 负方向发生的点击事件
   '''
   def get_tap_direction(self):
-   regester = self.REG_TAP_SRC
-   if(self.__uart_i2c == SPI_MODE):
-     regester  = self.REG_TAP_SRC | 0x80
-   reg = self.read_reg(regester)
+   reg = self.read_reg(self.REG_TAP_SRC)
    #print(reg)
    positive = reg & 0x08
    if(reg & 0x4)>0 and positive > 0:
@@ -1057,17 +828,14 @@ class DFRobot_LIS2DW12(object):
      return self.DIR_Z_DOWN
    return 0XFF
   '''
-    @brief 点击检测
+    @brief 唤醒的运动方向检测
     @return    DIR_X = 0#X方向的运动唤醒芯片
                DIR_Y = 1#Y方向的运动唤醒芯片
                DIR_Z = 2#Z方向的运动唤醒芯片
                eDirError,
   '''
   def get_wake_up_dir(self):
-    regester = self.REG_WAKE_UP_SRC
-    if(self.__uart_i2c == SPI_MODE):
-      regester  = self.REG_WAKE_UP_SRC | 0x80
-    reg = self.read_reg(regester)
+    reg = self.read_reg(self.REG_WAKE_UP_SRC)
     if(reg & 0x01) > 0:
       return self.DIR_Z
     elif(reg & 0x02) > 0:
@@ -1083,8 +851,10 @@ class DFRobot_LIS2DW12(object):
 class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):
     self.__addr = addr;
-    super(DFRobot_IIS2DLPC_I2C, self).__init__(bus,0)
-
+    super(DFRobot_IIS2DLPC_I2C, self).__init__()
+    self.i2cbus = smbus.SMBus(bus)
+    RPIGPIO.setmode(RPIGPIO.BCM)
+    RPIGPIO.setwarnings(False)
   '''
     @brief writes data to a register
     @param reg register address
@@ -1096,10 +866,6 @@ class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12):
         self.i2cbus.write_i2c_block_data(self.__addr ,reg,data1)
         #self.i2cbus.write_byte(self.__addr ,reg)
         #self.i2cbus.write_byte(self.__addr ,data)
-
-
-
-
   '''
     @brief read the data from the register
     @param reg register address
@@ -1111,18 +877,31 @@ class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12):
     rslt = self.i2cbus.read_byte(self.__addr)
     #print(rslt)
     return rslt
-
+    
+  '''
+    @brief  Set External Interrupt
+    @param pin Interrupt pin
+    @param cb Interrupt service function
+    @param mode Interrupt trigger mode
+  '''
+  def attach_interrupt(self,pin, cb,mode):
+    RPIGPIO.setup(pin, RPIGPIO.IN)
+    if mode != RPIGPIO.RISING and mode != RPIGPIO.FALLING and mode != RPIGPIO.BOTH:
+      return
+    RPIGPIO.add_event_detect(pin, mode, cb)
+    
 class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12): 
-
-
-  def __init__(self ,cs):
-    super(DFRobot_IIS2DLPC_SPI, self).__init__(0,cs)
-    #DFRobot_H3LIS200DL.__init__(0,0)
-    #self._busy = GPIO(busy, GPIO.IN)
-    self.__cs = GPIO(cs, GPIO.OUT)
-    self.__cs.setOut(GPIO.LOW)
-    self._spi = SPI(0, 0)
-
+  def __init__(self ,cs, bus = 0, dev = 0,speed = 100000):
+    super(DFRobot_IIS2DLPC_SPI, self).__init__()
+    RPIGPIO.setmode(RPIGPIO.BCM)
+    RPIGPIO.setwarnings(False)
+    self.__cs = cs
+    RPIGPIO.setup(self.__cs, RPIGPIO.OUT)
+    RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+    self.__spi = spidev.SpiDev()
+    self.__spi.open(bus, dev)
+    self.__spi.no_cs = True
+    self.__spi.max_speed_hz = speed
     
   '''
     @brief writes data to a register
@@ -1131,24 +910,35 @@ class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12):
   '''
   def write_reg(self, reg, data):
      data1 =[reg,data]
-     self.__cs.setOut(GPIO.LOW)
-     self._spi.transfer(data1)
-     self.__cs.setOut(GPIO.HIGH)
+     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+     self.__spi.writebytes(data1)
+     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
      #self._spi.transfer(data)
   '''
     @brief read the data from the register
     @param reg register address
-    @param value read data
+    @return value read data
   '''
   def read_reg(self, reg):
-     data1 =[reg]
-     self.__cs.setOut(GPIO.LOW)
-     self._spi.transfer(data1)
-     time.sleep(0.01);
-     data = self._spi.readData(1);
-     self.__cs.setOut(GPIO.HIGH)
-     #print(data)
+     data1 =[reg+0x80]
+     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+     self.__spi.writebytes(data1)
+     time.sleep(0.01)
+     data = self.__spi.readbytes(1)
+     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
      return  data[0]
+  
+  '''
+    @brief  Set External Interrupt
+    @param pin Interrupt pin
+    @param cb Interrupt service function
+    @param mode Interrupt trigger mode
+  '''
+  def attach_interrupt(self,pin, cb,mode):
+    RPIGPIO.setup(pin, RPIGPIO.IN)
+    if mode != RPIGPIO.RISING and mode != RPIGPIO.FALLING and mode != RPIGPIO.BOTH:
+      return
+    RPIGPIO.add_event_detect(pin, mode, cb)
 
 '''
   @brief An example of an i2c interface module
@@ -1156,8 +946,10 @@ class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12):
 class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):
     self.__addr = addr;
-    super(DFRobot_LIS2DW12_I2C, self).__init__(bus,0)
-
+    super(DFRobot_LIS2DW12_I2C, self).__init__()
+    self.i2cbus = smbus.SMBus(bus)
+    RPIGPIO.setmode(RPIGPIO.BCM)
+    RPIGPIO.setwarnings(False)
   '''
     @brief writes data to a register
     @param reg register address
@@ -1170,9 +962,6 @@ class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12):
         #self.i2cbus.write_byte(self.__addr ,reg)
         #self.i2cbus.write_byte(self.__addr ,data)
 
-
-
-
   '''
     @brief read the data from the register
     @param reg register address
@@ -1184,19 +973,30 @@ class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12):
     rslt = self.i2cbus.read_byte(self.__addr)
     #print(rslt)
     return rslt
-
-class DFRobot_LIS2DW12_SPI(DFRobot_LIS2DW12): 
-
-
-  def __init__(self ,cs):
-    super(DFRobot_LIS2DW12_SPI, self).__init__(0,cs)
-    #DFRobot_H3LIS200DL.__init__(0,0)
-    #self._busy = GPIO(busy, GPIO.IN)
-    self.__cs = GPIO(cs, GPIO.OUT)
-    self.__cs.setOut(GPIO.LOW)
-    self._spi = SPI(0, 0)
-
+  '''
+    @brief  Set External Interrupt
+    @param pin Interrupt pin
+    @param cb Interrupt service function
+    @param mode Interrupt trigger mode
+  '''
+  def attach_interrupt(self,pin, cb,mode):
+    RPIGPIO.setup(pin, RPIGPIO.IN)
+    if mode != RPIGPIO.RISING and mode != RPIGPIO.FALLING and mode != RPIGPIO.BOTH:
+      return
+    RPIGPIO.add_event_detect(pin, mode, cb)
     
+class DFRobot_LIS2DW12_SPI(DFRobot_LIS2DW12): 
+  def __init__(self ,cs, bus = 0, dev = 0,speed = 1000000):
+    super(DFRobot_LIS2DW12_SPI, self).__init__()
+    RPIGPIO.setmode(RPIGPIO.BCM)
+    RPIGPIO.setwarnings(False)
+    self.__cs = cs
+    RPIGPIO.setup(self.__cs, RPIGPIO.OUT)
+    RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+    self.__spi = spidev.SpiDev()
+    self.__spi.open(bus, dev)
+    self.__spi.no_cs = True
+    self.__spi.max_speed_hz = speed
   '''
     @brief writes data to a register
     @param reg register address
@@ -1204,21 +1004,33 @@ class DFRobot_LIS2DW12_SPI(DFRobot_LIS2DW12):
   '''
   def write_reg(self, reg, data):
      data1 =[reg,data]
-     self.__cs.setOut(GPIO.LOW)
-     self._spi.transfer(data1)
-     self.__cs.setOut(GPIO.HIGH)
+     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+     self.__spi.writebytes(data1)
+     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
      #self._spi.transfer(data)
   '''
     @brief read the data from the register
     @param reg register address
-    @param value read data
+    @return value read data
   '''
   def read_reg(self, reg):
-     data1 =[reg]
-     self.__cs.setOut(GPIO.LOW)
-     self._spi.transfer(data1)
-     time.sleep(0.01);
-     data = self._spi.readData(1);
-     self.__cs.setOut(GPIO.HIGH)
+     data1 =[reg+0x80]
+     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+     self.__spi.writebytes(data1)
+     time.sleep(0.01)
+     data = self.__spi.readbytes(1)
+     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
      #print(data)
      return  data[0]
+  
+  '''
+    @brief  Set External Interrupt
+    @param pin Interrupt pin
+    @param cb Interrupt service function
+    @param mode Interrupt trigger mode
+  '''
+  def attach_interrupt(self,pin, cb,mode):
+    RPIGPIO.setup(pin, RPIGPIO.IN)
+    if mode != RPIGPIO.RISING and mode != RPIGPIO.FALLING and mode != RPIGPIO.BOTH:
+      return
+    RPIGPIO.add_event_detect(pin, mode, cb)

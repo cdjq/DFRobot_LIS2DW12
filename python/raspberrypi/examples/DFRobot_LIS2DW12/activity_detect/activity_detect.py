@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 """
    @file activity_detect.py
-   @brief Get the acceleration in x, y, z directions
+   @brief Motion detection,可以检测到模块是否在移动
+   @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
    @author [fengli](li.feng@dfrobot.com)
@@ -23,14 +24,14 @@ import time
 
 
 #如果你想要应IIC驱动此模块，打开下面三行的注释，并通过I2C连接好模块和树莓树莓派
-I2C_MODE         = 0x01             #default use I2C1
-ADDRESS_0        = 0x19             #I2C address
-acce = DFRobot_LIS2DW12_I2C(I2C_MODE ,ADDRESS_0)
+I2C_BUS         = 0x01             #default use I2C1
+ADDRESS         = 0x19             #I2C address
+acce = DFRobot_LIS2DW12_I2C(I2C_BUS ,ADDRESS)
 
 
 acce.begin()
 print("chip id :")
-print(acce.get_ID())
+print(acce.get_id())
 
 '''
   Set the sensor measurement range:

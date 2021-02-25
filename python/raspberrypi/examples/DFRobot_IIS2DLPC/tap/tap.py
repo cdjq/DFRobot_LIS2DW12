@@ -2,6 +2,7 @@
 """
    @file tap.py
    @brief Single click and double click detection
+   @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
    @author [fengli](li.feng@dfrobot.com)
@@ -17,19 +18,18 @@ sys.path.append("../../..") # set system path to top
 from DFRobot_LIS2DW12 import *
 import time
 
-#如果你想要用SPI驱动此模块，打开下面两行的注释并通过SPI连接好模块和树莓派
-RASPBERRY_PIN_CS =  27              #Chip selection pin when SPI is selected
-acce = DFRobot_IIS2DLPC_SPI(RASPBERRY_PIN_CS)
+#如果你想要用SPI驱动此模块，打开下面两行的注释,并通过SPI连接好模块和树莓派
+#RASPBERRY_PIN_CS =  27              #Chip selection pin when SPI is selected
+#acce = DFRobot_IIS2DLPC_SPI(RASPBERRY_PIN_CS)
 
-
-#如果你想要应IIC驱动此模块，打开下面三行的注释，并通过I2C连接好模块和树莓树莓派
-I2C_MODE         = 0x01             #default use I2C1
-ADDRESS_0        = 0x19             #I2C address
-#acce = DFRobot_IIS2DLPC_I2C(I2C_MODE ,ADDRESS_0)
+#如果你想要应IIC驱动此模块，打开下面三行的注释，并通过I2C连接好模块和树莓派
+I2C_BUS         = 0x01             #default use I2C1
+ADDRESS         = 0x19             #I2C address
+acce = DFRobot_IIS2DLPC_I2C(I2C_BUS ,ADDRESS)
 
 acce.begin()
 print("chip id :")
-print(acce.get_ID())
+print(acce.get_id())
 acce.soft_reset()
 '''
     @brief Set the measurement range
@@ -40,9 +40,46 @@ acce.soft_reset()
                  RANGE_16G    #/**< ±16g>*/
 '''
 acce.set_range(acce.RANGE_2G)
-acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE_12BIT)
-acce.set_data_rate(acce.ODR_800HZ)
 
+'''
+   Set power mode:
+                 HIGH_PERFORMANCE                   = 0X04 #High-Performance Mode
+                 CONT_LOWPWR_4                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
+                 CONT_LOWPWR_3                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
+                 CONT_LOWPWR_2                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
+                 CONT_LOWPWR_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
+                 SING_LELOWPWR_4                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
+                 SING_LELOWPWR_3                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
+                 SING_LELOWPWR_2                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
+                 SING_LELOWPWR_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
+                 HIGHP_ERFORMANCELOW_NOISE           = 0X14#High-Performance Mode,Low-noise enabled
+                 CONT_LOWPWRLOWNOISE_4              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
+                 CONT_LOWPWRLOWNOISE_3              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
+                 CONT_LOWPWRLOWNOISE_2              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
+                 CONT_LOWPWRLOWNOISE_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
+                 SINGLE_LOWPWRLOWNOISE_4            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
+                 SINGLE_LOWPWRLOWNOISE_3            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
+                 SINGLE_LOWPWRLOWNOISE_2            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
+                 SINGLE_LOWLOWNOISEPWR_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
+'''
+acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE_12BIT)
+
+'''
+    Set the sensor data collection rate:
+    ODR_OFF            = 0X00
+    ODR_1HZ6_LP_ONLY   = 0X01
+    ODR_12HZ5          = 0X02
+    ODR_25HZ           = 0X03
+    ODR_50HZ           = 0X04
+    ODR_100HZ          = 0X05
+    ODR_200HZ          = 0X06
+    ODR_400HZ          = 0X07
+    ODR_800HZ          = 0X08
+    ODR_1K6HZ          = 0X09
+    SETSWTRIG          = 0X12
+    SETPINTRIG         = 0X22
+'''
+acce.set_data_rate(acce.ODR_800HZ)
 
 #Enable click detection in the X direction
 acce.enable_tap_detection_on_z(True)
@@ -80,21 +117,21 @@ acce.set_tap_mode(acce.BOTH_SINGLE_DOUBLE)
 
 '''
 Set the interrupt source of the int1 pin:
-        DOUBLE_TAP = 0x08 #/**< Double-tap recognition is routed to INT1 pad>*/
-        FF_EVENT = 0x10 #/**< Free-fall recognition is routed to INT1 pad>*/
+        DOUBLE_TAP   = 0x08 #/**< Double-tap recognition is routed to INT1 pad>*/
+        FF_EVENT     = 0x10 #/**< Free-fall recognition is routed to INT1 pad>*/
         WAKEUP_EVENT = 0x20 #/**<Wakeup recognition is routed to INT1 pad>*/
-        SINGLE_TAP = 0x40  #/**<Single-tap recognition is routed to INT1 pad.>*/
-        TNT_16D  = 0x80  #/**<6D recognition is routed to INT1 pad>*/
+        SINGLE_TAP   = 0x40 #/**<Single-tap recognition is routed to INT1 pad.>*/
+        TNT_16D      = 0x80 #/**<6D recognition is routed to INT1 pad>*/
 
 '''
 acce.set_int1_route(acce.DOUBLE_TAP)
 time.sleep(0.1)
 
 while True:
-    #Get the acceleration in the three directions of xyz
-    #time.sleep(0.3)
     tap = False
+    #点击检测
     event = acce.tap_detect()
+    #点击方向的源头检测
     direction = acce.get_tap_direction()
     if event == acce.SINGLE_CLICK:
       print ("Tap Detected :")

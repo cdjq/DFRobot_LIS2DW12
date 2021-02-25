@@ -42,7 +42,7 @@ void setup(void){
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("init failure");
+     Serial.println("通信失败，请检查连线是否准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);

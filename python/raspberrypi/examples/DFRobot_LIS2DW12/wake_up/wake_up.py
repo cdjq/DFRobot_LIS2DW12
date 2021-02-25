@@ -30,7 +30,7 @@ acce = DFRobot_LIS2DW12_I2C(I2C_MODE ,ADDRESS_0)
 
 acce.begin()
 print("chip id :")
-print(acce.get_ID())
+print(acce.get_id())
 acce.soft_reset()
 '''
     @brief Set the measurement range
@@ -122,13 +122,11 @@ acce.set_int1_route(acce.WAKEUP_EVENT)
 time.sleep(0.1)
 
 while True:
-    #Get the acceleration in the three directions of xyz
-
-    
     #Motion detected
     act = acce.act_detect()
     if act == True:
       print("Wake-Up event on:")
+      #唤醒的运动方向检测
       direction = acce.get_wake_up_dir() 
       if direction == acce.DIR_Z:
          print("z direction")
