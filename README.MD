@@ -25,6 +25,13 @@ IIS2DLPC      |      √       |              |
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg2.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg3.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg4.png)
+
+## 产品链接（链接到英文商城）
+    SKU：产品名称
+    SKU：产品名称
+    SKU：产品名称
+    SKU：产品名称
+    
 ## DFRobot_LIS2DW12 Library for Arduino
 ---------------------------------------------------------
 
