@@ -1,20 +1,34 @@
-# DFRobot_LIS
-LIS系列三轴加速度传感器
+# DFRobot_LIS2DW12
+The IIS2DLPC is an ultra-low-power high-performance 
+three-axis linear accelerometer with digital I²C/SPI 
+output interface which leverages on the robust and 
+mature manufacturing processes already used for the 
+production of micromachined accelerometers.<br>
+The IIS2DLPC has user-selectable full scales of 
+±2g/±4g/±8g/±16g and is capable of measuring 
+accelerations with output data rates from 1.6 Hz to 
+1600 Hz.<br>
+
+The LIS2DW12 is an ultra-low-power high-performance three-axis linear
+accelerometer belonging to the “femto” family which leverages on the robust and
+mature manufacturing processes already used for the production of micromachined
+accelerometers.
+The LIS2DW12 has user-selectable full scales of ±2g/±4g/±8g/±16g and is capable of
+measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 
 CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
-H3LIS200DL       |      √       |              |             
-LIS331HH      |      √       |              |  
-
+LIS2DW12       |      √       |              |             
+IIS2DLPC      |      √       |              |              
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg1.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg2.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg3.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg4.png)
-## 产品链接（链接到英文商城）
-    SKU：产品名称
-    SKU：产品名称
-    SKU：产品名称
-    SKU：产品名称
+## DFRobot_LIS2DW12 Library for Arduino
+---------------------------------------------------------
+
+Provide an Arduino library to get Three-axis acceleration by reading data from IIS2DLPC and LIS2DW12.
+
 ## Table of Contents
 
 * [Summary](#summary)
@@ -26,7 +40,9 @@ LIS331HH      |      √       |              |
 
 ## Summary
 
-Provide an Arduino library to get Three-axis acceleration by reading data from LIS.
+
+Provide an Arduino library to get Three-axis acceleration by reading data from IIS2DLPC and LIS2DW12.
+
 
 ## Installation
 
@@ -35,10 +51,12 @@ To use this library, first download the library file, paste it into the \Arduino
 ## Methods
 
 ```C++
-  DFRobot_LIS();
+
+  DFRobot_LIS2DW12();
+  
   /**
    * @brief Initialize the function
-   * @return true(成功)/false(失败)
+   * @return true(初始化成功)/fasle(初始化失败)
    */
   bool begin(void);
  
@@ -47,180 +65,316 @@ To use this library, first download the library file, paste it into the \Arduino
    * @return 8 bit serial number
    */
   uint8_t getID();
+ 
+  /**
+   * @brief Software reset to restore the value of all registers to the default value
+   */
+  void softReset();
   
   /**
-   * @brief Enable interrupt
-   * @param source Interrupt pin selection
-              eINT1 = 0,/<int1 >/
-              eINT2,/<int2>/
-   * @param event Interrupt event selection
-                   eXLowerThanTh ,/<The acceleration in the x direction is less than the threshold>/
-                   eXHigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
-                   eYLowerThanTh,/<The acceleration in the y direction is less than the threshold>/
-                   eYHigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
-                   eZLowerThanTh,/<The acceleration in the z direction is less than the threshold>/
-                   eZHigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
+   * @brief Choose whether to continuously let the chip collect data
+   * @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
    */
-  void enableInterruptEvent(eInterruptSource_t source, eInterruptEvent_t event);
+  void continRefresh(bool enable);
   
   /**
-   * @brief Set the measurement range
-   * @param range Range(g)
-                  eH3lis200dl_100g, //±100g
-                  eH3lis200dl_200g, //±200g
-                  
-                  eLis331hh_6g = 6,//±6g
-                  eLis331hh_12g = 12 //±12g
-                  eLis331hh_24g = 24 //±24g  
-    @return true(设置成功)/false(设置失败)
+   * @brief Set the filter processing mode
+   * @param fds  Three modes of filtering
+                 eLpfOnOut        = 0x00,/< low-pass filter path selected>/
+                 eHighPassOnOut   = 0x10,/<high-pass filter path selected>/
    */
-  bool setRange(eRange_t range);
-  
-  /**
-   * @brief Set data measurement rate
-   * @param rate rate(HZ)
-                  ePowerDown_0HZ   //测量关闭
-                  eLowPower_halfHZ //0.5 hz
-                  eLowPower_1HZ
-                  eLowPower_2HZ
-                  eLowPower_5HZ
-                  eLowPower_10HZ
-                  eNormal_50HZ
-                  eNormal_100HZ
-                  eNormal_400HZ
-                  eNormal_1000HZ
-   */
-  void setAcquireRate(ePowerMode_t rate);
-  
-  /**
-   * @brief Set data filtering mode
-   * @param mode Four modes
-                 eCutOffMode1 = 0,
-                 eCutOffMode2,
-                 eCutOffMode3,
-                 eCutOffMode4,
-                 eShutDown,  无过滤
-     eg：在50HZ的频率下,选择eCutOffMode1,滤波后的频率为 1 HZ
-   *|---------------------------High-pass filter cut-off frequency configuration-----------------------------|
-   *|--------------------------------------------------------------------------------------------------------|
-   *|                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-   *|   mode         |Data rate = 50 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 1000 Hz |
-   *|--------------------------------------------------------------------------------------------------------|
-   *|  eCutOffMode1  |     1           |         2            |            8         |             20        |
-   *|--------------------------------------------------------------------------------------------------------|
-   *|  eCutOffMode2  |    0.5          |         1            |            4         |             10        |
-   *|--------------------------------------------------------------------------------------------------------|
-   *|  eCutOffMode3  |    0.25         |         0.5          |            2         |             5         |
-   *|--------------------------------------------------------------------------------------------------------|
-   *|  eCutOffMode4  |    0.125        |         0.25         |            1         |             2.5       |
-   *|--------------------------------------------------------------------------------------------------------|
-   */
-  void setHFilterMode(eHighPassFilter_t mode);
+  void setFilterPath(eFds_t fds);
 
   /**
-   * @brief Set the threshold of interrupt source 1 interrupt
-   * @param threshold 设置的阈值在量程之内(unit:g)
+   * @brief Set the  bandwidth of the data
+   * @param bw   eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
+                 eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
+                 eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
+                 eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
    */
-  void setInt1Th(uint8_t threshold);
+  void setFilterBandwidth(eBWfilter_t bw);
+  
+  /**
+   * @brief Set power mode
+   * @param mode: 16 power modes to choose from
+                 eHighPerformance                   = 0x04, /<High-Performance Mode>/
+                 eContLowPwr_4                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr_3                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr_2                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
+                 eContLowPwr_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr_4                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr_3                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr_2                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise           = 0x14,/<High-Performance Mode,Low-noise enabled>/
+                 eContLowPwrLowNoise_4              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_3              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_2              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise_4           = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise_3           = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise_2           = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr_12bit       = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+   */
+  void setPowerMode(ePowerMode_t mode);
+  
+  /**
+   * @brief Chip data collection rate setting
+   * @param mode  0-1600hz selection
+                  eOdr_0hz            <测量关闭>
+                  eOdr_1hz6_lp_only   <1.6hz>
+                  eOdr_12hz5          <12.5hz>
+                  eOdr_25hz        
+                  eOdr_50hz        
+                  eOdr_100hz       
+                  eOdr_200hz       
+                  eOdr_400hz       
+                  eOdr_800hz       
+                  eOdr_1k6hz       
+   */
+  void setDataRate(eOdr_t odr);
+  
+  /**
+   * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
+   * @param dur LSB(0 ~ 31)
+   * @n time = dur * (1/ODR)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                         |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |                 |                      |                      |                       |
+     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
+   */
+  void setFrDur(uint8_t dur);
+  
+  /**
+   * @brief Select the signal that need to route on int1 pad.
+   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
+                   eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
+                   eFfEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
+                   eWakeupEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
+                   eSingleTap = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
+                   eTnt16d  = 0x80,/<6D recognition is routed to INT1 pad>/
+   */
+  void setPinInt1Route(eInt1Event_t event);
+  
+  /**
+   * @brief Select the signal that need to route on int2 pad
+   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
+                   eBoot = 0x20,/< Boot state routed to INT2 pad.>/
+                   eSleepChange = 0x40,/<Enable routing of SLEEP_STATE on INT2 pad>/
+                   eSleepState  = 0x80,/<Sleep change status routed to INT2 pad>/
+   */
+  void setPinInt2Route(eInt2Event_t event);
+  
+  /**
+   * @brief Latch interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
+     @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
+   * @param enable  true latched interrupt.
+                    false pulsed interrupt
+   */
+  void latchInterrupt(bool enable);
+  
+  /**
+   * @brief Set the wake-up duration
+   * @param dur LSB(0 ~ 3)
+     @n time = dur * (1/ODR)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                         |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |                 |                      |                      |                       |
+     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
+   */
+  void setWakeupDur(uint8_t dur);
 
   /**
-   * @brief Set interrupt source 2 interrupt generation threshold
-   * @param threshold 设置的阈值在量程之内(unit:g）
+   * @brief Set the wake-up Threshold
+   * @param th:unit(g),数值是在量程之内
    */
-  void setInt2Th(uint8_t threshold);
+  void setWakeupThreshold(float th);
+  
+  /**
+   * @brief Sets the mode of motion detection
+   * @param th:    eNoDetection 
+                   eDetectActInact  
+                   eDetectStatMotion
+   */
+  void setActMode(eSleepOn_t mode);
+  
+  /**
+   * @brief Set the range
+   * @param range: e2_g     = 2, /<±2g>/
+                   e4_g     = 4, /<±4g>/
+                   e8_g     = 8, /<±8g>/
+                   e16_g    = 16, /< ±16g>/
+   */
+  void setRange(eRange_t range);
+  
+  /**
+   * @brief enable detect click events in the Z direction
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
+   */
+  void enableTapDetectionOnZ(bool enable);
+  
+  /**
+   * @brief enable detect click events in the Y direction
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
+   */
+  void enableTapDetectionOnY(bool enable);
 
   /**
-   * @brief Enable sleep wake function
-   * @param enable true(enable)\false(disable)
-   * @return false 表示使能失败/true 表示使能成功
+   * @brief enable detect click events in the X direction
+   * @param enable:ture(使能点击检测)\false(禁用点击检测)
    */
-  bool enableSleep(bool enable);
-  
-  /**
-   * @brief Check whether the interrupt event'event' is generated in interrupt 1
-   * @param event Interrupt event
-                   eXLowerThanTh ,/<The acceleration in the x direction is less than the threshold>/
-                   eXHigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
-                   eYLowerThanTh,/<The acceleration in the y direction is less than the threshold>/
-                   eYHigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
-                   eZLowerThanTh,/<The acceleration in the z direction is less than the threshold>/
-                   eZHigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
-   * @return true 产生了此事件
-             false 未产生此事件
-   */
-  bool getInt1Event(eInterruptEvent_t event);
+  void enableTapDetectionOnX(bool enable);
 
   /**
-   * @brief Check whether the interrupt event'event' is generated in interrupt 2
-   * @param event Interrupt event
-                   eXLowerThanTh ,/<The acceleration in the x direction is less than the threshold>/
-                   eXHigherThanTh ,/<The acceleration in the x direction is greater than the threshold>/
-                   eYLowerThanTh,/<The acceleration in the y direction is less than the threshold>/
-                   eYHigherThanTh,/<The acceleration in the y direction is greater than the threshold>/
-                   eZLowerThanTh,/<The acceleration in the z direction is less than the threshold>/
-                   eZHigherThanTh,/<The acceleration in the z direction is greater than the threshold>/
-   * @return true 产生了此事件
-             false 未产生此事件
+   * @brief Set the click threshold in the X direction
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  bool getInt2Event(eInterruptEvent_t event);
+  void setTapThresholdOnX(float th);
   
   /**
-   * @brief Get the acceleration in the x direction
-   * @return acceleration from x 
+   * @brief Set the click threshold in the Y direction
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  long readAccX();
-  
-  /**
-   * @brief Get the acceleration in the y direction
-   * @return acceleration from y
-   */
-  long readAccY();
-  
-  /**
-   * @brief Get the acceleration in the z direction
-   * @return acceleration from z
-   */
-  long readAccZ();
-  
-  /**
-   * @brief Get the acceleration in the three directions of xyz
-   * @param accx 储存x方向加速度的变量
-   * @param accy 储存y方向加速度的变量
-   * @param accz 储存z方向加速度的变量
-   * @return true(成功获取数据)/false(数据未准备好)
-   */
-  bool getAcceFromXYZ(long &accx,long &accy,long &accz);
+  void setTapThresholdOnY(float th);
 
   /**
-   * @brief 获取传感器是否处于睡眠模式
-   * @return true(处于睡眠模式)/false(处于正常模式)
+   * @brief Set the click threshold in the Z direction
+   * @param th:Threshold(g),Can only be used in the range of ±2g
    */
-  bool getSleepState();
+  void setTapThresholdOnZ(float th);
   
   /**
-   * @brief 设置睡眠状态的标志
-   * @param into true(将现在的模式标记为睡眠模式)
-                 false(将现在的模式标记为正常模式)
+   * @brief Duration of maximum time gap for double-tap recognition. When double-tap 
+   * @n recognition is enabled, this register expresses the maximum time between two 
+   * @n successive detected taps to determine a double-tap event.
+   * @param dur LSB(0 ~ 15)
+   * @n time = dur * (1/ODR)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                         |
+     |--------------------------------------------------------------------------------------------------------|
+     |                |                 |                      |                      |                       |
+     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |--------------------------------------------------------------------------------------------------------|
+     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+     |--------------------------------------------------------------------------------------------------------|
    */
-  void setSleepFlag(bool into);
+  void setTapDur(uint8_t dur);
+  
+  /**
+   * @brief Set the click detection mode
+   * @param mode     eOnlySingle   //检测单击
+                      eBothSingleDouble //检测单击和双击
+   */
+  void setTapMode(sTapMode_t mode);
+
+  /**
+   * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
+   * @param degree:  eDegrees80   80°
+                     eDegrees70   70°
+                     eDegrees60   60°
+                     eDegrees50   50°
+   */
+  void set6dThreshold(s6dTH_t degree);
+
+  /**
+   * @brief Read the acceleration in the x direction
+   * @return  Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
+   */
+  float readAccX();
+  
+  /**
+   * @brief Read the acceleration in the y direction
+   * @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
+   */
+  float readAccY();
+  
+  /**
+   * @brief Read the acceleration in the z direction
+   * @return  Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
+   */
+  float readAccZ();
+  
+  /**
+   * @brief 检测是否有运动产生
+   * @return true(产生运动)/false(传感器未运动)
+   */
+  bool actDetect();
+  
+  /**
+   * @brief 自由落体运动检测
+   * @return true(检测到自由落体运动)/false(未检测到自由落体运动)
+   */
+  bool freeFallDetect();
+  
+  /**
+   * @brief Source of change in position portrait/landscape/face-up/face-down.
+   * @return true( no event detected)/false(a change in position is detected)
+   */
+  bool ia6dDetect();
+  
+  /**
+   * @brief 获取传感器现在的位置
+   * @return    eXdown = 0 ,/<X is now down>/
+                eXup   = 1 ,/<X is now up>/
+                eYdown = 2 ,/<Y is now down>/
+                eYup   = 3 ,/<Y is now up>/
+                eZdown = 4 ,/<Z is now down>/
+                eZup   = 5 ,/<Z is now up>/
+   */
+  eOrient_t getOrient();
+  
+  /**
+   * @brief 点击检测
+   * @return   eSingleClick  = 0 ,/<click>/
+               eDoubleClick      ,/<double click>/
+               eNoClick,          //没有点击产生
+                */
+  eTap_t tapDetect();
+  
+  /**
+   * @brief 点击方向的源头检测
+   * @return   eDirXup   = 0,/<从 X 正方向发生的点击事件>/
+               eDirXdown = 1,/<从 X 负方向发生的点击事件>/
+               eDirYup   = 2,/<从 Y 正方向发生的点击事件>/
+               eDirYdown = 3,/<从 Y 负方向发生的点击事件>/
+               eDirZup   = 4,/<从 Z 正方向发生的点击事件>/
+               eDirZdown = 5,/<从 Z 负方向发生的点击事件>/
+   */
+  eTapDir_t getTapDirection();
+  
+  /**
+   * @brief 唤醒的运动方向检测
+   * @return   eDirX = 0,/<X方向的运动唤醒芯片>/
+               eDirY = 1,/<Y方向的运动唤醒芯片>/
+               eDirZ = 2,/<Z方向的运动唤醒芯片>/
+               eDirError,
+   */
+  eWakeupDir_t getWakeupDir();
+
 ```
 
 ## Compatibility
 
 MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 ------------------ | :----------: | :----------: | :---------: | -----
-Arduino Uno        |      √       |              |             | 
+Arduino uno        |      √       |              |             | 
 FireBeetle-ESP8266        |      √       |              |             | 
 FireBeetle-ESP32        |      √       |              |             | 
 Arduino MEGA2560        |      √       |              |             | 
 Arduino Leonardo|      √       |              |             | 
-Micro:bit        |      √       |              |             | 
+microbit        |      √       |              |             | 
 FireBeetle-M0        |      √       |              |             | 
-Raspberry Pi      |      √       |              |             | 
+raspberry pi 3      |      √       |              |             | 
+
 
 ## History
 
-- data 2021-2-1
+- data 2020-12-31
 - version V1.0
 
 
