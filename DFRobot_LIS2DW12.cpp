@@ -50,7 +50,7 @@ void DFRobot_LIS2DW12::continRefresh(bool enable){
   writeReg(REG_CTRL_REG2,&value,1);
 }
 
-void DFRobot_LIS2DW12::setFilterPath(eFds_t path){
+void DFRobot_LIS2DW12::setFilterPath(ePath_t path){
   uint8_t value;
   readReg(REG_CTRL_REG6,&value, 1);
   uint8_t enable = (path & 0x10U )?1 : 0;
@@ -98,17 +98,17 @@ void DFRobot_LIS2DW12::setPowerMode(ePowerMode_t mode){
   return ;
 
 }
-void DFRobot_LIS2DW12::setDataRate(eFreq_t freq){
+void DFRobot_LIS2DW12::setDataRate(eRate_t rate){
 
   uint8_t value;
   readReg(REG_CTRL_REG1,&value, 1);
   value = value &(~(0xf<<4));
-  value = value | freq<<4; 
+  value = value | rate<<4; 
   DBG(value);
   writeReg(REG_CTRL_REG1,&value, 1);
 
   readReg(REG_CTRL_REG3,&value,1);
-  uint8_t enable = (freq&0x30) >> 4;
+  uint8_t enable = (rate&0x30) >> 4;
   value = value & (~3);
   value = value | enable;
   DBG(value);
@@ -160,10 +160,10 @@ void DFRobot_LIS2DW12::setFreeFallDur(uint8_t dur){
   writeReg(REG_WAKE_UP_DUR,&value1,1);
   DBG(value2);
   writeReg(REG_FREE_FALL,&value2,1);
-  setFfThreshold(eFfTsh10LSbFS2g);
+  setFfThreshold(3);
 }
 
-void DFRobot_LIS2DW12::setFfThreshold(eFfThs_t th){
+void DFRobot_LIS2DW12::setFfThreshold(uint8_t th){
 
   uint8_t value;
   readReg(REG_FREE_FALL,&value, 1);
@@ -174,7 +174,7 @@ void DFRobot_LIS2DW12::setFfThreshold(eFfThs_t th){
   return;
 }
 
-void DFRobot_LIS2DW12::setPinInt1Route(eInt1Event_t event){
+void DFRobot_LIS2DW12::setiInt1Event(eInt1Event_t event){
 
   uint8_t value1 = 0;
   uint8_t value2 = 0;
@@ -224,7 +224,7 @@ void DFRobot_LIS2DW12::setActSleepDur(uint8_t dur)
   return;
 }
 
-void DFRobot_LIS2DW12::setActMode(eSleepOn_t mode)
+void DFRobot_LIS2DW12::setActMode(eActDetect_t mode)
 {
   uint8_t value1;
   uint8_t value2;
@@ -243,9 +243,9 @@ void DFRobot_LIS2DW12::setActMode(eSleepOn_t mode)
 }
 
 
-void DFRobot_LIS2DW12::setWakeUpThreshold(float th){
+void DFRobot_LIS2DW12::setWakeUpThreshold(uint16_t th){
   uint8_t value;
-  uint8_t th1 = (th/_range1) * 64;
+  uint8_t th1 = (th/(_range1*1000)) * 64;
   DBG(th1);
   readReg(REG_WAKE_UP_THS,&value, 1);
   value = value & (~ 0x3f);
@@ -255,7 +255,7 @@ void DFRobot_LIS2DW12::setWakeUpThreshold(float th){
   return;
 }
 
-void DFRobot_LIS2DW12::latchInterrupt(bool enable){
+void DFRobot_LIS2DW12::lockInterrupt(bool enable){
 
   uint8_t value;
   readReg(REG_CTRL_REG3,&value, 1);
@@ -297,10 +297,10 @@ void DFRobot_LIS2DW12::enableTapDetectionOnX(bool enable){
 
 }
 
-void DFRobot_LIS2DW12::setTapThresholdOnX(int32_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnX(uint16_t th)
 {
   uint8_t value;
-  uint8_t th1 = (th/_range1) * 32;
+  uint8_t th1 = (th/(_range1*1000)) * 32;
   
   readReg(REG_TAP_THS_X,&value, 1);
   value = value & (~0x1f);
@@ -309,10 +309,10 @@ void DFRobot_LIS2DW12::setTapThresholdOnX(int32_t th)
   writeReg(REG_TAP_THS_X,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnY(int32_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnY(uint16_t th)
 {
   uint8_t value;
-  uint8_t th1 = (th/_range1) * 32;
+  uint8_t th1 = (th/(_range1*1000)) * 32;
   readReg(REG_TAP_THS_Y,&value, 1);
   value = value & (~0x1f);
   value = value | (th1 & 0x1f);
@@ -320,10 +320,10 @@ void DFRobot_LIS2DW12::setTapThresholdOnY(int32_t th)
   writeReg(REG_TAP_THS_Y,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnZ(int32_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnZ(uint16_t th)
 {
   uint8_t value;
-  uint8_t th1 = (th/_range1) * 32;
+  uint8_t th1 = (th/(_range1*1000)) * 32;
   readReg(REG_TAP_THS_Z,&value, 1);
   value = value & (~0x1f);
   value = value | (th1 & 0x1f);
@@ -381,11 +381,10 @@ void DFRobot_LIS2DW12::setTapMode(sTapMode_t mode)
   return;
 
 }
-void DFRobot_LIS2DW12::set6dThreshold(s6dTH_t degree)
+void DFRobot_LIS2DW12::set6DThreshold(e6DTh_t degree)
 {
 
   uint8_t value;
-  
   readReg(REG_TAP_THS_X,&value, 1);
   value = value & (~0x60);
   value = value | degree << 5;
@@ -396,7 +395,7 @@ void DFRobot_LIS2DW12::set6dThreshold(s6dTH_t degree)
 }
 
 
-void DFRobot_LIS2DW12::setPinInt2Route(eInt2Event_t event)
+void DFRobot_LIS2DW12::setiInt2Event(eInt2Event_t event)
 {
 
 
@@ -476,7 +475,7 @@ bool DFRobot_LIS2DW12::freeFallDetect()
   }
 }
 
-bool DFRobot_LIS2DW12::ia6dDetect()
+bool DFRobot_LIS2DW12::ia6DDetect()
 {
   uint8_t value;
   readReg(REG_SIXD_SRC,&value,1);
@@ -492,17 +491,17 @@ DFRobot_LIS2DW12::eOrient_t DFRobot_LIS2DW12::getOrient()
   uint8_t value;
   readReg(REG_SIXD_SRC,&value,1);
   if((value & 0x01) > 0){
-     return eXdown;
+     return eXDown;
   } else if((value & 0x2) > 0){
-     return eXup;
+     return eXUp;
   } else if((value & 0x4) > 0){
-     return eYdown;
+     return eYDown;
   } else if((value & 0x8) > 0){
-     return eYup;
+     return eYUp;
   } else if((value & 0x10) > 0){
-     return eZdown;
+     return eZDown;
   } else if((value & 0x20) > 0){
-     return eZup;
+     return eZUp;
   }
 }
 DFRobot_LIS2DW12::eTap_t DFRobot_LIS2DW12::tapDetect()
@@ -524,21 +523,21 @@ DFRobot_LIS2DW12::eTapDir_t DFRobot_LIS2DW12::getTapDirection()
   uint8_t positive = value & 0x08;
 
   if(((value & 0x04) != 0) && (positive > 0)){
-     return eDirXup;
+     return eDirXUp;
   }else if(((value & 0x4) != 0) && (positive == 0)){
-    return eDirXdown;
+    return eDirXDown;
   }else if(((value & 0x2) != 0) && (positive > 0)){
-    return eDirYup;
+    return eDirYUp;
   }else if(((value & 0x2) != 0) && (positive == 0)){
-    return eDirYdown;
+    return eDirYDown;
   }else if(((value & 0x1) != 0) && (positive > 0)){
-    return eDirZup;
+    return eDirZUp;
   }else if(((value & 0x1) != 0) && (positive == 0)){
-     return eDirZdown;
+     return eDirZDown;
   }
   return eDirNone;
 }
-DFRobot_LIS2DW12::eWakeupDir_t DFRobot_LIS2DW12::getWakeUpDir()
+DFRobot_LIS2DW12::eWakeUpDir_t DFRobot_LIS2DW12::getWakeUpDir()
 {
   uint8_t value;
   readReg(REG_WAKE_UP_SRC,&value,1);

@@ -19,8 +19,7 @@ measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
 LIS2DW12       |      √       |              |             
-IIS2DLPC      |      √       |              |             
-
+IIS2DLPC      |      √       |              |              
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg1.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg2.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg3.png)
@@ -52,7 +51,7 @@ To use this library, first download the library file, paste it into the \Arduino
 ## Methods
 
 ```C++
-  DFRobot_LIS2DW12();
+   DFRobot_LIS2DW12();
   
   /**
    * @brief Initialize the function
@@ -80,63 +79,63 @@ To use this library, first download the library file, paste it into the \Arduino
   /**
    * @brief Set the filter processing mode
    * @param path path of filtering
-                 eLpfOnOut   = 0x00,/< low-pass filter path selected>/
-                 eHpfOnOut   = 0x10,/<high-pass filter path selected>/
+                 eLPF   = 0x00,/< low-pass filter path selected>/
+                 eHPF   = 0x10,/<high-pass filter path selected>/
    */
-  void setFilterPath(eFds_t path);
+  void setFilterPath(ePath_t path);
 
   /**
    * @brief Set the  bandwidth of the data
-   * @param bw   eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
-                 eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
-                 eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
-                 eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
+   * @param bw   eRateDiv_2     = 0,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
+                 eRateDiv_4     = 1,/<Rate/4 (High Power/Low power)>*
+                 eRateDiv_10    = 2,/<Rate/10 (HP/LP)>/
+                 eRateDiv_20    = 3,/< Rate/20 (HP/LP)>/
    */
   void setFilterBandwidth(eBWfilter_t bw);
   
   /**
    * @brief Set power mode
    * @param mode  16 power modes to choose from
-                 eHighPerformance                   = 0x04, /<High-Performance Mode>/
-                 eContLowPwr_4                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
-                 eContLowPwr_3                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
-                 eContLowPwr_2                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
-                 eContLowPwr_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
-                 eSingleLowPwr_4                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
-                 eSingleLowPwr_3                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
-                 eSingleLowPwr_2                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
-                 eSingleLowPwr_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
-                 eHighPerformanceLowNoise           = 0x14,/<High-Performance Mode,Low-noise enabled>/
-                 eContLowPwrLowNoise_4              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise_3              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise_2              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
-                 eSingleLowPwrLowNoise_4           = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
-                 eSingleLowPwrLowNoise_3           = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
-                 eSingleLowPwrLowNoise_2           = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
-                 eSingleLowLowNoisePwr_12bit       = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
-   */
+                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+                  */
   void setPowerMode(ePowerMode_t mode);
   
   /**
    * @brief Chip data collection rate setting
-   * @param freq  0-1600hz selection
-                  eOdr_0hz            <测量关闭>
-                  eOdr_1hz6_lp_only   <1.6hz>
-                  eOdr_12hz5          <12.5hz>
-                  eOdr_25hz        
-                  eOdr_50hz        
-                  eOdr_100hz       
-                  eOdr_200hz       
-                  eOdr_400hz       
-                  eOdr_800hz       
-                  eOdr_1k6hz       
+   * @param rate  0-1600hz selection
+                  eRate_0hz            <测量关闭>
+                  eRate_1hz6_lp_only   <1.6hz>
+                  eRate_12hz5          <12.5hz>
+                  eRate_25hz        
+                  eRate_50hz        
+                  eRate_100hz       
+                  eRate_200hz       
+                  eRate_400hz       
+                  eRate_800hz       
+                  eRate_1k6hz       
    */
-  void setDataRate(eFreq_t freq);
+  void setDataRate(eRate_t rate);
   
   /**
    * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
-   * @param dur (0 ~ 31)
+   * @param dur duration(0 ~ 3)
    * @n time = dur * (1/ODR)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -151,34 +150,33 @@ To use this library, first download the library file, paste it into the \Arduino
   /**
    * @brief 选择在中断1引脚产生的中断事件
    * @param event  中断事件,当此事件产生会在中断1引脚产生电平跳变
-                   eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
-                   eFFEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
-                   eWakeUpEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
-                   eSingleTap = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
-                   eTnt16d  = 0x80,/<6D recognition is routed to INT1 pad>/
+               eDoubleTap   = 0x08,/< Double-tap recognition is routed to INT1 pad>/
+               eFreeFall     = 0x10,/< Free-fall recognition is routed to INT1 pad>/
+               eWakeUp = 0x20,/<Wakeup recognition is routed to INT1 pad>/
+               eSingleTap   = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
+               e6D      = 0x80,/<6D recognition is routed to INT1 pad>/
    */
-  void setPinInt1Route(eInt1Event_t event);
+  void setiInt1Event(eInt1Event_t event);
   
   /**
    * @brief 选择在中断2引脚产生的中断事件
    * @param event 中断事件,当此事件产生会在中断2引脚产生电平跳变
-                   eBoot = 0x20,/< Boot state routed to INT2 pad.>/
-                   eSleepChange = 0x40,/<Enable routing of SLEEP_STATE on INT2 pad>/
-                   eSleepState  = 0x80,/<Sleep change status routed to INT2 pad>/
+                 eSleepChange = 0x40,/<Sleep change status routed to INT2 pad>/
+                 eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
    */
-  void setPinInt2Route(eInt2Event_t event);
+  void setiInt2Event(eInt2Event_t event);
   
   /**
-   * @brief Latch interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
+   * @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
      @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
-   * @param enable  true latched interrupt.
+   * @param enable  true lock interrupt.
                     false pulsed interrupt
    */
-  void latchInterrupt(bool enable);
+  void lockInterrupt(bool enable);
   
   /**
    * @brief Set the wake-up duration
-   * @param dur (0 ~ 3)
+   * @param dur duration(0 ~ 3)
      @n time = dur * (1/ODR)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -192,18 +190,18 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief Set the wake-up Threshold
-   * @param th:unit(g),数值是在量程之内
+   * @param th:unit(mg),数值是在量程之内
    */
-  void setWakeUpThreshold(float th);
+  void setWakeUpThreshold(uint16_t th);
   
   /**
    * @brief Sets the mode of motion detection
    * @param mode 运动检测模式
                 eNoDetection        = 0,/<No detection>/
-                eDetectActInact     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
+                eDetectAct     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
                 eDetectStatMotion   = 3,/<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either ODR or operating mode>/
    */
-  void setActMode(eSleepOn_t mode);
+  void setActMode(eActDetect_t mode);
   
   /**
    * @brief Set the range
@@ -234,27 +232,27 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief Set the click threshold in the X direction
-   * @param th Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnX(int32_t th);
+  void setTapThresholdOnX(uint16_t th);
   
   /**
    * @brief Set the click threshold in the Y direction
-   * @param th Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnY(int32_t th);
+  void setTapThresholdOnY(uint16_t th);
 
   /**
    * @brief Set the click threshold in the Z direction
-   * @param th Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnZ(int32_t th);
+  void setTapThresholdOnZ(uint16_t th);
   
   /**
    * @brief Duration of maximum time gap for double-tap recognition. When double-tap 
    * @n recognition is enabled, this register expresses the maximum time between two 
    * @n successive detected taps to determine a double-tap event.
-   * @param dur (0 ~ 15)
+   * @param dur duration(0 ~ 3)
    * @n time = dur * (1/ODR)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -275,12 +273,12 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-   * @param degree   eDegrees80   80°
-                     eDegrees70   70°
-                     eDegrees60   60°
-                     eDegrees50   50°
+   * @param degree   eDegrees80   (80°)
+                     eDegrees70   (70°)
+                     eDegrees60   (60°)
+                     eDegrees50   (50°)
    */
-  void set6dThreshold(s6dTH_t degree);
+  void set6DThreshold(e6DTh_t degree);
 
   /**
    * @brief Read the acceleration in the x direction
@@ -314,48 +312,48 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief Source of change in position portrait/landscape/face-up/face-down.
-   * @return true( no event detected)/false(a change in position is detected)
+   * @return true(a change in position is detected)/false(no event detected)
    */
-  bool ia6dDetect();
+  bool ia6DDetect();
   
   /**
    * @brief 获取传感器现在的位置
-   * @return    eXdown = 0 ,/<X is now down>/
-                eXup   = 1 ,/<X is now up>/
-                eYdown = 2 ,/<Y is now down>/
-                eYup   = 3 ,/<Y is now up>/
-                eZdown = 4 ,/<Z is now down>/
-                eZup   = 5 ,/<Z is now up>/
+   * @return    eXDown  /<X is now down>/
+                eXUp    /<X is now up>/
+                eYDown  /<Y is now down>/
+                eYUp    /<Y is now up>/
+                eZDown  /<Z is now down>/
+                eZUp    /<Z is now up>/
    */
   eOrient_t getOrient();
   
   /**
    * @brief 点击检测
-   * @return   eSingleClick  = 0 ,/<click>/
-               eDoubleClick      ,/<double click>/
+   * @return   eSingleClick       /<Single click>/
+               eDoubleClick       /<double click>/
                eNoClick,          //没有点击产生
                 */
   eTap_t tapDetect();
   
   /**
    * @brief 点击方向的源头检测
-   * @return   eDirXup   = 0,/<从 X 正方向发生的点击事件>/
-               eDirXdown = 1,/<从 X 负方向发生的点击事件>/
-               eDirYup   = 2,/<从 Y 正方向发生的点击事件>/
-               eDirYdown = 3,/<从 Y 负方向发生的点击事件>/
-               eDirZup   = 4,/<从 Z 正方向发生的点击事件>/
-               eDirZdown = 5,/<从 Z 负方向发生的点击事件>/
+   * @return   eDirXUp   /<从 X 正方向发生的点击事件>/
+               eDirXDown /<从 X 负方向发生的点击事件>/
+               eDirYUp   /<从 Y 正方向发生的点击事件>/
+               eDirYDown /<从 Y 负方向发生的点击事件>/
+               eDirZUp   /<从 Z 正方向发生的点击事件>/
+               eDirZDown /<从 Z 负方向发生的点击事件>/
    */
   eTapDir_t getTapDirection();
   
   /**
    * @brief 唤醒的运动方向检测
-   * @return   eDirX = 0,/<X方向的运动唤醒芯片>/
-               eDirY = 1,/<Y方向的运动唤醒芯片>/
-               eDirZ = 2,/<Z方向的运动唤醒芯片>/
+   * @return   eDirX    /<X方向的运动唤醒芯片>/
+               eDirY    /<Y方向的运动唤醒芯片>/
+               eDirZ    /<Z方向的运动唤醒芯片>/
                eDirError,
    */
-  eWakeupDir_t getWakeUpDir();
+  eWakeUpDir_t getWakeUpDir();
 
 ```
 

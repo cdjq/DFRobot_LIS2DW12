@@ -1,6 +1,6 @@
 /**！
  * @file getAcceleration.ino
- * @brief Get the acceleration in x, y, z  范围(±2g/±4g/±8g/±16g)
+ * @brief Get the acceleration in x, y, z directions,测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
  * @n 在使用SPI时片选引脚可以通过 LIS2DW12_CS 的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -35,13 +35,14 @@ DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
  * @param cs Chip selection pinChip selection pin
  * @param spi SPI controller
  */
+//DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS,&SPI);
 //DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS);
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("通信失败，请检查连线是否准确");
+     Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -50,22 +51,21 @@ void setup(void){
   //Set whether to collect data continuously
   acce.continRefresh(true);
   
+  
   /**！
     Set the sensor data collection rate:
-    eOdr_0hz         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
+               eRate_0hz           /<测量关闭>/
+               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_12hz5         /<12.5hz>/
+               eRate_25hz          
+               eRate_50hz          
+               eRate_100hz         
+               eRate_200hz         
+               eRate_400hz         
+               eRate_800hz         
+               eRate_1k6hz         
   */
-  acce.setDataRate(DFRobot_LIS2DW12::eOdr_50hz);
+  acce.setDataRate(DFRobot_LIS2DW12::eRate_50hz);
   
   /**！
     Set the sensor measurement range:
@@ -79,49 +79,49 @@ void setup(void){
   
   /**！
     Filter settings:
-    eLpfOnOut(Low pass filter)
-    eHighPassOnOut(High pass filter)
+           eLPF (Low pass filter)
+           eHPF (High pass filter)
   */
-  acce.setFilterPath(DFRobot_LIS2DW12::eLpfOnOut);
+  acce.setFilterPath(DFRobot_LIS2DW12::eLPF);
   
   /**！
     Set bandwidth：
-        eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
-        eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
-        eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
-        eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
+        eRateDiv_2     = 0,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
+        eRateDiv_4     = 1,/<Rate/4 (High Power/Low power)>*
+        eRateDiv_10    = 2,/<Rate/10 (HP/LP)>/
+        eRateDiv_20    = 3,/< Rate/20 (HP/LP)>/
   */
-  acce.setFilterBandwidth(DFRobot_LIS2DW12::eOdrDiv_4);
+  acce.setFilterBandwidth(DFRobot_LIS2DW12::eRateDiv_4);
   
   /**！
    Set power mode:
-      eHighPerformance              /<High-Performance Mode>/
-      eContLowPwr_4                /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
-      eContLowPwr_3                /<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
-      eContLowPwr_2                /<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
-      eContLowPwr_12bit            /<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
-      eSingleLowPwr_4              /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
-      eSingleLowPwr_3              /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
-      eSingleLowPwr_2              /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
-      eSingleLowPwr_12bit          /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
-      eHighPerformanceLowNoise     /<High-Performance Mode,Low-noise enabled>/
-      eContLowPwrLowNoise_4        /<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_3        /<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_2        /<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_12bit    /<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
-      eSingleLowPwrLowNoise_4         /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_3         /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_2         /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
-      eSingleLowLowNoisePwr_12bit     /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise_2);
+  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise2_14bit);
   
   delay(1000);
 }
 
 void loop(void){
-   
-    Serial.print("Acceleration x: "); 
+    //测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
+    Serial.print("Acceleration x: ");
     //Read the acceleration in the x direction
     Serial.print(acce.readAccX());
     Serial.print(" mg \ty: ");

@@ -21,7 +21,6 @@
  */
 DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
 
-
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_LIS2DW12_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
 #define LIS2DW12_CS  D3
@@ -36,12 +35,13 @@ DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
  * @param spi SPI controller
  */
 //DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS);
+//DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS,&SPI);
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("通信失败，请检查连线是否准确");
+     Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -53,105 +53,100 @@ void setup(void){
                    e2_g   /<±2g>/
                    e4_g   /<±4g>/
                    e8_g   /<±8g>/
-                   e16_g  /< ±16g>/
+                   e16_g  /<±16g>/
   */
   acce.setRange(DFRobot_LIS2DW12::e2_g);
   
   /**！
     Filter settings:
-    eLpfOnOut(Low pass filter)
-    eHighPassOnOut(High pass filter)
+           eLPF(Low pass filter)
+           eHPF(High pass filter)
   */
-  acce.setFilterPath(DFRobot_LIS2DW12::eLpfOnOut);
+  acce.setFilterPath(DFRobot_LIS2DW12::eLPF);
   
   /**！
     Set bandwidth：
-        eOdrDiv_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
-        eOdrDiv_4     = 1,/<ODR/4 (High Power/Low power)>*
-        eOdrDiv_10    = 2,/<ODR/10 (HP/LP)>/
-        eOdrDiv_20    = 3,/< ODR/20 (HP/LP)>/
+        eRateDiv_2     = 0,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
+        eRateDiv_4     = 1,/<Rate/4 (High Power/Low power)>*
+        eRateDiv_10    = 2,/<Rate/10 (HP/LP)>/
+        eRateDiv_20    = 3,/< Rate/20 (HP/LP)>/
   */
-  acce.setFilterBandwidth(DFRobot_LIS2DW12::eOdrDiv_4);
+  acce.setFilterBandwidth(DFRobot_LIS2DW12::eRateDiv_4);
   
- 
-  //Set the wake-up duration
-  //@n 1 LSB = 1 * 1/ODR (measurement frequency)
-  // |                                       参数与时间之间的线性关系                                         |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-  // |--------------------------------------------------------------------------------------------------------|
-  acce.setWakeupDur(/*duration = */2);
-  //Set wakeup threshold,unit:g
+  /**
+    唤醒持续时间
+    dur (0 ~ 31)
+    time = dur * (1/Rate)(unit:s)
+   */
+  acce.setWakeUpDur(/*dur = */2);
+  
+  //Set wakeup threshold,unit:mg
   //数值是在量程之内
-  acce.setWakeupThreshold(/*threshold = */0.2);
+  acce.setWakeUpThreshold(/*threshold = */200);
   
   /**！
    Set power mode:
-      eHighPerformance              /<High-Performance Mode>/
-      eContLowPwr_4                /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
-      eContLowPwr_3                /<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
-      eContLowPwr_2                /<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
-      eContLowPwr_12bit            /<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
-      eSingleLowPwr_4              /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
-      eSingleLowPwr_3              /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
-      eSingleLowPwr_2              /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
-      eSingleLowPwr_12bit          /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
-      eHighPerformanceLowNoise     /<High-Performance Mode,Low-noise enabled>/
-      eContLowPwrLowNoise_4        /<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_3        /<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_2        /<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_12bit    /<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
-      eSingleLowPwrLowNoise_4         /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_3         /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_2         /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
-      eSingleLowLowNoisePwr_12bit     /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise_12bit);
+  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise1_12bit);
   
   /**！
     Set the mode of motion detection:
-    eNoDetection     
-    eDetectActInact  
-    eDetectStatMotion
+    eNoDetection     /<No detection>/
+    eDetectAct     /<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
+    eDetectStatMotion  /<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either ODR or operating mode>/
   */
-  acce.setActMode(DFRobot_LIS2DW12::eDetectActInact);
+  acce.setActMode(DFRobot_LIS2DW12::eDetectAct);
   
   /**！
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
-    eFfEvent(Free fall)
-    eWakeupEvent(wake)
+    eFreeFall(Free fall)
+    eWakeUp(wake)
     eSingleTap(single-Click)
-    eTnt16d(Orientation change check)
+    e6D(Orientation change check)
   */
-  acce.setPinInt1Route(DFRobot_LIS2DW12::eWakeupEvent);
+  acce.setiInt1Event(DFRobot_LIS2DW12::eWakeUp);
   
   /**！
     Set the sensor data collection rate:
-    eOdr_off         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
+               eRate_0hz           /<测量关闭>/
+               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_12hz5         /<12.5hz>/
+               eRate_25hz          
+               eRate_50hz          
+               eRate_100hz         
+               eRate_200hz         
+               eRate_400hz         
+               eRate_800hz         
+               eRate_1k6hz         
   */
-  acce.setDataRate(DFRobot_LIS2DW12::eOdr_200hz);
-  delay(1000);
+  acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
+  delay(100);
 }
 
 void loop(void){
    //Motion detected
    if(acce.actDetect()){
      Serial.println("Activity Detected");
+     delay(100);
    }
-  delay(100);
+  
 }

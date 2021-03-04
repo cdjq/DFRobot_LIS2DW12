@@ -1,7 +1,7 @@
 /**！
  * @file tapInterrupt.ino
- * @brief Click interrupt detection
- * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
+ * @brief Click interrupt detection,点击模块，或者点击模块附件的桌面都可以触发int1的中断电平
+ * @n 在使用SPI时,片选引脚 可以通过改变宏LIS2DW12_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -36,19 +36,19 @@ DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
  * @param cs  Chip selection pinChip selection pin
  * @param spi SPI controller
  */
+//DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS,&SPI);
 //DFRobot_LIS2DW12_SPI acce(/*cs = */LIS2DW12_CS);
 volatile uint8_t intFlag = 0;
 void interEvent(){
   intFlag = 1;
 }
 
-
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("通信失败，请检查连线是否准确");
+     Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -94,43 +94,41 @@ void setup(void){
   
   /**！
    Set power mode:
-      eHighPerformance              /<High-Performance Mode>/
-      eContLowPwr_4                /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
-      eContLowPwr_3                /<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
-      eContLowPwr_2                /<Continuous measurement,Low-Power Mode 2(14-bit resolution)>/
-      eContLowPwr_12bit            /<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
-      eSingleLowPwr_4              /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
-      eSingleLowPwr_3              /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
-      eSingleLowPwr_2              /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
-      eSingleLowPwr_12bit          /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
-      eHighPerformanceLowNoise     /<High-Performance Mode,Low-noise enabled>/
-      eContLowPwrLowNoise_4        /<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_3        /<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_2        /<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
-      eContLowPwrLowNoise_12bit    /<Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)>/
-      eSingleLowPwrLowNoise_4         /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_3         /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
-      eSingleLowPwrLowNoise_2         /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
-      eSingleLowLowNoisePwr_12bit     /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+       eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+       eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+       eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+       eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+       eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+       eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+       eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+       eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+       eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+       eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+       eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+       eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+       eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+       eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+       eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+       eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+       eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+       eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise_12bit);
-
+  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise1_12bit);
   /**！
     Set the sensor data collection rate:
-    eOdr_0hz         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
+               eRate_0hz           /<测量关闭>/
+               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_12hz5         /<12.5hz>/
+               eRate_25hz          
+               eRate_50hz          
+               eRate_100hz         
+               eRate_200hz         
+               eRate_400hz         
+               eRate_800hz         
+               eRate_1k6hz         
   */
-  acce.setDataRate(DFRobot_LIS2DW12::eOdr_800hz);
+  acce.setDataRate(DFRobot_LIS2DW12::eRate_800hz);
+  
   //Enable click detection in the X direction
   acce.enableTapDetectionOnZ(true);
   //Enable click detection in Y direction
@@ -138,22 +136,27 @@ void setup(void){
   //Enable click detection in the Z direction
   acce.enableTapDetectionOnX(true);
   //The threshold setting in the X direction 
-  //Threshold(g),Can only be used in the range of ±2g
-  acce.setTapThresholdOnX(/*Threshold = */0.2);
-  //The threshold setting in the Y direction   //Threshold(g),Can only be used in the range of ±2g
-  acce.setTapThresholdOnY(/*Threshold = */0.2);
-  //The threshold setting in the Z direction   //Threshold(g),Can only be used in the range of ±2g)
-  acce.setTapThresholdOnZ(/*Threshold = */0.2);
+  //Threshold(mg),Can only be used in the range of ±2g
+  acce.setTapThresholdOnX(/*Threshold = */500);
+  //The threshold setting in the Y direction   //Threshold(mg),Can only be used in the range of ±2g
+  acce.setTapThresholdOnY(/*Threshold = */500);
+  //The threshold setting in the Z direction   //Threshold(mg),Can only be used in the range of ±2g)
+  acce.setTapThresholdOnZ(/*Threshold = */500);
   
-  //Set the interval of double-clicking, 1 LSB = 32 * 1/ODR (0~15) (data acquisition frequency)
-  // |                                       参数与时间之间的线性关系                                         |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-  // |--------------------------------------------------------------------------------------------------------|
-  acce.setTapDur(7);
+  
+  /*
+    设置检测双击时，两次点击的间隔时间
+    dur duration(0 ~ 3)
+    time = dur * (1/ODR)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time(s)      |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
+  */
+  acce.setTapDur(/*dur=*/3);
   
   /**！
     Set click detection mode:
@@ -165,45 +168,43 @@ void setup(void){
   /**！
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
-    eFfEvent(Free fall)
-    eWakeupEvent(wake)
+    eFreeFall(Free fall)
+    eWakeUp(wake)
     eSingleTap(single-Click)
-    eTnt16d(Orientation change check)
+    e6D(Orientation change check)
   */
-
-  acce.setPinInt1Route(DFRobot_LIS2DW12::eSingleTap);
-  acce.setPinInt1Route(DFRobot_LIS2DW12::eDoubleTap);
+  acce.setiInt1Event(DFRobot_LIS2DW12::eDoubleTap);
   delay(1000);
 }
 
 void loop(void){
   if(intFlag == 1){
-    //Click detected
-    DFRobot_LIS2DW12:: eTap_t tapEvent = acce.tapDetect();
+   //Click detected
+     DFRobot_LIS2DW12:: eTap_t tapEvent = acce.tapDetect();
     //点击方向的源头检测
-    DFRobot_LIS2DW12::eTapDir_t dir = acce.getTapDirection();
-    if(tapEvent  == DFRobot_LIS2DW12::eSingleClick){
-        Serial.print("single click Detected :");
-    }
-    if(tapEvent  == DFRobot_LIS2DW12::eDoubleClick){  
-        Serial.print("Double Tap Detected :");
-    }
-    
-    if(dir == DFRobot_LIS2DW12::eDirXup){
-      Serial.println("Click it in the positive direction of x");
-    }else if(dir == DFRobot_LIS2DW12::eDirXdown){
-      Serial.println("Click it in the negative direction of x");
-    }else if(dir == DFRobot_LIS2DW12::eDirYup){
-      Serial.println("Click it in the positive direction of y");
-    }else if(dir == DFRobot_LIS2DW12::eDirYdown){
-      Serial.println("Click it in the negative direction of y");
-    }else if(dir == DFRobot_LIS2DW12::eDirZup){
-      Serial.println("Click it in the positive direction of z");
-    }else if(dir == DFRobot_LIS2DW12::eDirZdown){
-      Serial.println("Click it in the negative direction of z");
-    }
-    
-    intFlag = 0;
-    
-    }
+     DFRobot_LIS2DW12::eTapDir_t dir = acce.getTapDirection();
+     if(tapEvent  == DFRobot_LIS2DW12::eSingleClick){
+         Serial.print("single click Detected :");
+     }
+     if(tapEvent  == DFRobot_LIS2DW12::eDoubleClick){  
+         Serial.print("Double Tap Detected :");
+     }
+     
+     if(dir == DFRobot_LIS2DW12::eDirXUp){
+       Serial.println("Click it in the positive direction of x");
+     }else if(dir == DFRobot_LIS2DW12::eDirXDown){
+       Serial.println("Click it in the negative direction of x");
+     }else if(dir == DFRobot_LIS2DW12::eDirYUp){
+       Serial.println("Click it in the positive direction of y");
+     }else if(dir == DFRobot_LIS2DW12::eDirYDown){
+       Serial.println("Click it in the negative direction of y");
+     }else if(dir == DFRobot_LIS2DW12::eDirZUp){
+       Serial.println("Click it in the positive direction of z");
+     }else if(dir == DFRobot_LIS2DW12::eDirZDown){
+       Serial.println("Click it in the negative direction of z");
+     }
+     
+     intFlag = 0;
+   
+  }
 }

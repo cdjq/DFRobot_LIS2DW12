@@ -1,6 +1,7 @@
 /**！
  * @file freeFallInterrupt.ino
- * @brief Interrupt detection of free fall,当有自由落体事件产生会在int1/int2产生中断信号
+ * @brief Interrupt detection of free fall,当有自由落体事件产生会在int1产生中断信号
+ * @n 检测到有自由落体运动产生，会在串口打印显示
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -34,6 +35,7 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
  * @param cs Chip selection pinChip selection pin
  * @param spi SPI controller
  */
+//DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS,&SPI);
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
 
 volatile uint8_t intFlag = 0;
@@ -46,7 +48,7 @@ void setup(void){
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("通信失败，请检查连线是否准确");
+     Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -79,7 +81,6 @@ void setup(void){
   attachInterrupt(/*Interrupt No*/0,interEvent,CHANGE);//Open the external interrupt 0, connect INT1/2 to the digital pin of the main control: 
      //UNO(2), Mega2560(2), Leonardo(3), microbit(P0).
   #endif
-  
   //Chip soft reset
   acce.softReset();
   //Set whether to collect data continuously
@@ -87,44 +88,41 @@ void setup(void){
   
   /**！
    Set power mode:
-    eHighPerformance           
-    eContLowPwr_4              
-    eContLowPwr_3              
-    eContLowPwr_2              
-    eContLowPwr_12bit          
-    eSingleLowPwr_4            
-    eSingleLowPwr_3            
-    eSingleLowPwr_2            
-    eSingleLowPwr_12bit        
-    eHighPerformanceLowNoise   
-    eContLowPwrLowNoise_4      
-    eContLowPwrLowNoise_3      
-    eContLowPwrLowNoise_2      
-    eContLowPwrLowNoise_12bit  
-    eSingleLowPwrLowNoise_4    
-    eSingleLowPwrLowNoise_3    
-    eSingleLowPwrLowNoise_2    
-    eSingleLowLowNoisePwr_12bit
+                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwr_4);
+  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwr4_14bit);
   
   /**！
     Set the sensor data collection rate:
-    
-    eOdr_off         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
+               eRate_0hz           /<测量关闭>/
+               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_12hz5         /<12.5hz>/
+               eRate_25hz          
+               eRate_50hz          
+               eRate_100hz         
+               eRate_200hz         
+               eRate_400hz         
+               eRate_800hz         
+               eRate_1k6hz         
   */
-  acce.setDataRate(DFRobot_LIS2DW12::eOdr_100hz);
+  acce.setDataRate(DFRobot_LIS2DW12::eRate_100hz);
   
   /**！
     Set the sensor measurement range:
@@ -136,28 +134,25 @@ void setup(void){
   acce.setRange(DFRobot_LIS2DW12::e2_g);
   
   //The duration of free fall (0~31), the larger the value, the longer the free fall time is needed to be detected
-  //1 LSB = 1 * 1/ODR (measurement frequency)
-  // |                                       参数与时间之间的线性关系                                         |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-  // |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-  // |--------------------------------------------------------------------------------------------------------|
-  // |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-  // |--------------------------------------------------------------------------------------------------------|
-  acce.setFrDur(0x06);
+  /**
+   * 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
+    dur范围(0 ~ 31)
+    time = dur * (1/Rate)(unit:s)
+   */
+  acce.setFreeFallDur(/*dur = */0x03);
   
   /**！
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
-    eFfEvent(Free fall)
-    eWakeupEvent(wake)
+    eFreeFall(Free fall)
+    eWakeUp(wake)
     eSingleTap(single-Click)
-    eTnt16d(Orientation change check)
+    e6D(Orientation change check)
   */
-  acce.setPinInt1Route(DFRobot_LIS2DW12::eFfEvent);
-  //Latch interrupt
-  acce.latchInterrupt(true);
-  delay(1000);
+  acce.setiInt1Event(DFRobot_LIS2DW12::eFreeFall);
+  //lock interrupt
+  acce.lockInterrupt(true);
+  delay(100);
 }
 
 void loop(void){

@@ -1,6 +1,12 @@
 /**！
  * @file orientation.ino
- * @brief Detect the movement of the module in six directions. When the module turns from another direction to a certain direction, an event will be triggered and then detected
+ * @brief 检测模块的朝向,传感器能检测到以下六种事件
+ * @n Z轴正向朝上
+ * @n Z轴正向朝下
+ * @n Y轴正向朝上
+ * @n Y轴正向朝下
+ * @n X轴正向朝上
+ * @n X轴正向朝下
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -36,13 +42,14 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
  * @param cs Chip selection pinChip selection pin
  * @param spi SPI controller
  */
+//DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS,&SPI);
 //DFRobot_IIS2DLPC_SPI acce(/*cs = */IIS2DLPC_CS);
 void setup(void){
 
   Serial.begin(9600);
   while(acce.begin()){
      delay(1000);
-     Serial.println("通信失败，请检查连线是否准确");
+     Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
   Serial.print("chip id : ");
   Serial.println(acce.getID(),HEX);
@@ -60,62 +67,60 @@ void setup(void){
 
   /**！
    Set power mode:
-    eHighPerformance           
-    eContLowPwr_4              
-    eContLowPwr_3              
-    eContLowPwr_2              
-    eContLowPwr_12bit          
-    eSingleLowPwr_4            
-    eSingleLowPwr_3            
-    eSingleLowPwr_2            
-    eSingleLowPwr_12bit        
-    eHighPerformanceLowNoise   
-    eContLowPwrLowNoise_4      
-    eContLowPwrLowNoise_3      
-    eContLowPwrLowNoise_2      
-    eContLowPwrLowNoise_12bit  
-    eSingleLowPwrLowNoise_4    
-    eSingleLowPwrLowNoise_3    
-    eSingleLowPwrLowNoise_2    
-    eSingleLowLowNoisePwr_12bit
+                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
+                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
   */
-  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise_12bit);
+  acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise1_12bit);
   
   /**！
     Set the sensor data collection rate:
-    eOdr_0hz         
-    eOdr_1hz6_lp_only
-    eOdr_12hz5       
-    eOdr_25hz        
-    eOdr_50hz        
-    eOdr_100hz       
-    eOdr_200hz       
-    eOdr_400hz       
-    eOdr_800hz       
-    eOdr_1k6hz       
-    eSetSwTrig       
-    eSetPinTrig      
+               eRate_0hz           /<测量关闭>/
+               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_12hz5         /<12.5hz>/
+               eRate_25hz          
+               eRate_50hz          
+               eRate_100hz         
+               eRate_200hz         
+               eRate_400hz         
+               eRate_800hz         
+               eRate_1k6hz         
   */
-  acce.setDataRate(DFRobot_LIS2DW12::eOdr_200hz);
+  acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
   
   /**！
     Set the threshold of the angle when turning:
-    eDegrees80
-    eDegrees70
-    eDegrees60
-    eDegrees50
+                     eDegrees80   (80°)
+                     eDegrees70   (70°)
+                     eDegrees60   (60°)
+                     eDegrees50   (50°)
   */
-  acce.set6dThreshold(DFRobot_LIS2DW12::eDegrees60);
+  acce.set6DThreshold(DFRobot_LIS2DW12::eDegrees60);
   
   /**！
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
-    eFfEvent(Free fall)
-    eWakeupEvent(wake)
+    eFreeFall(Free fall)
+    eWakeUp(wake)
     eSingleTap(single-Click)
-    eTnt16d(Orientation change check)
+    e6D(Orientation change check)
   */
-  acce.setPinInt1Route(DFRobot_LIS2DW12::eTnt16d);
+  acce.setiInt1Event(DFRobot_LIS2DW12::e6D);
 
   delay(1000);
 }
@@ -123,26 +128,26 @@ void setup(void){
 void loop(void){
 
    //check Changes detected in six directions
-   if(acce.ia6dDetect()){
+   if(acce.ia6DDetect()){
      
      Serial.print("6D Or. switched to ");
      DFRobot_LIS2DW12::eOrient_t orient = acce.getOrient();
-     if(orient == DFRobot_LIS2DW12::eXdown){
+     if(orient == DFRobot_LIS2DW12::eXDown){
       Serial.println("X is now down");
      }
-     if(orient == DFRobot_LIS2DW12::eXup){
+     if(orient == DFRobot_LIS2DW12::eXUp){
       Serial.println("X is now up");
      }
-     if(orient == DFRobot_LIS2DW12::eYdown){
+     if(orient == DFRobot_LIS2DW12::eYDown){
       Serial.println("Y is now down");
      }
-     if(orient == DFRobot_LIS2DW12::eYup){
+     if(orient == DFRobot_LIS2DW12::eYUp){
       Serial.println("Y is now up");
      }
-     if(orient == DFRobot_LIS2DW12::eZdown){
+     if(orient == DFRobot_LIS2DW12::eZDown){
       Serial.println("Z is now down");
      }
-     if(orient == DFRobot_LIS2DW12::eZup){
+     if(orient == DFRobot_LIS2DW12::eZUp){
       Serial.println("Z is now up");
      }
    }
