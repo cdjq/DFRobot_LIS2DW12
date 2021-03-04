@@ -152,8 +152,8 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief 选择在中断1引脚产生的中断事件
    * @param event  中断事件,当此事件产生会在中断1引脚产生电平跳变
                    eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
-                   eFfEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
-                   eWakeupEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
+                   eFFEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
+                   eWakeUpEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
                    eSingleTap = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
                    eTnt16d  = 0x80,/<6D recognition is routed to INT1 pad>/
    */
