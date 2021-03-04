@@ -1,6 +1,6 @@
 /**！
  * @file activityDetect.ino
- * @brief Motion detection,可以检测到模块是否在移动
+ * @brief Motion detection,可以检测到模块是否在移动，
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -21,7 +21,6 @@
  * @param addr  I2C address(0x18/0x19)
  */
 DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
-
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
@@ -62,7 +61,7 @@ void setup(void){
   /**！
     Filter settings:
     eLpfOnOut(Low pass filter)
-    eHighPassOnOut(High pass filter)
+    eHpfOnOut(High pass filter)
   */
   acce.setFilterPath(DFRobot_LIS2DW12::eLpfOnOut);
   
@@ -75,18 +74,16 @@ void setup(void){
   */
   acce.setFilterBandwidth(DFRobot_LIS2DW12::eOdrDiv_4);
   
-  //Interrupt setting, open when using interrupt
-  //attachInterrupt(0,interEvent, CHANGE);
-  
-  /**!
-     Set the wake-up duration
-     @n 1 LSB = 1 * 1/ODR (measurement frequency)
-     |                                       参数与时间之间的线性关系                                         |
+  /**
+   * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
+   * @param dur LSB(0 ~ 31)
+   * @n time = dur * (1/ODR)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                         |
      |--------------------------------------------------------------------------------------------------------|
-     |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-     |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
+     |                |                 |                      |                      |                       |
+     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
      |--------------------------------------------------------------------------------------------------------|
-     |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
+     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
      |--------------------------------------------------------------------------------------------------------|
    */
   acce.setWakeupDur(/*duration = */2);

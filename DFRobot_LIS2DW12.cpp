@@ -17,7 +17,6 @@ DFRobot_LIS2DW12::DFRobot_LIS2DW12(){
 bool DFRobot_LIS2DW12::begin(void){
   uint8_t identifier = 0;
   readReg(REG_CARD_ID,&identifier,1);
-  Serial.println(identifier);
   if(identifier == 0x44){
     return true;
   } else {
@@ -51,10 +50,10 @@ void DFRobot_LIS2DW12::continRefresh(bool enable){
   writeReg(REG_CTRL_REG2,&value,1);
 }
 
-void DFRobot_LIS2DW12::setFilterPath(eFds_t fds){
+void DFRobot_LIS2DW12::setFilterPath(eFds_t path){
   uint8_t value;
   readReg(REG_CTRL_REG6,&value, 1);
-  uint8_t enable = (fds & 0x10U )?1 : 0;
+  uint8_t enable = (path & 0x10U )?1 : 0;
   value = value &(~(3<<2));
   value = value | enable << 3;
   DBG(value);
@@ -62,7 +61,7 @@ void DFRobot_LIS2DW12::setFilterPath(eFds_t fds){
   
   readReg(REG_CTRL_REG7,&value,1);
 
-  enable = (fds & 0x01U )?1 : 0;
+  enable = (path & 0x01U )?1 : 0;
   value = value &(~(1<<4));
   value = value | enable << 4;
   DBG(value);
@@ -99,17 +98,17 @@ void DFRobot_LIS2DW12::setPowerMode(ePowerMode_t mode){
   return ;
 
 }
-void DFRobot_LIS2DW12::setDataRate(eOdr_t odr){
+void DFRobot_LIS2DW12::setDataRate(eFreq_t freq){
 
   uint8_t value;
   readReg(REG_CTRL_REG1,&value, 1);
   value = value &(~(0xf<<4));
-  value = value | odr<<4; 
+  value = value | freq<<4; 
   DBG(value);
   writeReg(REG_CTRL_REG1,&value, 1);
 
   readReg(REG_CTRL_REG3,&value,1);
-  uint8_t enable = (odr&0x30) >> 4;
+  uint8_t enable = (freq&0x30) >> 4;
   value = value & (~3);
   value = value | enable;
   DBG(value);
@@ -149,7 +148,7 @@ void DFRobot_LIS2DW12::setRange(eRange_t range){
   
 }
 
-void DFRobot_LIS2DW12::setFrDur(uint8_t dur){
+void DFRobot_LIS2DW12::setFreeFallDur(uint8_t dur){
   uint8_t value1 = 0;
   uint8_t value2 = 0;
   readReg(REG_WAKE_UP_DUR,&value1,1);
@@ -199,7 +198,7 @@ void DFRobot_LIS2DW12::setPinInt1Route(eInt1Event_t event){
 
 
 }
-void DFRobot_LIS2DW12::setWakeupDur(uint8_t dur){
+void DFRobot_LIS2DW12::setWakeUpDur(uint8_t dur){
 
   uint8_t value;
   
@@ -232,10 +231,10 @@ void DFRobot_LIS2DW12::setActMode(eSleepOn_t mode)
 
   readReg(REG_WAKE_UP_THS,&value1, 1);
   readReg(REG_WAKE_UP_DUR,&value2, 1);
-  value1 = value1 & (~0x01);
-  value2 = value2 & (~0x02);
+  value1 = value1 & (~(1<<6));
+  value2 = value2 & (~(1<<4));
   value1 = value1 | (mode & 0x01);
-  value2 = value2 | (mode & 0x02);
+  value2 = value2 | ((mode & 0x02)>>1);
   DBG(value1);
   DBG(value2);
   writeReg(REG_WAKE_UP_THS,&value1, 1);
@@ -244,7 +243,7 @@ void DFRobot_LIS2DW12::setActMode(eSleepOn_t mode)
 }
 
 
-void DFRobot_LIS2DW12::setWakeupThreshold(float th){
+void DFRobot_LIS2DW12::setWakeUpThreshold(float th){
   uint8_t value;
   uint8_t th1 = (th/_range1) * 64;
   DBG(th1);
@@ -298,7 +297,7 @@ void DFRobot_LIS2DW12::enableTapDetectionOnX(bool enable){
 
 }
 
-void DFRobot_LIS2DW12::setTapThresholdOnX(float th)
+void DFRobot_LIS2DW12::setTapThresholdOnX(int32_t th)
 {
   uint8_t value;
   uint8_t th1 = (th/_range1) * 32;
@@ -310,7 +309,7 @@ void DFRobot_LIS2DW12::setTapThresholdOnX(float th)
   writeReg(REG_TAP_THS_X,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnY(float th)
+void DFRobot_LIS2DW12::setTapThresholdOnY(int32_t th)
 {
   uint8_t value;
   uint8_t th1 = (th/_range1) * 32;
@@ -321,7 +320,7 @@ void DFRobot_LIS2DW12::setTapThresholdOnY(float th)
   writeReg(REG_TAP_THS_Y,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnZ(float th)
+void DFRobot_LIS2DW12::setTapThresholdOnZ(int32_t th)
 {
   uint8_t value;
   uint8_t th1 = (th/_range1) * 32;
@@ -433,13 +432,13 @@ void DFRobot_LIS2DW12::set6dFeedData(uint8_t data)
   return;
 }
 
-float DFRobot_LIS2DW12::readAccX(){
+int32_t DFRobot_LIS2DW12::readAccX(){
   uint8_t sensorData[2];
   readReg(REG_OUT_X_L,sensorData,2);
   int16_t a = ((int16_t)sensorData[1])*256+(int16_t)sensorData[0];
   return a*_range;
 }
-float DFRobot_LIS2DW12::readAccY(){
+int32_t DFRobot_LIS2DW12::readAccY(){
 
   uint8_t sensorData[2];
   readReg(REG_OUT_Y_L,sensorData,2);
@@ -448,7 +447,7 @@ float DFRobot_LIS2DW12::readAccY(){
   
 }
 
-float DFRobot_LIS2DW12::readAccZ(){
+int32_t DFRobot_LIS2DW12::readAccZ(){
   uint8_t sensorData[2];
   readReg(REG_OUT_Z_L,sensorData,2);
   int16_t a = ((int16_t)sensorData[1])*256+(int16_t)sensorData[0];
@@ -539,7 +538,7 @@ DFRobot_LIS2DW12::eTapDir_t DFRobot_LIS2DW12::getTapDirection()
   }
   return eDirNone;
 }
-DFRobot_LIS2DW12::eWakeupDir_t DFRobot_LIS2DW12::getWakeupDir()
+DFRobot_LIS2DW12::eWakeupDir_t DFRobot_LIS2DW12::getWakeUpDir()
 {
   uint8_t value;
   readReg(REG_WAKE_UP_SRC,&value,1);

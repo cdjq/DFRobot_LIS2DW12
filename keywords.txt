@@ -24,7 +24,7 @@ setFilterBandwidth	KEYWORD2
 setPowerMode	KEYWORD2
 setDataRate	KEYWORD2
 getDataReadyFlag	KEYWORD2
-setFrDur	KEYWORD2
+setFreeFillDur	KEYWORD2
 setPinInt1Route	KEYWORD2
 setFfThreshold	KEYWORD2
 setPinInt2Route	KEYWORD2
@@ -32,7 +32,7 @@ latchInterrupt	KEYWORD2
 getAllSources	KEYWORD2
 setWakeupDur	KEYWORD2
 setActSleepDur	KEYWORD2
-setWakeupThreshold	KEYWORD2
+setWakeUpThreshold	KEYWORD2
 setActMode	KEYWORD2
 setRange	KEYWORD2
 enableTapDetectionOnZ	KEYWORD2
@@ -53,7 +53,7 @@ ia6dDetect	KEYWORD2
 getOrient	KEYWORD2
 tapDetect	KEYWORD2
 getTapDirection	KEYWORD2
-getWakeupDir	KEYWORD2
+getWakeUpDir	KEYWORD2
 
 
 

@@ -20,18 +20,10 @@ CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
 LIS2DW12       |      √       |              |             
 IIS2DLPC      |      √       |              |              
-
-![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg1.png)
-![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg2.png)
-![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg3.png)
-![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS/raw/master/resources/images/SEN0245svg4.png)
-
-## 产品链接（链接到英文商城）
-    SKU：产品名称
-    SKU：产品名称
-    SKU：产品名称
-    SKU：产品名称
-    
+![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg1.png)
+![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg2.png)
+![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg3.png)
+![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg4.png)
 ## DFRobot_LIS2DW12 Library for Arduino
 ---------------------------------------------------------
 
@@ -59,7 +51,6 @@ To use this library, first download the library file, paste it into the \Arduino
 ## Methods
 
 ```C++
-
   DFRobot_LIS2DW12();
   
   /**
@@ -80,18 +71,18 @@ To use this library, first download the library file, paste it into the \Arduino
   void softReset();
   
   /**
-   * @brief Choose whether to continuously let the chip collect data
+   * @brief 使芯片持续采集数据
    * @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
    */
   void continRefresh(bool enable);
   
   /**
    * @brief Set the filter processing mode
-   * @param fds  Three modes of filtering
-                 eLpfOnOut        = 0x00,/< low-pass filter path selected>/
-                 eHighPassOnOut   = 0x10,/<high-pass filter path selected>/
+   * @param path path of filtering
+                 eLpfOnOut   = 0x00,/< low-pass filter path selected>/
+                 eHpfOnOut   = 0x10,/<high-pass filter path selected>/
    */
-  void setFilterPath(eFds_t fds);
+  void setFilterPath(eFds_t path);
 
   /**
    * @brief Set the  bandwidth of the data
@@ -104,7 +95,7 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief Set power mode
-   * @param mode: 16 power modes to choose from
+   * @param mode  16 power modes to choose from
                  eHighPerformance                   = 0x04, /<High-Performance Mode>/
                  eContLowPwr_4                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
                  eContLowPwr_3                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
@@ -128,7 +119,7 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief Chip data collection rate setting
-   * @param mode  0-1600hz selection
+   * @param freq  0-1600hz selection
                   eOdr_0hz            <测量关闭>
                   eOdr_1hz6_lp_only   <1.6hz>
                   eOdr_12hz5          <12.5hz>
@@ -140,25 +131,25 @@ To use this library, first download the library file, paste it into the \Arduino
                   eOdr_800hz       
                   eOdr_1k6hz       
    */
-  void setDataRate(eOdr_t odr);
+  void setDataRate(eFreq_t freq);
   
   /**
    * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
-   * @param dur LSB(0 ~ 31)
+   * @param dur (0 ~ 31)
    * @n time = dur * (1/ODR)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                         |
-     |--------------------------------------------------------------------------------------------------------|
-     |                |                 |                      |                      |                       |
-     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-     |--------------------------------------------------------------------------------------------------------|
-     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-     |--------------------------------------------------------------------------------------------------------|
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
    */
-  void setFrDur(uint8_t dur);
+  void setFreeFallDur(uint8_t dur);
   
   /**
-   * @brief Select the signal that need to route on int1 pad.
-   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
+   * @brief 选择在中断1引脚产生的中断事件
+   * @param event  中断事件,当此事件产生会在中断1引脚产生电平跳变
                    eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
                    eFfEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
                    eWakeupEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
@@ -168,8 +159,8 @@ To use this library, first download the library file, paste it into the \Arduino
   void setPinInt1Route(eInt1Event_t event);
   
   /**
-   * @brief Select the signal that need to route on int2 pad
-   * @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
+   * @brief 选择在中断2引脚产生的中断事件
+   * @param event 中断事件,当此事件产生会在中断2引脚产生电平跳变
                    eBoot = 0x20,/< Boot state routed to INT2 pad.>/
                    eSleepChange = 0x40,/<Enable routing of SLEEP_STATE on INT2 pad>/
                    eSleepState  = 0x80,/<Sleep change status routed to INT2 pad>/
@@ -186,35 +177,36 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief Set the wake-up duration
-   * @param dur LSB(0 ~ 3)
+   * @param dur (0 ~ 3)
      @n time = dur * (1/ODR)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                         |
-     |--------------------------------------------------------------------------------------------------------|
-     |                |                 |                      |                      |                       |
-     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-     |--------------------------------------------------------------------------------------------------------|
-     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-     |--------------------------------------------------------------------------------------------------------|
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
    */
-  void setWakeupDur(uint8_t dur);
+  void setWakeUpDur(uint8_t dur);
 
   /**
    * @brief Set the wake-up Threshold
    * @param th:unit(g),数值是在量程之内
    */
-  void setWakeupThreshold(float th);
+  void setWakeUpThreshold(float th);
   
   /**
    * @brief Sets the mode of motion detection
-   * @param th:    eNoDetection 
-                   eDetectActInact  
-                   eDetectStatMotion
+   * @param mode 运动检测模式
+                eNoDetection        = 0,/<No detection>/
+                eDetectActInact     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
+                eDetectStatMotion   = 3,/<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either ODR or operating mode>/
    */
   void setActMode(eSleepOn_t mode);
   
   /**
    * @brief Set the range
-   * @param range: e2_g     = 2, /<±2g>/
+   * @param range  e2_g     = 2, /<±2g>/
                    e4_g     = 4, /<±4g>/
                    e8_g     = 8, /<±8g>/
                    e16_g    = 16, /< ±16g>/
@@ -223,7 +215,7 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief enable detect click events in the Z direction
-   * @param enable:ture(使能点击检测)\false(禁用点击检测)
+   * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnZ(bool enable);
   
@@ -235,54 +227,54 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief enable detect click events in the X direction
-   * @param enable:ture(使能点击检测)\false(禁用点击检测)
+   * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnX(bool enable);
 
   /**
    * @brief Set the click threshold in the X direction
-   * @param th:Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnX(float th);
+  void setTapThresholdOnX(int32_t th);
   
   /**
    * @brief Set the click threshold in the Y direction
-   * @param th:Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnY(float th);
+  void setTapThresholdOnY(int32_t th);
 
   /**
    * @brief Set the click threshold in the Z direction
-   * @param th:Threshold(g),Can only be used in the range of ±2g
+   * @param th Threshold(g),Can only be used in the range of ±2g
    */
-  void setTapThresholdOnZ(float th);
+  void setTapThresholdOnZ(int32_t th);
   
   /**
    * @brief Duration of maximum time gap for double-tap recognition. When double-tap 
    * @n recognition is enabled, this register expresses the maximum time between two 
    * @n successive detected taps to determine a double-tap event.
-   * @param dur LSB(0 ~ 15)
+   * @param dur (0 ~ 15)
    * @n time = dur * (1/ODR)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                         |
-     |--------------------------------------------------------------------------------------------------------|
-     |                |                 |                      |                      |                       |
-     |   frequen      |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-     |--------------------------------------------------------------------------------------------------------|
-     |   time         |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= n*2.5ms |  n*(1s/800)= n*1.25ms |
-     |--------------------------------------------------------------------------------------------------------|
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
    */
   void setTapDur(uint8_t dur);
   
   /**
    * @brief Set the click detection mode
    * @param mode     eOnlySingle   //检测单击
-                      eBothSingleDouble //检测单击和双击
+                     eBothSingleDouble //检测单击和双击
    */
   void setTapMode(sTapMode_t mode);
 
   /**
    * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-   * @param degree:  eDegrees80   80°
+   * @param degree   eDegrees80   80°
                      eDegrees70   70°
                      eDegrees60   60°
                      eDegrees50   50°
@@ -293,19 +285,19 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief Read the acceleration in the x direction
    * @return  Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  float readAccX();
+  int32_t readAccX();
   
   /**
    * @brief Read the acceleration in the y direction
    * @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  float readAccY();
+  int32_t readAccY();
   
   /**
    * @brief Read the acceleration in the z direction
    * @return  Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  float readAccZ();
+  int32_t readAccZ();
   
   /**
    * @brief 检测是否有运动产生
@@ -362,7 +354,7 @@ To use this library, first download the library file, paste it into the \Arduino
                eDirZ = 2,/<Z方向的运动唤醒芯片>/
                eDirError,
    */
-  eWakeupDir_t getWakeupDir();
+  eWakeupDir_t getWakeUpDir();
 
 ```
 
@@ -370,19 +362,19 @@ To use this library, first download the library file, paste it into the \Arduino
 
 MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 ------------------ | :----------: | :----------: | :---------: | -----
-Arduino uno        |      √       |              |             | 
+Arduino Uno        |      √       |              |             | 
 FireBeetle-ESP8266        |      √       |              |             | 
 FireBeetle-ESP32        |      √       |              |             | 
 Arduino MEGA2560        |      √       |              |             | 
 Arduino Leonardo|      √       |              |             | 
-microbit        |      √       |              |             | 
+Micro:bit        |      √       |              |             | 
 FireBeetle-M0        |      √       |              |             | 
-raspberry pi 3      |      √       |              |             | 
+Raspberry Pi       |      √       |              |             | 
 
 
 ## History
 
-- data 2020-12-31
+- data 2021-3-4
 - version V1.0
 
 

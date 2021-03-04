@@ -1,6 +1,6 @@
 /**！
  * @file freeFall.ino
- * @brief Sensor module free fall detection
+ * @brief Sensor module free fall detection,通过setFrDur()函数设置自由落体时间,调节检测的灵敏度,自由落体时间越短,自由落体时间越容易发生
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
