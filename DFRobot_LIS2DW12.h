@@ -136,7 +136,7 @@ typedef enum {
   eOdr_400hz          = 0x07,
   eOdr_800hz          = 0x08,
   eOdr_1k6hz          = 0x09,
-} eFreq_t;
+} eRate_t;
 
 /**
   Free fall threshold@ ±2 g FS
@@ -168,8 +168,8 @@ does not change either ODR or operating mode>*/
 */
 typedef enum{
   eDoubleTap   = 0x08,/**< Double-tap recognition is routed to INT1 pad>*/
-  eFfEvent     = 0x10,/**< Free-fall recognition is routed to INT1 pad>*/
-  eWakeupEvent = 0x20,/**<Wakeup recognition is routed to INT1 pad>*/
+  eFFEvent     = 0x10,/**< Free-fall recognition is routed to INT1 pad>*/
+  eWakeUpEvent = 0x20,/**<Wakeup recognition is routed to INT1 pad>*/
   eSingleTap   = 0x40,/**<Single-tap recognition is routed to INT1 pad.>*/
   eTnt16d      = 0x80,/**<6D recognition is routed to INT1 pad>*/
 }eInt1Event_t;
@@ -313,7 +313,7 @@ public:
   
   /**
    * @brief Chip data collection rate setting
-   * @param freq  0-1600hz selection
+   * @param rate  0-1600hz selection
                   eOdr_0hz            <测量关闭>
                   eOdr_1hz6_lp_only   <1.6hz>
                   eOdr_12hz5          <12.5hz>
@@ -325,7 +325,7 @@ public:
                   eOdr_800hz       
                   eOdr_1k6hz       
    */
-  void setDataRate(eFreq_t freq);
+  void setDataRate(eRate_t rate);
   
   /**
    * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
@@ -345,8 +345,8 @@ public:
    * @brief 选择在中断1引脚产生的中断事件
    * @param event  中断事件,当此事件产生会在中断1引脚产生电平跳变
                    eDoubleTap = 0x08,/< Double-tap recognition is routed to INT1 pad>/
-                   eFfEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
-                   eWakeupEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
+                   eFFEvent = 0x10,/< Free-fall recognition is routed to INT1 pad>/
+                   eWakeUpEvent = 0x20,/<Wakeup recognition is routed to INT1 pad>/
                    eSingleTap = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
                    eTnt16d  = 0x80,/<6D recognition is routed to INT1 pad>/
    */
