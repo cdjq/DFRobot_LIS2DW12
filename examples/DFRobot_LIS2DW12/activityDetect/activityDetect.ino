@@ -82,7 +82,7 @@ void setup(void){
   
   //Set wakeup threshold,unit:mg
   //数值是在量程之内
-  acce.setWakeUpThreshold(/*threshold = */200);
+  acce.setWakeUpThreshold(/*threshold = */0.2);
   
   /**！
    Set power mode:
@@ -123,7 +123,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::eWakeUp);
+  acce.setInt1Event(DFRobot_LIS2DW12::eWakeUp);
   
   /**！
     Set the sensor data collection rate:

@@ -16,9 +16,10 @@ import time
 import smbus
 import spidev
 import numpy as np
-import RPi.GPIO as RPIGPIO
-I2C_MODE                  = 0x01
-SPI_MODE                  = 0x02
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 class DFRobot_LIS2DW12(object):
   REG_CARD_ID      = 0x0F     #The chip id
@@ -49,31 +50,30 @@ class DFRobot_LIS2DW12(object):
   REG_TAP_THS_Z  =  0x32      #Threshold for tap recognition @ FS = ±2 g on Z direction
   REG_INT_DUR    =  0x33      #Interrupt duration register
   REG_WAKE_UP_THS = 0x34      #Wakeup threshold register
-  
+  SPI_READ_BIT   =  0X80     # bit 0: RW bit. When 0, the data DI(7:0) is written into the device. When 1, the data DO(7:0) from the device is read.
   __range =  0.061
-  __reset = 0
   __range_d = 0
   '''
    Power mode
   '''
-  HIGH_PERFORMANCE                   = 0X04#High-Performance Mode
-  CONT_LOWPWR_4                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
-  CONT_LOWPWR_3                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
-  CONT_LOWPWR_2                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
-  CONT_LOWPWR_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
-  SING_LELOWPWR_4                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
-  SING_LELOWPWR_3                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
-  SING_LELOWPWR_2                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
-  SING_LELOWPWR_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
-  HIGHP_ERFORMANCELOW_NOISE           = 0X14#High-Performance Mode,Low-noise enabled
-  CONT_LOWPWRLOWNOISE_4              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
-  CONT_LOWPWRLOWNOISE_3              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
-  CONT_LOWPWRLOWNOISE_2              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
-  CONT_LOWPWRLOWNOISE_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
-  SINGLE_LOWPWRLOWNOISE_4            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
-  SINGLE_LOWPWRLOWNOISE_3            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
-  SINGLE_LOWPWRLOWNOISE_2            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
-  SINGLE_LOWLOWNOISEPWR_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
+  HIGH_PERFORMANCE_14BIT                   = 0X04#High-Performance Mode
+  CONT_LOWPWR4_14BIT                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
+  CONT_LOWPWR3_14BIT                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
+  CONT_LOWPWR2_14BIT                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
+  CONT_LOWPWR1_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
+  SING_LELOWPWR4_14BIT                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
+  SING_LELOWPWR3_14BIT                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
+  SING_LELOWPWR2_14BIT                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
+  SING_LELOWPWR1_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
+  HIGHP_ERFORMANCELOW_NOISE_14BIT           = 0X14#High-Performance Mode,Low-noise enabled
+  CONT_LOWPWRLOWNOISE4_14BIT              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
+  CONT_LOWPWRLOWNOISE3_14BIT              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
+  CONT_LOWPWRLOWNOISE2_14BIT              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
+  CONT_LOWPWRLOWNOISE1_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
+  SINGLE_LOWPWRLOWNOISE4_14BIT            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
+  SINGLE_LOWPWRLOWNOISE3_14BIT            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
+  SINGLE_LOWPWRLOWNOISE2_14BIT            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
+  SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
 
   '''
     Sensor range
@@ -86,50 +86,36 @@ class DFRobot_LIS2DW12(object):
   '''
     Filtering mode
   '''
-  LPF_ON_OUT         = 0x00 #Low pass filter
-  HIGH_PASS_ON_OUT    = 0x10 #High pass filter
+  LPF         = 0x00 #Low pass filter
+  HPF         = 0x10 #High pass filter
 
   '''
      bandwidth of collected data
   '''
-  ODR_DIV_2     = 0  #ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
-  ODR_DIV_4     = 1  #ODR/4 (High Power/Low power)
-  ODR_DIV_10    = 2  #ODR/10 (HP/LP)
-  ODR_DIV_20    = 3  # ODR/20 (HP/LP)
+  RATE_DIV_2     = 0  #ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
+  RATE_DIV_4     = 1  #ODR/4 (High Power/Low power)
+  RATE_DIV_10    = 2  #ODR/10 (HP/LP)
+  RATE_DIV_20    = 3  # ODR/20 (HP/LP)
 
   '''
   Data collection rate
   '''
-  ODR_OFF            = 0X00
-  ODR_1HZ6_LP_ONLY   = 0X01
-  ODR_12HZ5          = 0X02
-  ODR_25HZ           = 0X03
-  ODR_50HZ           = 0X04
-  ODR_100HZ          = 0X05
-  ODR_200HZ          = 0X06
-  ODR_400HZ          = 0X07
-  ODR_800HZ          = 0X08
-  ODR_1K6HZ          = 0X09
-  SETSWTRIG          = 0X12
-  SETPINTRIG         = 0X22
-
-  '''
-    free fall threshold@ ±2 G FS
-  '''
-  FFTSH_5LSB_FS2G  = 0  #5 LSB
-  FFTSH_7LSB_FS2G  = 1  #7 LSB
-  FFTSH_8LSB_FS2G  = 2  #8 LSB
-  FFTSH_10LSB_FS2G = 3  #10 LSB
-  FFTSH_11LSB_FS2G = 4  #11 LSB
-  FFTSH_13LSB_FS2G = 5  #13 LSB
-  FFTSH_15LSB_FS2G = 6  #15 LSB
-  FFTSH_16LSB_FS2G = 7  #16 LSB
+  RATE_OFF            = 0X00
+  RATE_1HZ6_LP_ONLY   = 0X01
+  RATE_12HZ5          = 0X02
+  RATE_25HZ           = 0X03
+  RATE_50HZ           = 0X04
+  RATE_100HZ          = 0X05
+  RATE_200HZ          = 0X06
+  RATE_400HZ          = 0X07
+  RATE_800HZ          = 0X08
+  RATE_1K6HZ          = 0X09
 
   '''
     Motion detection mode
   '''
   NO_DETECTION        = 0 #No detection
-  DETECT_ACTINACT     = 1 #Detect movement
+  DETECT_ACT          = 1 #Detect movement
   DETECT_STATMOTION   = 3 #Detect Motion
 
 
@@ -137,23 +123,22 @@ class DFRobot_LIS2DW12(object):
   Interrupt source 1 trigger event setting
   '''
   DOUBLE_TAP = 0x08   #Double-tap recognition is routed to INT1 pad
-  FF_EVENT = 0x10     #Free-fall recognition is routed to INT1 pad
-  WAKEUP_EVENT = 0x20 #Wakeup recognition is routed to INT1 pad
+  FREEFALL = 0x10     #Free-fall recognition is routed to INT1 pad
+  WAKEUP = 0x20 #Wakeup recognition is routed to INT1 pad
   SINGLE_TAP = 0x40   #Single-tap recognition is routed to INT1 pad.
-  TNT_16D  = 0x80     #6D recognition is routed to INT1 pad
+  IA6D  = 0x80     #6D recognition is routed to INT1 pad
 
   '''
   Interrupt source 2 trigger event setting
   '''
+  SLEEP_STATE  = 0x40 #Sleep change status routed to INT2 pad
+  SLEEP_CHANGE = 0x80 #Enable routing of SLEEP_STATE on INT2 pad
 
-  BOOT = 0x20         #Boot state routed to INT2 pad
-  SLEEP_CHANGE = 0x40 #Enable routing of SLEEP_STATE on INT2 pad
-  SLEEP_STATE  = 0x80 #Sleep change status routed to INT2 pad
   
   '''
   Click or double click
   '''
-  SINGLE_CLICK  = 0  #Click
+  SINGLE_CLICK  = 0  #single Click
   DOUBLE_CLICK  = 1  #double click
   NO_CLICK      = 2  #no click
   
@@ -194,21 +179,20 @@ class DFRobot_LIS2DW12(object):
 
   def __init__(self):
     __reset = 1
-
   '''
     @brief Initialize the function
-    @return Return 0 indicates a successful initialization, while other values indicates failure and return to error code.
+    @return True(初始化成功)/Fasle(初始化失败)
   '''
   def begin(self):
     identifier = self.read_reg(self.REG_CARD_ID)
     if identifier == 0x44:
-      return 0
+      return True
     else:
-      return 1
+      return False
       
   '''
     @brief Get chip id
-    @return Returns the eight-digit serial number
+    @return 8 bit serial number
   '''
   def get_id(self):
     identifier = self.read_reg(self.REG_CARD_ID)
@@ -217,7 +201,6 @@ class DFRobot_LIS2DW12(object):
     @brief Software reset to restore the value of all registers to the default value
   '''
   def soft_reset(self):
-    reg = 0
     reg = self.read_reg(self.REG_CTRL_REG2)
     reg = reg | (1<<6)
     #print(reg)
@@ -235,28 +218,23 @@ class DFRobot_LIS2DW12(object):
   def set_range(self,range_r):
     reg = self.read_reg(self.REG_CTRL_REG6)
     self.__range_d = range_r
+    reg = reg & (~(3<<4))
     if range_r == self.RANGE_2G:
-      #print("2g")
-      reg = reg & (~(3<<4))
-      reg = reg | 0
       self.__range = 0.061
     elif range_r == self.RANGE_4G:
       self._range = 0.122
-      reg = reg &(~(3<<4))
       reg = reg | (1<<4)
     elif range_r == self.RANGE_8G:
       self._range = 0.244
-      reg = reg &(~(3<<4))
       reg = reg | (2<<4)
     elif range_r == self.RANGE_16G:
       self._range = 0.488
-      reg = reg &(~(3<<4))
       reg = reg | (3<<4)
     self.write_reg(self.REG_CTRL_REG6,reg)
     
   '''
     @brief Choose whether to continuously let the chip collect data
-    @param enable  True(持续采集数据)/False(单次采集数据)
+    @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
   '''
   def contin_refresh(self,enable):
     reg = self.read_reg(self.REG_CTRL_REG2)
@@ -268,13 +246,13 @@ class DFRobot_LIS2DW12(object):
   
   '''
     @brief Set the filter processing mode
-    @param fds  Three modes of filtering
-                LPF_ON_OUT        = 0x00  Low pass filter
-                HIGH_PASS_ON_OUT   = 0x10 High pass filter
+    @param path  Three modes of filtering
+                LPF        = 0x00  Low pass filter
+                HPF        = 0x10 High pass filter
   '''
-  def set_filter_path(self,fds):
+  def set_filter_path(self,path):
     reg = self.read_reg(self.REG_CTRL_REG6)
-    enable = fds & 0x10
+    enable = path & 0x10
     if(enable > 0):
        enable = 1
     reg = reg & (~(3<<2))
@@ -282,7 +260,7 @@ class DFRobot_LIS2DW12(object):
     #print(reg)
     self.write_reg(self.REG_CTRL_REG6,reg)
     reg = self.read_reg(self.REG_CTRL_REG7)
-    enable = (fds & 0x10)
+    enable = (path & 0x10)
     if(enable > 0):
       enable = 1
     reg = reg &(~(1<<4))
@@ -292,10 +270,10 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Set the  bandwidth of the data
-    @param bw   ODR_DIV_2     = 0  ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)
-                ODR_DIV_4     = 1  ODR/4 (High Power/Low power)
-                ODR_DIV_10    = 2  ODR/10 (HP/LP)
-                ODR_DIV_20    = 3  ODR/20 (HP/LP)
+    @param bw   RATE_DIV_2     = 0  ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)
+                RATE_DIV_4     = 1  ODR/4 (High Power/Low power)
+                RATE_DIV_10    = 2  ODR/10 (HP/LP)
+                RATE_DIV_20    = 3  ODR/20 (HP/LP)
   '''
   def set_filter_bandwidth(self,bw):
     reg = self.read_reg(self.REG_CTRL_REG6)
@@ -307,24 +285,24 @@ class DFRobot_LIS2DW12(object):
   '''
     @brief Set power mode
     @param mode 16 power modes to choose from
-                   HIGH_PERFORMANCE                   = 0X04 #High-Performance Mode
-                   CONT_LOWPWR_4                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
-                   CONT_LOWPWR_3                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
-                   CONT_LOWPWR_2                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
-                   CONT_LOWPWR_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
-                   SING_LELOWPWR_4                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
-                   SING_LELOWPWR_3                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
-                   SING_LELOWPWR_2                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
-                   SING_LELOWPWR_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
-                   HIGHP_ERFORMANCELOW_NOISE           = 0X14#High-Performance Mode,Low-noise enabled
-                   CONT_LOWPWRLOWNOISE_4              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
-                   CONT_LOWPWRLOWNOISE_3              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
-                   CONT_LOWPWRLOWNOISE_2              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
-                   CONT_LOWPWRLOWNOISE_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
-                   SINGLE_LOWPWRLOWNOISE_4            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
-                   SINGLE_LOWPWRLOWNOISE_3            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
-                   SINGLE_LOWPWRLOWNOISE_2            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
-                   SINGLE_LOWLOWNOISEPWR_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
+               HIGH_PERFORMANCE_14BIT                   = 0X04#High-Performance Mode
+               CONT_LOWPWR4_14BIT                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
+               CONT_LOWPWR3_14BIT                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
+               CONT_LOWPWR2_14BIT                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
+               CONT_LOWPWR1_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
+               SING_LELOWPWR4_14BIT                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
+               SING_LELOWPWR3_14BIT                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
+               SING_LELOWPWR2_14BIT                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
+               SING_LELOWPWR1_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
+               HIGHP_ERFORMANCELOW_NOISE_14BIT           = 0X14#High-Performance Mode,Low-noise enabled
+               CONT_LOWPWRLOWNOISE4_14BIT              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE3_14BIT              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE2_14BIT              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE1_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
+               SINGLE_LOWPWRLOWNOISE4_14BIT            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
+               SINGLE_LOWPWRLOWNOISE3_14BIT            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
+               SINGLE_LOWPWRLOWNOISE2_14BIT            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
+               SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
   def set_power_mode(self,mode):
     reg = self.read_reg(self.REG_CTRL_REG1)
@@ -342,29 +320,27 @@ class DFRobot_LIS2DW12(object):
     
   '''
     @brief Set data measurement rate
-    @param range rate(g)
-                 ODR_OFF            = 0X00
-                 ODR_1HZ6_LP_ONLY   = 0X01
-                 ODR_12HZ5          = 0X02
-                 ODR_25HZ           = 0X03
-                 ODR_50HZ           = 0X04
-                 ODR_100HZ          = 0X05
-                 ODR_200HZ          = 0X06
-                 ODR_400HZ          = 0X07
-                 ODR_800HZ          = 0X08
-                 ODR_1K6HZ          = 0X09
-                 SETSWTRIG          = 0X12
-                 SETPINTRIG         = 0X22
+    @param rate rate(g)
+                 RATE_OFF          #测量关闭
+                 RATE_1HZ6_LP_ONLY #1.6hz
+                 RATE_12HZ5        #12.5hz
+                 RATE_25HZ         
+                 RATE_50HZ         
+                 RATE_100HZ        
+                 RATE_200HZ        
+                 RATE_400HZ        
+                 RATE_800HZ          
+                 RATE_1K6HZ          
   '''
-  def set_data_rate(self, odr):
+  def set_data_rate(self, rate):
     reg = self.read_reg(self.REG_CTRL_REG1)
     reg = reg & (~(0xf << 4))
-    reg = reg | (odr << 4)
+    reg = reg | (rate << 4)
     #print("set_data_rate")
     #print(reg)
     self.write_reg(self.REG_CTRL_REG1,reg)
     reg = self.read_reg(self.REG_CTRL_REG3)
-    enable = (odr&0x30) >> 4
+    enable = (rate&0x30) >> 4
     
     reg = reg & (~3)
     reg = reg | enable
@@ -372,19 +348,18 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_CTRL_REG3,reg)
     
   '''
-    @brief 自由落体时间
-    @param dur  Free fall duration (0~31), the larger the value, the longer the free fall time is needed to be detected
-    @n 1 LSB = 1 * 1/ODR (measurement frequency)
-    @n example
-    |                           High-pass filter cut-off frequency configuration                             |
-    |--------------------------------------------------------------------------------------------------------|
-    |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-    |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-    |--------------------------------------------------------------------------------------------------------|
-    |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
-    |--------------------------------------------------------------------------------------------------------|
+     @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
+     @param dur duration(0 ~ 3)
+     @n time = dur * (1/rate)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
   '''
-  def set_ff_Dur(self,dur):
+  def set_free_fall_Dur(self,dur):
     reg1 = self.read_reg(self.REG_WAKE_UP_DUR)
     reg2 = self.read_reg(self.REG_FREE_FALL)
     
@@ -395,12 +370,13 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_WAKE_UP_DUR,reg1)
     #print(reg2)
     self.write_reg(self.REG_FREE_FALL,reg2)
-    self.set_ff_threshold(self.FFTSH_10LSB_FS2G)
+    self.__set_ff_threshold(3)
+    
   '''
     @brief Set Free-fall threshold
     @param th threshold
   '''
-  def set_ff_threshold(self,th):
+  def __set_ff_threshold(self,th):
     reg = self.read_reg(self.REG_FREE_FALL)
     reg = reg & (~0x07)
     reg = reg | (th & 0x07)
@@ -410,14 +386,14 @@ class DFRobot_LIS2DW12(object):
   '''
     @brief Set the interrupt source of the int1 pin
     @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
-                DOUBLE_TAP = 0x08 #Double-tap recognition is routed to INT1 pad
-                FF_EVENT = 0x10 #Free-fall recognition is routed to INT1 pad
-                WAKEUP_EVENT = 0x20 #Wakeup recognition is routed to INT1 pad
-                SINGLE_TAP = 0x40  #Single-tap recognition is routed to INT1 pad.
-                TNT_16D  = 0x80  #6D recognition is routed to INT1 pad
+              DOUBLE_TAP = 0x08   #Double-tap recognition is routed to INT1 pad
+              FREEFALL = 0x10     #Free-fall recognition is routed to INT1 pad
+              WAKEUP = 0x20 #Wakeup recognition is routed to INT1 pad
+              SINGLE_TAP = 0x40   #Single-tap recognition is routed to INT1 pad.
+              IA6D  = 0x80     #6D recognition is routed to INT1 pad
     
   '''
-  def set_int1_route(self,event):
+  def set_int1_event(self,event):
     reg1 = self.read_reg(self.REG_CTRL_REG4)
     reg2 = self.read_reg(self.REG_CTRL_REG5)
     reg3 = self.read_reg(self.REG_CTRL_REG7)
@@ -428,52 +404,37 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_CTRL_REG7,reg3)
     
   '''
-    @brief Set the wake-up duration
-    @param dur Wakeup duration (0~3)
-    @n 1 LSB = 1 * 1/ODR (measurement frequency)
-    @n example
-    |                           High-pass filter cut-off frequency configuration                             |
-    |--------------------------------------------------------------------------------------------------------|
-    |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-    |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-    |--------------------------------------------------------------------------------------------------------|
-    |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
-    |--------------------------------------------------------------------------------------------------------|
+     @brief Set the wake-up duration
+     @param dur duration(0 ~ 3)
+     @n time = dur * (1/rate)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                                        |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_wakeup_dur(self,dur):
-    
     reg = self.read_reg(self.REG_WAKE_UP_DUR)
     reg = reg & (~0x60)
     reg = reg | ((dur << 5) & 0x60)
-    
-    #print(reg)
-    self.write_reg(self.REG_WAKE_UP_DUR,reg)
-  '''
-    @brief Set duration to go in sleep mode.
-    @param dur  duration
-  '''
-  def set_act_sleep_dur(self,dur):
-    reg = self.read_reg(self.REG_WAKE_UP_DUR)
-    
-    dur = dur & 0x0f
-    reg = reg & (~0x0f)
-    reg = reg | dur
     #print(reg)
     self.write_reg(self.REG_WAKE_UP_DUR,reg)
 
   '''
     @brief Sets the mode of motion detection
-    @param th:     NO_DETECTION        = 0 #No detection
-                   DETECT_ACTINACT     = 1 #Detect movement
+    @param mode:   NO_DETECTION        = 0 #No detection
+                   DETECT_ACT          = 1 #Detect movement
                    DETECT_STATMOTION   = 3 #Detect Motion
   '''
   def set_act_mode(self,mode):
     reg1 = self.read_reg(self.REG_WAKE_UP_THS)
     reg2 = self.read_reg(self.REG_WAKE_UP_DUR)
-    reg1 = reg1 & (~0x01)
-    reg2 = reg2 & (~0x02)
-    reg1 = reg1 | (mode & 0x01)
-    reg2 = reg2 | (mode & 0x02)
+    reg1 = reg1 & (~(1<<6))
+    reg2 = reg2 & (~(1<<4))
+    reg1 = reg1 | (mode & 0x01)<<6
+    reg2 = reg2 | ((mode & 0x02)>>1)<<4
     #print(reg1)
     #print(reg2)
     self.write_reg(self.REG_WAKE_UP_THS,reg1)
@@ -487,16 +448,16 @@ class DFRobot_LIS2DW12(object):
     th1 = (float(th)/self.__range_d) * 64
     reg = self.read_reg(self.REG_WAKE_UP_THS)
     reg = reg &(~0x3f)
-    #print(int(th1))
     reg = reg | (int(th1) & 0x3f)
     #print(reg)
     self.write_reg(self.REG_WAKE_UP_THS,reg)
+    
   '''
-    @brief Latch interrupt
+    @brief lock interrupt
     @param enable  Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
      function source signals and interrupts routed to pins (wakeup, single/double-tap).
   '''
-  def latch_interrupt(self,enable):
+  def lock_interrupt(self,enable):
     reg = self.read_reg(self.REG_CTRL_REG3)
     reg = reg & (~0x10)
     reg = reg | (enable << 4)
@@ -579,17 +540,18 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_Z,reg)
     
   '''
-    @brief 双击的两次点击之间的间隔时间
-    @param th 1 LSB = 32 * 1/ODR(0~15)
-    @n ODR:Data acquisition frequency
-    @n example
-    |                           High-pass filter cut-off frequency configuration                             |
-    |--------------------------------------------------------------------------------------------------------|
-    |                |    ft [Hz]      |        ft [Hz]       |       ft [Hz]        |        ft [Hz]        |
-    |   dur          |Data rate = 25 Hz|   Data rate = 100 Hz |  Data rate = 400 Hz  |   Data rate = 800 Hz  |
-    |--------------------------------------------------------------------------------------------------------|
-    |  n             |n*(1s/25)= n*40ms|  n*(1s/100)= n*10ms  |  n*(1s/400)= 2.5*nms |  n*(1s/800)= n*1.25ms |
-    |--------------------------------------------------------------------------------------------------------|
+   @brief Duration of maximum time gap for double-tap recognition. When double-tap 
+   @n recognition is enabled, this register expresses the maximum time between two 
+   @n successive detected taps to determine a double-tap event.
+   @param dur duration(0 ~ 3)
+   @n time = dur * (1/rate)(unit:s)
+   |                                  参数与时间之间的线性关系的示例                                                        |
+   |------------------------------------------------------------------------------------------------------------------------|
+   |                |                     |                          |                          |                           |
+   |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+   |------------------------------------------------------------------------------------------------------------------------|
+   |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+   |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_tap_dur(self,dur):
     reg = self.read_reg(self.REG_INT_DUR)
@@ -598,14 +560,15 @@ class DFRobot_LIS2DW12(object):
     #print("set_tap_dur")
     #print(reg)
     self.write_reg(self.REG_INT_DUR,reg)
-    self.set_tap_quiet(2);
-    self.set_tap_shock(2);
+    self.__set_tap_quiet(2);
+    self.__set_tap_shock(2);
+    
   '''
     @brief set quiet time after a tap detection: this register represents
     @n the time after the first detected tap in which there must not be any overthreshold event.
     @param quiet quiet time
   '''
-  def set_tap_quiet(self,quiet):
+  def __set_tap_quiet(self,quiet):
     reg = self.read_reg(self.REG_INT_DUR)
     reg = reg & (~0x0C)
     quiet = quiet & 0x03
@@ -618,7 +581,7 @@ class DFRobot_LIS2DW12(object):
     @brief Set the maximum time of an over-threshold signal detection to be recognized as a tap event.
     @param shock  shock time
   '''
-  def set_tap_shock(self,shock):
+  def __set_tap_shock(self,shock):
     reg = self.read_reg(self.REG_INT_DUR)
     reg = reg & (~0x03)
     shock = shock & 0x03
@@ -654,23 +617,20 @@ class DFRobot_LIS2DW12(object):
     #print("set_6d_threshold")
     #print(reg)
     self.write_reg(self.REG_TAP_THS_X,reg)
-    self.set_6d_feed_data(1)
+    self.__set_6d_feed_data(1)
     
   '''
-    @brief Set interrupt source of int2 pin
+    @brief 选择在中断2引脚产生的中断事件
     @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
-                  BOOT = 0x20 Boot state routed to INT2 pad.
                   SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
                   SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
   '''
-  def set_int2_route(self,event):
+  def set_int2_event(self,event):
     reg1 = self.read_reg(self.REG_CTRL_REG4)
     reg2 = self.read_reg(self.REG_CTRL_REG5)
     reg3 = self.read_reg(self.REG_CTRL_REG7)
-    
     reg3 = reg3 & (~0x20)
     reg3 = reg3 | 0x20
-    
     reg2 = reg2 | event
     #print(reg2)
     #print(reg3)
@@ -682,7 +642,7 @@ class DFRobot_LIS2DW12(object):
     @param data 0: ODR/2 low pass filtered data sent to 6D interrupt function (default)
                 1: LPF2 output data sent to 6D interrupt function)
   '''
-  def set_6d_feed_data(self,data):
+  def __set_6d_feed_data(self,data):
     reg = self.read_reg(self.REG_CTRL_REG7)
     reg = reg & (~1)
     reg = reg | data
@@ -690,7 +650,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_CTRL_REG7,reg)
   '''
     @brief Read the acceleration in the x direction
-    @return Acceleration data from x(mg)
+    @return Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_x(self):
     reg1 = self.read_reg(self.REG_OUT_X_L)
@@ -701,7 +661,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Read the acceleration in the y direction
-    @return  Acceleration data from y(mg)
+    @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_y(self):
     reg1 = self.read_reg(self.REG_OUT_Y_L)
@@ -712,7 +672,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Read the acceleration in the z direction
-    @return Acceleration data from z(mg)
+    @return Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_z(self):
     reg1 = self.read_reg(self.REG_OUT_Z_L)
@@ -741,11 +701,12 @@ class DFRobot_LIS2DW12(object):
     if(reg & 0x20) > 0:
       return True
     return False
+    
   '''
     @brief Source of change in position portrait/landscape/face-up/face-down.
-    @return True( no event detected)/False(a change in position is detected)
+    @return True(a change in position is detected)/False(no event detected)
   '''
-  def ia6d_detect(self):
+  def ia_6d_detect(self):
     reg = self.read_reg(self.REG_SIXD_SRC)
     if(reg & 0x40) > 0:
       return True
@@ -754,12 +715,12 @@ class DFRobot_LIS2DW12(object):
       
   '''
   @brief 获取传感器现在的位置
-  @return      X_DOWN = 0  #X is now down
-               X_UP   = 1  #X is now up
-               Y_DOWN = 2  #Y is now down
-               Y_UP   = 3  #Y is now up
-               Z_DOWN = 4  #Z is now down
-               Z_UP   = 5  #Z is now up
+  @return      X_DOWN   #X is now down
+               X_UP     #X is now up
+               Y_DOWN   #Y is now down
+               Y_UP     #Y is now up
+               Z_DOWN   #Z is now down
+               Z_UP     #Z is now up
   '''
   def get_orient(self):
    reg = self.read_reg(self.REG_SIXD_SRC)
@@ -780,7 +741,7 @@ class DFRobot_LIS2DW12(object):
      
   '''
     @brief 点击检测
-    @return   SINGLE_CLICK  = 0  #click
+    @return   SINGLE_CLICK       #single click
               DOUBLE_CLICK       #double click
               NO_CLICK,          #没有点击产生
   '''
@@ -797,12 +758,12 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief 点击方向的源头检测
-    @return     DIR_X_UP   = 0#在X 正方向发生的点击事件
-                DIR_X_DOWN = 1#在X 负方向发生的点击事件
-                DIR_Y_UP   = 2#在Y 正方向发生的点击事件
-                DIR_Y_DOWN = 3#在Y 负方向发生的点击事件
-                DIR_Z_UP   = 4#在Z 正方向发生的点击事件
-                DIR_Z_DOWN = 5#在Z 负方向发生的点击事件
+    @return     DIR_X_UP   #在X 正方向发生的点击事件
+                DIR_X_DOWN #在X 负方向发生的点击事件
+                DIR_Y_UP   #在Y 正方向发生的点击事件
+                DIR_Y_DOWN #在Y 负方向发生的点击事件
+                DIR_Z_UP   #在Z 正方向发生的点击事件
+                DIR_Z_DOWN #在Z 负方向发生的点击事件
   '''
   def get_tap_direction(self):
    reg = self.read_reg(self.REG_TAP_SRC)
@@ -823,9 +784,9 @@ class DFRobot_LIS2DW12(object):
    return 0XFF
   '''
     @brief 唤醒的运动方向检测
-    @return    DIR_X = 0#X方向的运动唤醒芯片
-               DIR_Y = 1#Y方向的运动唤醒芯片
-               DIR_Z = 2#Z方向的运动唤醒芯片
+    @return    DIR_X  #X方向的运动唤醒芯片
+               DIR_Y  #Y方向的运动唤醒芯片
+               DIR_Z  #Z方向的运动唤醒芯片
                eDirError,
   '''
   def get_wake_up_dir(self):
@@ -839,25 +800,19 @@ class DFRobot_LIS2DW12(object):
     else:
       return 0xFF
 
-'''
-  @brief An example of an i2c interface module
-'''
 class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):
     self.__addr = addr;
     super(DFRobot_IIS2DLPC_I2C, self).__init__()
     self.i2cbus = smbus.SMBus(bus)
-    RPIGPIO.setmode(RPIGPIO.BCM)
-    RPIGPIO.setwarnings(False)
+    
   '''
     @brief writes data to a register
     @param reg register address
     @param data written data
   '''
   def write_reg(self, reg, data):
-        data1 = [0]
-        data1[0] = data
-        self.i2cbus.write_i2c_block_data(self.__addr ,reg,data1)
+        self.i2cbus.write_i2c_block_data(self.__addr ,reg,[data])
         #self.i2cbus.write_byte(self.__addr ,reg)
         #self.i2cbus.write_byte(self.__addr ,data)
   '''
@@ -875,11 +830,9 @@ class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12):
 class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12): 
   def __init__(self ,cs, bus = 0, dev = 0,speed = 100000):
     super(DFRobot_IIS2DLPC_SPI, self).__init__()
-    RPIGPIO.setmode(RPIGPIO.BCM)
-    RPIGPIO.setwarnings(False)
     self.__cs = cs
-    RPIGPIO.setup(self.__cs, RPIGPIO.OUT)
-    RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+    GPIO.setup(self.__cs, GPIO.OUT)
+    GPIO.output(self.__cs, GPIO.LOW)
     self.__spi = spidev.SpiDev()
     self.__spi.open(bus, dev)
     self.__spi.no_cs = True
@@ -891,46 +844,37 @@ class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12):
     @param data written data
   '''
   def write_reg(self, reg, data):
-     data1 =[reg,data]
-     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
-     self.__spi.writebytes(data1)
-     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
+     GPIO.output(self.__cs, GPIO.LOW)
+     self.__spi.writebytes([reg,data])
+     GPIO.output(self.__cs, GPIO.HIGH)
      #self._spi.transfer(data)
+     
   '''
     @brief read the data from the register
     @param reg register address
     @return read data
   '''
   def read_reg(self, reg):
-     data1 =[reg+0x80]
-     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
-     self.__spi.writebytes(data1)
+     GPIO.output(self.__cs, GPIO.LOW)
+     self.__spi.writebytes([reg | self.SPI_READ_BIT])
      time.sleep(0.01)
      data = self.__spi.readbytes(1)
-     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
+     GPIO.output(self.__cs, GPIO.HIGH)
      return  data[0]
   
-'''
-  @brief An example of an i2c interface module
-'''
 class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):
     self.__addr = addr;
     super(DFRobot_LIS2DW12_I2C, self).__init__()
     self.i2cbus = smbus.SMBus(bus)
-    RPIGPIO.setmode(RPIGPIO.BCM)
-    RPIGPIO.setwarnings(False)
+
   '''
     @brief writes data to a register
     @param reg register address
     @param value written data
   '''
   def write_reg(self, reg, data):
-        data1 = [0]
-        data1[0] = data
-        self.i2cbus.write_i2c_block_data(self.__addr ,reg,data1)
-        #self.i2cbus.write_byte(self.__addr ,reg)
-        #self.i2cbus.write_byte(self.__addr ,data)
+        self.i2cbus.write_i2c_block_data(self.__addr ,reg,[data])
 
   '''
     @brief read the data from the register
@@ -941,43 +885,38 @@ class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12):
     self.i2cbus.write_byte(self.__addr,reg)
     time.sleep(0.01)
     rslt = self.i2cbus.read_byte(self.__addr)
-    #print(rslt)
     return rslt
     
 class DFRobot_LIS2DW12_SPI(DFRobot_LIS2DW12): 
   def __init__(self ,cs, bus = 0, dev = 0,speed = 1000000):
     super(DFRobot_LIS2DW12_SPI, self).__init__()
-    RPIGPIO.setmode(RPIGPIO.BCM)
-    RPIGPIO.setwarnings(False)
     self.__cs = cs
-    RPIGPIO.setup(self.__cs, RPIGPIO.OUT)
-    RPIGPIO.output(self.__cs, RPIGPIO.LOW)
+    GPIO.setup(self.__cs, GPIO.OUT)
+    GPIO.output(self.__cs, GPIO.LOW)
     self.__spi = spidev.SpiDev()
     self.__spi.open(bus, dev)
     self.__spi.no_cs = True
     self.__spi.max_speed_hz = speed
+    
   '''
     @brief writes data to a register
     @param reg register address
     @param data written data
   '''
   def write_reg(self, reg, data):
-     data1 =[reg,data]
-     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
-     self.__spi.writebytes(data1)
-     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
-     #self._spi.transfer(data)
+     GPIO.output(self.__cs, GPIO.LOW)
+     self.__spi.writebytes([reg,data])
+     GPIO.output(self.__cs, GPIO.HIGH)
+     
   '''
     @brief read the data from the register
     @param reg register address
     @return read data
   '''
   def read_reg(self, reg):
-     data1 =[reg+0x80]
-     RPIGPIO.output(self.__cs, RPIGPIO.LOW)
-     self.__spi.writebytes(data1)
+     GPIO.output(self.__cs, GPIO.LOW)
+     self.__spi.writebytes([reg | self.SPI_READ_BIT])
      time.sleep(0.01)
      data = self.__spi.readbytes(1)
-     RPIGPIO.output(self.__cs, RPIGPIO.HIGH)
-     #print(data)
+     GPIO.output(self.__cs, GPIO.HIGH)
      return  data[0]

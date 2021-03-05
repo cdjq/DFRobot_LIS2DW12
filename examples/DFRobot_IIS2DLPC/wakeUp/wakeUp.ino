@@ -1,7 +1,7 @@
 /**！
  * @file wakeUp.ino
  * @brief 当x,y,z中某个方向的加速度大于设置好的阈值时,芯片会产生wake-up事件，通过
- * @访问芯片可以知道是从哪一个方向的运动唤醒了芯片
+ * @访问芯片寄存器可以知道是从哪一个方向的运动唤醒了芯片
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -113,7 +113,7 @@ void setup(void){
   acce.setWakeUpDur(/*dur =*/2);
   //Set wakeup threshold,unit:mg
   //数值是在量程之内
-  acce.setWakeUpThreshold(/*threshold = */500);
+  acce.setWakeUpThreshold(/*threshold = */0.5);
   
   /**！
     Set the interrupt source of the int1 pin:
@@ -123,7 +123,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::eWakeUp);
+  acce.setInt1Event(DFRobot_LIS2DW12::eWakeUp);
   
   delay(100);
 }

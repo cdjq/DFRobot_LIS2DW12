@@ -174,7 +174,7 @@ void DFRobot_LIS2DW12::setFfThreshold(uint8_t th){
   return;
 }
 
-void DFRobot_LIS2DW12::setiInt1Event(eInt1Event_t event){
+void DFRobot_LIS2DW12::setInt1Event(eInt1Event_t event){
 
   uint8_t value1 = 0;
   uint8_t value2 = 0;
@@ -233,8 +233,8 @@ void DFRobot_LIS2DW12::setActMode(eActDetect_t mode)
   readReg(REG_WAKE_UP_DUR,&value2, 1);
   value1 = value1 & (~(1<<6));
   value2 = value2 & (~(1<<4));
-  value1 = value1 | (mode & 0x01);
-  value2 = value2 | ((mode & 0x02)>>1);
+  value1 = value1 | (mode & 0x01)<<6;
+  value2 = value2 | ((mode & 0x02)>>1)<<4;
   DBG(value1);
   DBG(value2);
   writeReg(REG_WAKE_UP_THS,&value1, 1);
@@ -243,9 +243,10 @@ void DFRobot_LIS2DW12::setActMode(eActDetect_t mode)
 }
 
 
-void DFRobot_LIS2DW12::setWakeUpThreshold(uint16_t th){
+void DFRobot_LIS2DW12::setWakeUpThreshold(float th){
   uint8_t value;
-  uint8_t th1 = (th/(_range1*1000)) * 64;
+  uint8_t th1 = (th/(_range1)) * 64;
+
   DBG(th1);
   readReg(REG_WAKE_UP_THS,&value, 1);
   value = value & (~ 0x3f);
@@ -297,10 +298,10 @@ void DFRobot_LIS2DW12::enableTapDetectionOnX(bool enable){
 
 }
 
-void DFRobot_LIS2DW12::setTapThresholdOnX(uint16_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnX(float th)
 {
   uint8_t value;
-  uint8_t th1 = (th/(_range1*1000)) * 32;
+  uint8_t th1 = (th/_range1) * 32;
   
   readReg(REG_TAP_THS_X,&value, 1);
   value = value & (~0x1f);
@@ -309,10 +310,10 @@ void DFRobot_LIS2DW12::setTapThresholdOnX(uint16_t th)
   writeReg(REG_TAP_THS_X,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnY(uint16_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnY(float th)
 {
   uint8_t value;
-  uint8_t th1 = (th/(_range1*1000)) * 32;
+  uint8_t th1 = (th/_range1) * 32;
   readReg(REG_TAP_THS_Y,&value, 1);
   value = value & (~0x1f);
   value = value | (th1 & 0x1f);
@@ -320,10 +321,10 @@ void DFRobot_LIS2DW12::setTapThresholdOnY(uint16_t th)
   writeReg(REG_TAP_THS_Y,&value, 1);
   return;
 }
-void DFRobot_LIS2DW12::setTapThresholdOnZ(uint16_t th)
+void DFRobot_LIS2DW12::setTapThresholdOnZ(float th)
 {
   uint8_t value;
-  uint8_t th1 = (th/(_range1*1000)) * 32;
+  uint8_t th1 = (th/_range1) * 32;
   readReg(REG_TAP_THS_Z,&value, 1);
   value = value & (~0x1f);
   value = value | (th1 & 0x1f);
@@ -395,7 +396,7 @@ void DFRobot_LIS2DW12::set6DThreshold(e6DTh_t degree)
 }
 
 
-void DFRobot_LIS2DW12::setiInt2Event(eInt2Event_t event)
+void DFRobot_LIS2DW12::setInt2Event(eInt2Event_t event)
 {
 
 

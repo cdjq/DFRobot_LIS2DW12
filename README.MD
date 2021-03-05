@@ -51,7 +51,7 @@ To use this library, first download the library file, paste it into the \Arduino
 ## Methods
 
 ```C++
-   DFRobot_LIS2DW12();
+  DFRobot_LIS2DW12();
   
   /**
    * @brief Initialize the function
@@ -134,9 +134,9 @@ To use this library, first download the library file, paste it into the \Arduino
   void setDataRate(eRate_t rate);
   
   /**
-   * @brief 设置自由落体时间(或可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件)
+   * @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
    * @param dur duration(0 ~ 3)
-   * @n time = dur * (1/ODR)(unit:s)
+   * @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
@@ -156,7 +156,7 @@ To use this library, first download the library file, paste it into the \Arduino
                eSingleTap   = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
                e6D      = 0x80,/<6D recognition is routed to INT1 pad>/
    */
-  void setiInt1Event(eInt1Event_t event);
+  void setInt1Event(eInt1Event_t event);
   
   /**
    * @brief 选择在中断2引脚产生的中断事件
@@ -164,7 +164,7 @@ To use this library, first download the library file, paste it into the \Arduino
                  eSleepChange = 0x40,/<Sleep change status routed to INT2 pad>/
                  eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
    */
-  void setiInt2Event(eInt2Event_t event);
+  void setInt2Event(eInt2Event_t event);
   
   /**
    * @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
@@ -177,7 +177,7 @@ To use this library, first download the library file, paste it into the \Arduino
   /**
    * @brief Set the wake-up duration
    * @param dur duration(0 ~ 3)
-     @n time = dur * (1/ODR)(unit:s)
+     @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
@@ -192,14 +192,14 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief Set the wake-up Threshold
    * @param th:unit(mg),数值是在量程之内
    */
-  void setWakeUpThreshold(uint16_t th);
+  void setWakeUpThreshold(float th);
   
   /**
    * @brief Sets the mode of motion detection
    * @param mode 运动检测模式
                 eNoDetection        = 0,/<No detection>/
-                eDetectAct     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
-                eDetectStatMotion   = 3,/<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either ODR or operating mode>/
+                eDetectAct     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode>/
+                eDetectStatMotion   = 3,/<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode>/
    */
   void setActMode(eActDetect_t mode);
   
@@ -232,28 +232,28 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief Set the click threshold in the X direction
-   * @param th Threshold(mg),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
-  void setTapThresholdOnX(uint16_t th);
+  void setTapThresholdOnX(float th);
   
   /**
    * @brief Set the click threshold in the Y direction
-   * @param th Threshold(mg),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
-  void setTapThresholdOnY(uint16_t th);
+  void setTapThresholdOnY(float th);
 
   /**
    * @brief Set the click threshold in the Z direction
-   * @param th Threshold(mg),Can only be used in the range of ±2g
+   * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
-  void setTapThresholdOnZ(uint16_t th);
+  void setTapThresholdOnZ(float th);
   
   /**
    * @brief Duration of maximum time gap for double-tap recognition. When double-tap 
    * @n recognition is enabled, this register expresses the maximum time between two 
    * @n successive detected taps to determine a double-tap event.
    * @param dur duration(0 ~ 3)
-   * @n time = dur * (1/ODR)(unit:s)
+   * @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |

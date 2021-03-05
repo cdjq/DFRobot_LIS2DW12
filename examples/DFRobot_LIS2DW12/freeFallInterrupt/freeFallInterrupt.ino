@@ -150,7 +150,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::eFreeFall);
+  acce.setInt1Event(DFRobot_LIS2DW12::eFreeFall);
   //lock interrupt
   acce.lockInterrupt(true);
   delay(100);
@@ -166,5 +166,4 @@ void loop(void){
    }
     intFlag = 0;
    }
-
 }

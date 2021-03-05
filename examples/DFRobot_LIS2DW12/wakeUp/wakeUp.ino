@@ -112,7 +112,7 @@ void setup(void){
   acce.setWakeUpDur(/*dur =*/2);
   //Set wakeup threshold,unit:mg
   //数值是在量程之内
-  acce.setWakeUpThreshold(/*threshold = */500);
+  acce.setWakeUpThreshold(/*threshold = */0.5);
   
   /**！
     Set the interrupt source of the int1 pin:
@@ -122,7 +122,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::eWakeUp);
+  acce.setInt1Event(DFRobot_LIS2DW12::eWakeUp);
   
   delay(100);
 }

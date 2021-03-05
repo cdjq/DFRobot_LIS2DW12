@@ -121,7 +121,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::e6D);
+  acce.setInt1Event(DFRobot_LIS2DW12::e6D);
 
   delay(1000);
 }

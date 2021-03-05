@@ -137,11 +137,11 @@ void setup(void){
   acce.enableTapDetectionOnX(true);
   //The threshold setting in the X direction 
   //Threshold(mg),Can only be used in the range of ±2g
-  acce.setTapThresholdOnX(/*Threshold = */500);
+  acce.setTapThresholdOnX(/*Threshold = */0.5);
   //The threshold setting in the Y direction   //Threshold(mg),Can only be used in the range of ±2g
-  acce.setTapThresholdOnY(/*Threshold = */500);
+  acce.setTapThresholdOnY(/*Threshold = */0.5);
   //The threshold setting in the Z direction   //Threshold(mg),Can only be used in the range of ±2g)
-  acce.setTapThresholdOnZ(/*Threshold = */500);
+  acce.setTapThresholdOnZ(/*Threshold = */0.5);
   
   
   /*
@@ -173,7 +173,7 @@ void setup(void){
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
-  acce.setiInt1Event(DFRobot_LIS2DW12::eDoubleTap);
+  acce.setInt1Event(DFRobot_LIS2DW12::eDoubleTap);
   delay(1000);
 }
 
