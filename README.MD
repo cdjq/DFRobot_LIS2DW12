@@ -19,7 +19,8 @@ measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 CHIP                | Work Well    | Work Wrong  | Remarks
 ------------------ | :----------: | :----------| -----
 LIS2DW12       |      √       |              |             
-IIS2DLPC      |      √       |              |              
+IIS2DLPC      |      √       |              |           
+
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg1.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg2.png)
 ![正反面svg效果图](https://github.com/cdjq/DFRobot_LIS2DW12/raw/master/resources/images/SEN0245svg3.png)
