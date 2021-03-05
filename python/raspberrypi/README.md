@@ -197,7 +197,7 @@ python get_acceleration.py
     @param enable  Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
      function source signals and interrupts routed to pins (wakeup, single/double-tap).
   '''
-  lock_interrupt(self,enable):)
+  lock_interrupt(self,enable):
     
   '''
     @brief set to detect click events in the Z direction
