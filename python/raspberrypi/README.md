@@ -16,6 +16,11 @@ accelerometers.
 The LIS2DW12 has user-selectable full scales of ±2g/±4g/±8g/±16g and is capable of
 measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 
+CHIP                | Work Well    | Work Wrong  | Remarks
+------------------ | :----------: | :----------| -----
+LIS2DW12       |      √       |              |             
+IIS2DLPC      |      √       |              |       
+
 ## DFRobot_LIS2DW12 Library for RaspberryPi
 ---------------------------------------------------------
 
@@ -361,12 +366,7 @@ python get_acceleration.py
 MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 ------------------ | :----------: | :----------: | :---------: | -----
 raspberry pi 3             |      √         |            |             | 
-
-
-CHIP                | Work Well    | Work Wrong  | Remarks
------------------- | :----------: | :----------| -----
-LIS2DW12       |      √       |              |             
-IIS2DLPC      |      √       |              |              
+       
 
 ## History
 
