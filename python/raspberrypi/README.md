@@ -36,9 +36,9 @@ Provide an RaspberryPi library to get Three-axis acceleration by reading data fr
 
 ## Installation
 
-下载DFRobot_LIS文件到树莓派文件目录下,然后运行下面两行命令行，使用此传感器:
+下载DFRobot_LIS2DW12文件到树莓派文件目录下,然后运行下面两行命令行，使用此传感器:
 ```
-cd DFRobot_LIS/python/raspberry/examples/LIS331HH/get_acceleration
+cd DFRobot_LIS2DW12/python/raspberry/examples/LIS2DW12/get_acceleration
 python get_acceleration.py
 ```
 
@@ -200,14 +200,14 @@ python get_acceleration.py
   lock_interrupt(self,enable):)
     
   '''
-    @brief Set to detect click events in the Z direction
-    @param enable:Ture(使能点击检测\False(禁用点击检测)
+    @brief set to detect click events in the Z direction
+    @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   enable_tap_detection_on_z(self, enable):
   
   '''
     @brief Set to detect click events in the Y direction
-    @param enable:Ture(使能点击检测\False(禁用点击检测)
+    @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   enable_tap_detection_on_y(self, enable):
 
