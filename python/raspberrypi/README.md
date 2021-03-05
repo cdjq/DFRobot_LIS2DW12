@@ -68,10 +68,9 @@ python get_acceleration.py
   '''
   soft_reset(self):
     
-    
   '''
     @brief Set the measurement range
-    @param range:Range(g)
+    @param range Range(g)
                  RANGE_2G     #±2g
                  RANGE_4G     #±4g
                  RANGE_8G     #±8g
@@ -185,7 +184,7 @@ python get_acceleration.py
   
   '''
     @brief Sets the mode of motion detection
-    @param mode:   NO_DETECTION        = 0 #No detection
+    @param mode   NO_DETECTION        = 0 #No detection
                    DETECT_ACT          = 1 #Detect movement
                    DETECT_STATMOTION   = 3 #Detect Motion
   '''
@@ -193,7 +192,7 @@ python get_acceleration.py
 
   '''
     @brief Set the wake-up Threshold
-    @param th:unit(g),数值是在量程之内
+    @param th unit(g),数值是在量程之内
   '''
   set_wakeup_threshold(self,th):
     
@@ -219,25 +218,25 @@ python get_acceleration.py
     
   '''
     @brief Set to detect click events in the X direction
-    @param enable:Ture(使能点击检)\False(禁用点击检)
+    @param enable Ture(使能点击检)\False(禁用点击检)
   '''
   enable_tap_detection_on_x(self, enable):
 
   '''
     @brief Set the click threshold in the X direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_x(self,th):
   
   '''
     @brief Set the click threshold in the Y direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_y(self,th):
     
   '''
     @brief Set the click threshold in the Z direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_z(self,th):
     
@@ -266,7 +265,7 @@ python get_acceleration.py
 
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-    @param degree:  DEGREES_80   80°
+    @param degree   DEGREES_80   80°
                     DEGREES_70   70°
                     DEGREES_60   60°
                     DEGREES_50   50°

@@ -191,7 +191,7 @@ To use this library, first download the library file, paste it into the \Arduino
 
   /**
    * @brief Set the wake-up Threshold
-   * @param th:unit(mg),数值是在量程之内
+   * @param th unit(mg),数值是在量程之内
    */
   void setWakeUpThreshold(float th);
   
@@ -221,7 +221,7 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief enable detect click events in the Y direction
-   * @param enable:ture(使能点击检测)\false(禁用点击检测)
+   * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnY(bool enable);
 
@@ -355,6 +355,7 @@ To use this library, first download the library file, paste it into the \Arduino
                eDirError,
    */
   eWakeUpDir_t getWakeUpDir();
+
 
 ```
 

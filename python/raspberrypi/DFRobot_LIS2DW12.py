@@ -209,7 +209,7 @@ class DFRobot_LIS2DW12(object):
     
   '''
     @brief Set the measurement range
-    @param range:Range(g)
+    @param range Range(g)
                  RANGE_2G     #±2g
                  RANGE_4G     #±4g
                  RANGE_8G     #±8g
@@ -424,7 +424,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Sets the mode of motion detection
-    @param mode:   NO_DETECTION        = 0 #No detection
+    @param mode    NO_DETECTION        = 0 #No detection
                    DETECT_ACT          = 1 #Detect movement
                    DETECT_STATMOTION   = 3 #Detect Motion
   '''
@@ -442,7 +442,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Set the wake-up Threshold
-    @param th:unit(g),数值是在量程之内
+    @param th unit(g),数值是在量程之内
   '''
   def set_wakeup_threshold(self,th):
     th1 = (float(th)/self.__range_d) * 64
@@ -465,7 +465,7 @@ class DFRobot_LIS2DW12(object):
     
   '''
     @brief Set to detect click events in the Z direction
-    @param enable:Ture(使能点击检测\False(禁用点击检测)
+    @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_z(self, enable):
     value = self.read_reg(self.REG_TAP_THS_Z)
@@ -477,7 +477,7 @@ class DFRobot_LIS2DW12(object):
   
   '''
     @brief Set to detect click events in the Y direction
-    @param enable:Ture(使能点击检测\False(禁用点击检测)
+    @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_y(self, enable):
     value = self.read_reg(self.REG_TAP_THS_Z)
@@ -489,7 +489,7 @@ class DFRobot_LIS2DW12(object):
     
   '''
     @brief Set to detect click events in the X direction
-    @param enable:Ture(使能点击检)\False(禁用点击检)
+    @param enable Ture(使能点击检)\False(禁用点击检)
   '''
   def enable_tap_detection_on_x(self, enable):
     value = self.read_reg(self.REG_TAP_THS_Z)
@@ -501,7 +501,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Set the click threshold in the X direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_x(self,th):
     
@@ -515,7 +515,7 @@ class DFRobot_LIS2DW12(object):
   
   '''
     @brief Set the click threshold in the Y direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_y(self,th):
     th1 = (float(th)/self.__range_d) * 32
@@ -528,7 +528,7 @@ class DFRobot_LIS2DW12(object):
     
   '''
     @brief Set the click threshold in the Z direction
-    @param th:Threshold(g),Can only be used in the range of ±2g
+    @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_z(self,th):
     th1 = (float(th)/self.__range_d) * 32
@@ -605,7 +605,7 @@ class DFRobot_LIS2DW12(object):
 
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-    @param degree:  DEGREES_80   80°
+    @param degree  DEGREES_80   80°
                     DEGREES_70   70°
                     DEGREES_60   60°
                     DEGREES_50   50°
