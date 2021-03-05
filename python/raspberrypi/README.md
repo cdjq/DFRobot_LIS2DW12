@@ -16,11 +16,6 @@ accelerometers.
 The LIS2DW12 has user-selectable full scales of ±2g/±4g/±8g/±16g and is capable of
 measuring accelerations with output data rates from 1.6 Hz to 1600 Hz.
 
-CHIP                | Work Well    | Work Wrong  | Remarks
------------------- | :----------: | :----------| -----
-LIS2DW12       |      √       |              |             
-IIS2DLPC      |      √       |              |     
-
 ## DFRobot_LIS2DW12 Library for RaspberryPi
 ---------------------------------------------------------
 
@@ -55,18 +50,18 @@ python get_acceleration.py
     @brief Initialize the function
     @return True(初始化成功)/Fasle(初始化失败)
   '''
-  def begin(self):
+  begin(self):
   
   '''
     @brief Get chip id
     @return 8 bit serial number
   '''
-  def get_id(self):
+  get_id(self):
 
   '''
     @brief Software reset to restore the value of all registers to the default value
   '''
-  def soft_reset(self):
+  soft_reset(self):
     
     
   '''
@@ -77,13 +72,13 @@ python get_acceleration.py
                  RANGE_8G     #±8g
                  RANGE_16G    #±16g
   '''
-  def set_range(self,range_r):
+  set_range(self,range_r):
     
   '''
     @brief Choose whether to continuously let the chip collect data
     @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
   '''
-  def contin_refresh(self,enable):
+  contin_refresh(self,enable):
   
   '''
     @brief Set the filter processing mode
@@ -91,7 +86,7 @@ python get_acceleration.py
                 LPF        = 0x00  Low pass filter
                 HPF        = 0x10 High pass filter
   '''
-  def set_filter_path(self,path):
+  set_filter_path(self,path):
 
   '''
     @brief Set the  bandwidth of the data
@@ -100,7 +95,7 @@ python get_acceleration.py
                 RATE_DIV_10    = 2  ODR/10 (HP/LP)
                 RATE_DIV_20    = 3  ODR/20 (HP/LP)
   '''
-  def set_filter_bandwidth(self,bw):
+  set_filter_bandwidth(self,bw):
     
   '''
     @brief Set power mode
@@ -124,7 +119,7 @@ python get_acceleration.py
                SINGLE_LOWPWRLOWNOISE2_14BIT            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
                SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
-  def set_power_mode(self,mode):
+  set_power_mode(self,mode):
     
   '''
     @brief Set data measurement rate
@@ -140,7 +135,7 @@ python get_acceleration.py
                  RATE_800HZ          
                  RATE_1K6HZ          
   '''
-  def set_data_rate(self, rate):
+  set_data_rate(self, rate):
     
   '''
      @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
@@ -154,7 +149,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  def set_free_fall_Dur(self,dur):
+  set_free_fall_Dur(self,dur):
 
   
   '''
@@ -167,7 +162,7 @@ python get_acceleration.py
               IA6D  = 0x80     #6D recognition is routed to INT1 pad
     
   '''
-  def set_int1_event(self,event):
+  set_int1_event(self,event):
     
   '''
      @brief Set the wake-up duration
@@ -181,7 +176,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  def set_wakeup_dur(self,dur):
+  set_wakeup_dur(self,dur):
   
   '''
     @brief Sets the mode of motion detection
@@ -189,57 +184,57 @@ python get_acceleration.py
                    DETECT_ACT          = 1 #Detect movement
                    DETECT_STATMOTION   = 3 #Detect Motion
   '''
-  def set_act_mode(self,mode):
+  set_act_mode(self,mode):
 
   '''
     @brief Set the wake-up Threshold
     @param th:unit(g),数值是在量程之内
   '''
-  def set_wakeup_threshold(self,th):
+  set_wakeup_threshold(self,th):
     
   '''
     @brief lock interrupt
     @param enable  Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
      function source signals and interrupts routed to pins (wakeup, single/double-tap).
   '''
-  def lock_interrupt(self,enable):)
+  lock_interrupt(self,enable):)
     
   '''
     @brief Set to detect click events in the Z direction
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
-  def enable_tap_detection_on_z(self, enable):
+  enable_tap_detection_on_z(self, enable):
   
   '''
     @brief Set to detect click events in the Y direction
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
-  def enable_tap_detection_on_y(self, enable):
+  enable_tap_detection_on_y(self, enable):
 
     
   '''
     @brief Set to detect click events in the X direction
     @param enable:Ture(使能点击检)\False(禁用点击检)
   '''
-  def enable_tap_detection_on_x(self, enable):
+  enable_tap_detection_on_x(self, enable):
 
   '''
     @brief Set the click threshold in the X direction
     @param th:Threshold(g),Can only be used in the range of ±2g
   '''
-  def set_tap_threshold_on_x(self,th):
+  set_tap_threshold_on_x(self,th):
   
   '''
     @brief Set the click threshold in the Y direction
     @param th:Threshold(g),Can only be used in the range of ±2g
   '''
-  def set_tap_threshold_on_y(self,th):
+  set_tap_threshold_on_y(self,th):
     
   '''
     @brief Set the click threshold in the Z direction
     @param th:Threshold(g),Can only be used in the range of ±2g
   '''
-  def set_tap_threshold_on_z(self,th):
+  set_tap_threshold_on_z(self,th):
     
   '''
    @brief Duration of maximum time gap for double-tap recognition. When double-tap 
@@ -255,14 +250,14 @@ python get_acceleration.py
    |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
    |------------------------------------------------------------------------------------------------------------------------|
   '''
-  def set_tap_dur(self,dur):
+  set_tap_dur(self,dur):
   
   '''
     @brief Set the click detection mode
     @param mode      ONLY_SINGLE   //检测单击
                      BOTH_SINGLE_DOUBLE //检测单击和双击
   '''
-  def set_tap_mode(self,mode):
+  set_tap_mode(self,mode):
 
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
@@ -271,7 +266,7 @@ python get_acceleration.py
                     DEGREES_60   60°
                     DEGREES_50   50°
   '''
-  def set_6d_threshold(self,degree):
+  set_6d_threshold(self,degree):
     
   '''
     @brief 选择在中断2引脚产生的中断事件
@@ -279,50 +274,43 @@ python get_acceleration.py
                   SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
                   SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
   '''
-  def set_int2_event(self,event):
-
-  '''
-    @brief Set 6d filtered data source
-    @param data 0: ODR/2 low pass filtered data sent to 6D interrupt function (default)
-                1: LPF2 output data sent to 6D interrupt function)
-  '''
-  def __set_6d_feed_data(self,data):
+  set_int2_event(self,event):
   
   '''
     @brief Read the acceleration in the x direction
     @return Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  def read_acc_x(self):
+  read_acc_x(self):
 
   '''
     @brief Read the acceleration in the y direction
     @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  def read_acc_y(self):
+  read_acc_y(self):
 
   '''
     @brief Read the acceleration in the z direction
     @return Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  def read_acc_z(self):
+  read_acc_z(self):
   
   '''
     @brief 检测是否有运动产生
     @return True(产生运动)/False(传感器未运动)
   '''
-  def act_detect(self):
+  act_detect(self):
       
   '''
     @brief 自由落体运动检测
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
-  def free_fall_detect(self):
+  free_fall_detect(self):
     
   '''
     @brief Source of change in position portrait/landscape/face-up/face-down.
     @return True(a change in position is detected)/False(no event detected)
   '''
-  def ia_6d_detect(self):
+  ia_6d_detect(self):
       
   '''
   @brief 获取传感器现在的位置
@@ -333,7 +321,7 @@ python get_acceleration.py
                Z_DOWN   #Z is now down
                Z_UP     #Z is now up
   '''
-  def get_orient(self):
+  get_orient(self):
      
   '''
     @brief 点击检测
@@ -341,7 +329,7 @@ python get_acceleration.py
               DOUBLE_CLICK       #double click
               NO_CLICK,          #没有点击产生
   '''
-  def tap_detect(self):
+  tap_detect(self):
 
   '''
     @brief 点击方向的源头检测
@@ -352,7 +340,7 @@ python get_acceleration.py
                 DIR_Z_UP   #在Z 正方向发生的点击事件
                 DIR_Z_DOWN #在Z 负方向发生的点击事件
   '''
-  def get_tap_direction(self):
+  get_tap_direction(self):
    
   '''
     @brief 唤醒的运动方向检测
@@ -361,7 +349,7 @@ python get_acceleration.py
                DIR_Z  #Z方向的运动唤醒芯片
                eDirError,
   '''
-  def get_wake_up_dir(self):
+  get_wake_up_dir(self):
 
 
 
@@ -372,7 +360,13 @@ python get_acceleration.py
 
 MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 ------------------ | :----------: | :----------: | :---------: | -----
-Raspberry Pi             |      √         |            |             | 
+raspberry pi 3             |      √         |            |             | 
+
+
+CHIP                | Work Well    | Work Wrong  | Remarks
+------------------ | :----------: | :----------| -----
+LIS2DW12       |      √       |              |             
+IIS2DLPC      |      √       |              |              
 
 ## History
 

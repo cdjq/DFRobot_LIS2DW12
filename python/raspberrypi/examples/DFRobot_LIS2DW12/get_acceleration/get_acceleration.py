@@ -71,10 +71,10 @@ acce.set_filter_path(acce.LPF)
 
 '''
    Set bandwidth
-        RATE_DIV_2     = 0,/<ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>/
-        RATE_DIV_4     = 1,/<ODR/4 (High Power/Low power)>*
-        RATE_DIV_10    = 2,/<ODR/10 (HP/LP)>/
-        RATE_DIV_20    = 3,/< ODR/20 (HP/LP)>/
+        RATE_DIV_2     = 0,/<RATE/2 (up to RATE = 800 Hz, 400 Hz when RATE = 1600 Hz)>/
+        RATE_DIV_4     = 1,/<RATE/4 (High Power/Low power)>*
+        RATE_DIV_10    = 2,/<RATE/10 (HP/LP)>/
+        RATE_DIV_20    = 3,/< RATE/20 (HP/LP)>/
 '''
 acce.set_filter_bandwidth(acce.RATE_DIV_4)
 '''

@@ -92,10 +92,10 @@ class DFRobot_LIS2DW12(object):
   '''
      bandwidth of collected data
   '''
-  RATE_DIV_2     = 0  #ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)>*/
-  RATE_DIV_4     = 1  #ODR/4 (High Power/Low power)
-  RATE_DIV_10    = 2  #ODR/10 (HP/LP)
-  RATE_DIV_20    = 3  # ODR/20 (HP/LP)
+  RATE_DIV_2     = 0  #RATE/2 (up to RATE = 800 Hz, 400 Hz when RATE = 1600 Hz)>*/
+  RATE_DIV_4     = 1  #RATE/4 (High Power/Low power)
+  RATE_DIV_10    = 2  #RATE/10 (HP/LP)
+  RATE_DIV_20    = 3  #RATE/20 (HP/LP)
 
   '''
   Data collection rate
@@ -201,10 +201,10 @@ class DFRobot_LIS2DW12(object):
     @brief Software reset to restore the value of all registers to the default value
   '''
   def soft_reset(self):
-    reg = self.read_reg(self.REG_CTRL_REG2)
-    reg = reg | (1<<6)
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG2,reg)
+    value = self.read_reg(self.REG_CTRL_REG2)
+    value = value | (1<<6)
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG2,value)
     
     
   '''
@@ -216,33 +216,33 @@ class DFRobot_LIS2DW12(object):
                  RANGE_16G    #±16g
   '''
   def set_range(self,range_r):
-    reg = self.read_reg(self.REG_CTRL_REG6)
+    value = self.read_reg(self.REG_CTRL_REG6)
     self.__range_d = range_r
-    reg = reg & (~(3<<4))
+    value = value & (~(3<<4))
     if range_r == self.RANGE_2G:
       self.__range = 0.061
     elif range_r == self.RANGE_4G:
       self._range = 0.122
-      reg = reg | (1<<4)
+      value = value | (1<<4)
     elif range_r == self.RANGE_8G:
       self._range = 0.244
-      reg = reg | (2<<4)
+      value = value | (2<<4)
     elif range_r == self.RANGE_16G:
       self._range = 0.488
-      reg = reg | (3<<4)
-    self.write_reg(self.REG_CTRL_REG6,reg)
+      value = value | (3<<4)
+    self.write_reg(self.REG_CTRL_REG6,value)
     
   '''
     @brief Choose whether to continuously let the chip collect data
     @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
   '''
   def contin_refresh(self,enable):
-    reg = self.read_reg(self.REG_CTRL_REG2)
+    value = self.read_reg(self.REG_CTRL_REG2)
     if enable == True:
-       reg = reg | (1<<3)
+       value = value | (1<<3)
     else:
-       reg = reg &(~(1<<3))
-    self.write_reg(self.REG_CTRL_REG2,reg)
+       value = value &(~(1<<3))
+    self.write_reg(self.REG_CTRL_REG2,value)
   
   '''
     @brief Set the filter processing mode
@@ -251,36 +251,36 @@ class DFRobot_LIS2DW12(object):
                 HPF        = 0x10 High pass filter
   '''
   def set_filter_path(self,path):
-    reg = self.read_reg(self.REG_CTRL_REG6)
+    value = self.read_reg(self.REG_CTRL_REG6)
     enable = path & 0x10
     if(enable > 0):
        enable = 1
-    reg = reg & (~(3<<2))
-    reg = reg | (enable << 3)
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG6,reg)
-    reg = self.read_reg(self.REG_CTRL_REG7)
+    value = value & (~(3<<2))
+    value = value | (enable << 3)
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG6,value)
+    value = self.read_reg(self.REG_CTRL_REG7)
     enable = (path & 0x10)
     if(enable > 0):
       enable = 1
-    reg = reg &(~(1<<4))
-    reg = reg | enable << 4
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG7,reg)
+    value = value &(~(1<<4))
+    value = value | enable << 4
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG7,value)
 
   '''
     @brief Set the  bandwidth of the data
-    @param bw   RATE_DIV_2     = 0  ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)
-                RATE_DIV_4     = 1  ODR/4 (High Power/Low power)
-                RATE_DIV_10    = 2  ODR/10 (HP/LP)
-                RATE_DIV_20    = 3  ODR/20 (HP/LP)
+    @param bw   RATE_DIV_2     = 0  RATE/2 (up to RATE = 800 Hz, 400 Hz when RATE = 1600 Hz)
+                RATE_DIV_4     = 1  RATE/4 (High Power/Low power)
+                RATE_DIV_10    = 2  RATE/10 (HP/LP)
+                RATE_DIV_20    = 3  RATE/20 (HP/LP)
   '''
   def set_filter_bandwidth(self,bw):
-    reg = self.read_reg(self.REG_CTRL_REG6)
-    reg = reg & (~(3 << 6))
-    reg = reg | (bw << 6)
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG6,reg)
+    value = self.read_reg(self.REG_CTRL_REG6)
+    value = value & (~(3 << 6))
+    value = value | (bw << 6)
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG6,value)
     
   '''
     @brief Set power mode
@@ -305,18 +305,18 @@ class DFRobot_LIS2DW12(object):
                SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
   def set_power_mode(self,mode):
-    reg = self.read_reg(self.REG_CTRL_REG1)
-    reg = reg & (~0x0f)
-    reg = reg | (mode & 0xf)
-    self.write_reg(self.REG_CTRL_REG1,reg)
+    value = self.read_reg(self.REG_CTRL_REG1)
+    value = value & (~0x0f)
+    value = value | (mode & 0xf)
+    self.write_reg(self.REG_CTRL_REG1,value)
     #print("set_power_mode")
-    #print(reg)
-    reg = self.read_reg(self.REG_CTRL_REG6)
+    #print(value)
+    value = self.read_reg(self.REG_CTRL_REG6)
     enable = mode >> 4
-    reg = reg & (~(1 << 2))
-    reg = reg | (enable << 2)
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG6,reg)
+    value = value & (~(1 << 2))
+    value = value | (enable << 2)
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG6,value)
     
   '''
     @brief Set data measurement rate
@@ -333,19 +333,19 @@ class DFRobot_LIS2DW12(object):
                  RATE_1K6HZ          
   '''
   def set_data_rate(self, rate):
-    reg = self.read_reg(self.REG_CTRL_REG1)
-    reg = reg & (~(0xf << 4))
-    reg = reg | (rate << 4)
+    value = self.read_reg(self.REG_CTRL_REG1)
+    value = value & (~(0xf << 4))
+    value = value | (rate << 4)
     #print("set_data_rate")
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG1,reg)
-    reg = self.read_reg(self.REG_CTRL_REG3)
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG1,value)
+    value = self.read_reg(self.REG_CTRL_REG3)
     enable = (rate&0x30) >> 4
     
-    reg = reg & (~3)
-    reg = reg | enable
-    #print(reg)
-    self.write_reg(self.REG_CTRL_REG3,reg)
+    value = value & (~3)
+    value = value | enable
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG3,value)
     
   '''
      @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
@@ -360,16 +360,16 @@ class DFRobot_LIS2DW12(object):
      |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_free_fall_Dur(self,dur):
-    reg1 = self.read_reg(self.REG_WAKE_UP_DUR)
-    reg2 = self.read_reg(self.REG_FREE_FALL)
+    value1 = self.read_reg(self.REG_WAKE_UP_DUR)
+    value2 = self.read_reg(self.REG_FREE_FALL)
     
-    reg1 = reg1 & (~0x80)
-    reg2 = reg2 & (~0xf8)
-    reg2 = reg2 | (dur << 3)
-    #print(reg1)
-    self.write_reg(self.REG_WAKE_UP_DUR,reg1)
-    #print(reg2)
-    self.write_reg(self.REG_FREE_FALL,reg2)
+    value1 = value1 & (~0x80)
+    value2 = value2 & (~0xf8)
+    value2 = value2 | (dur << 3)
+    #print(value1)
+    self.write_reg(self.REG_WAKE_UP_DUR,value1)
+    #print(value2)
+    self.write_reg(self.REG_FREE_FALL,value2)
     self.__set_ff_threshold(3)
     
   '''
@@ -377,11 +377,11 @@ class DFRobot_LIS2DW12(object):
     @param th threshold
   '''
   def __set_ff_threshold(self,th):
-    reg = self.read_reg(self.REG_FREE_FALL)
-    reg = reg & (~0x07)
-    reg = reg | (th & 0x07)
-    #print(reg)
-    self.write_reg(self.REG_FREE_FALL,reg)
+    value = self.read_reg(self.REG_FREE_FALL)
+    value = value & (~0x07)
+    value = value | (th & 0x07)
+    #print(value)
+    self.write_reg(self.REG_FREE_FALL,value)
   
   '''
     @brief Set the interrupt source of the int1 pin
@@ -394,14 +394,14 @@ class DFRobot_LIS2DW12(object):
     
   '''
   def set_int1_event(self,event):
-    reg1 = self.read_reg(self.REG_CTRL_REG4)
-    reg2 = self.read_reg(self.REG_CTRL_REG5)
-    reg3 = self.read_reg(self.REG_CTRL_REG7)
-    reg3 = reg3 & (~0x20)
-    reg3 = reg3 | 0x20
-    reg1 = reg1 | event
-    self.write_reg(self.REG_CTRL_REG4,reg1)
-    self.write_reg(self.REG_CTRL_REG7,reg3)
+    value1 = self.read_reg(self.REG_CTRL_REG4)
+    value2 = self.read_reg(self.REG_CTRL_REG5)
+    value3 = self.read_reg(self.REG_CTRL_REG7)
+    value3 = value3 & (~0x20)
+    value3 = value3 | 0x20
+    value1 = value1 | event
+    self.write_reg(self.REG_CTRL_REG4,value1)
+    self.write_reg(self.REG_CTRL_REG7,value3)
     
   '''
      @brief Set the wake-up duration
@@ -416,11 +416,11 @@ class DFRobot_LIS2DW12(object):
      |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_wakeup_dur(self,dur):
-    reg = self.read_reg(self.REG_WAKE_UP_DUR)
-    reg = reg & (~0x60)
-    reg = reg | ((dur << 5) & 0x60)
-    #print(reg)
-    self.write_reg(self.REG_WAKE_UP_DUR,reg)
+    value = self.read_reg(self.REG_WAKE_UP_DUR)
+    value = value & (~0x60)
+    value = value | ((dur << 5) & 0x60)
+    #print(value)
+    self.write_reg(self.REG_WAKE_UP_DUR,value)
 
   '''
     @brief Sets the mode of motion detection
@@ -429,16 +429,16 @@ class DFRobot_LIS2DW12(object):
                    DETECT_STATMOTION   = 3 #Detect Motion
   '''
   def set_act_mode(self,mode):
-    reg1 = self.read_reg(self.REG_WAKE_UP_THS)
-    reg2 = self.read_reg(self.REG_WAKE_UP_DUR)
-    reg1 = reg1 & (~(1<<6))
-    reg2 = reg2 & (~(1<<4))
-    reg1 = reg1 | (mode & 0x01)<<6
-    reg2 = reg2 | ((mode & 0x02)>>1)<<4
-    #print(reg1)
-    #print(reg2)
-    self.write_reg(self.REG_WAKE_UP_THS,reg1)
-    self.write_reg(self.REG_WAKE_UP_DUR,reg2)
+    value1 = self.read_reg(self.REG_WAKE_UP_THS)
+    value2 = self.read_reg(self.REG_WAKE_UP_DUR)
+    value1 = value1 & (~(1<<6))
+    value2 = value2 & (~(1<<4))
+    value1 = value1 | (mode & 0x01)<<6
+    value2 = value2 | ((mode & 0x02)>>1)<<4
+    #print(value1)
+    #print(value2)
+    self.write_reg(self.REG_WAKE_UP_THS,value1)
+    self.write_reg(self.REG_WAKE_UP_DUR,value2)
 
   '''
     @brief Set the wake-up Threshold
@@ -446,11 +446,11 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_wakeup_threshold(self,th):
     th1 = (float(th)/self.__range_d) * 64
-    reg = self.read_reg(self.REG_WAKE_UP_THS)
-    reg = reg &(~0x3f)
-    reg = reg | (int(th1) & 0x3f)
-    #print(reg)
-    self.write_reg(self.REG_WAKE_UP_THS,reg)
+    value = self.read_reg(self.REG_WAKE_UP_THS)
+    value = value &(~0x3f)
+    value = value | (int(th1) & 0x3f)
+    #print(value)
+    self.write_reg(self.REG_WAKE_UP_THS,value)
     
   '''
     @brief lock interrupt
@@ -458,46 +458,46 @@ class DFRobot_LIS2DW12(object):
      function source signals and interrupts routed to pins (wakeup, single/double-tap).
   '''
   def lock_interrupt(self,enable):
-    reg = self.read_reg(self.REG_CTRL_REG3)
-    reg = reg & (~0x10)
-    reg = reg | (enable << 4)
-    self.write_reg(self.REG_CTRL_REG3,reg)
+    value = self.read_reg(self.REG_CTRL_REG3)
+    value = value & (~0x10)
+    value = value | (enable << 4)
+    self.write_reg(self.REG_CTRL_REG3,value)
     
   '''
     @brief Set to detect click events in the Z direction
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_z(self, enable):
-    reg = self.read_reg(self.REG_TAP_THS_Z)
-    reg = reg & (~(1<<5))
-    reg = reg | (enable << 5)
+    value = self.read_reg(self.REG_TAP_THS_Z)
+    value = value & (~(1<<5))
+    value = value | (enable << 5)
     #print("enable_tap_detection_on_z")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_Z,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_Z,value)
   
   '''
     @brief Set to detect click events in the Y direction
     @param enable:Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_y(self, enable):
-    reg = self.read_reg(self.REG_TAP_THS_Z)
-    reg = reg & (~(1<<6))
-    reg = reg | (enable << 6)
+    value = self.read_reg(self.REG_TAP_THS_Z)
+    value = value & (~(1<<6))
+    value = value | (enable << 6)
     #print("enable_tap_detection_on_y")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_Z,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_Z,value)
     
   '''
     @brief Set to detect click events in the X direction
     @param enable:Ture(使能点击检)\False(禁用点击检)
   '''
   def enable_tap_detection_on_x(self, enable):
-    reg = self.read_reg(self.REG_TAP_THS_Z)
-    reg = reg & (~(1<<7))
-    reg = reg | (enable << 7)
+    value = self.read_reg(self.REG_TAP_THS_Z)
+    value = value & (~(1<<7))
+    value = value | (enable << 7)
     #print("enable_tap_detection_on_x")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_Z,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_Z,value)
 
   '''
     @brief Set the click threshold in the X direction
@@ -506,12 +506,12 @@ class DFRobot_LIS2DW12(object):
   def set_tap_threshold_on_x(self,th):
     
     th1 = (float(th)/self.__range_d) * 32
-    reg = self.read_reg(self.REG_TAP_THS_X)
-    reg = reg & (~0x1f)
-    reg = reg | (int(th1) & 0x1f)
+    value = self.read_reg(self.REG_TAP_THS_X)
+    value = value & (~0x1f)
+    value = value | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_x")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_X,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_X,value)
   
   '''
     @brief Set the click threshold in the Y direction
@@ -519,12 +519,12 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_tap_threshold_on_y(self,th):
     th1 = (float(th)/self.__range_d) * 32
-    reg = self.read_reg(self.REG_TAP_THS_Y)
-    reg = reg & (~0x1f)
-    reg = reg | (int(th1) & 0x1f)
+    value = self.read_reg(self.REG_TAP_THS_Y)
+    value = value & (~0x1f)
+    value = value | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_y")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_Y,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_Y,value)
     
   '''
     @brief Set the click threshold in the Z direction
@@ -532,12 +532,12 @@ class DFRobot_LIS2DW12(object):
   '''
   def set_tap_threshold_on_z(self,th):
     th1 = (float(th)/self.__range_d) * 32
-    reg = self.read_reg(self.REG_TAP_THS_Z)
-    reg = reg & (~0x1f)
-    reg = reg | (int(th1) & 0x1f)
+    value = self.read_reg(self.REG_TAP_THS_Z)
+    value = value & (~0x1f)
+    value = value | (int(th1) & 0x1f)
     #print("set_tap_threshold_on_z")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_Z,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_Z,value)
     
   '''
    @brief Duration of maximum time gap for double-tap recognition. When double-tap 
@@ -554,12 +554,12 @@ class DFRobot_LIS2DW12(object):
    |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_tap_dur(self,dur):
-    reg = self.read_reg(self.REG_INT_DUR)
-    reg = reg & (~0xf0)
-    reg = reg | (dur << 4)
+    value = self.read_reg(self.REG_INT_DUR)
+    value = value & (~0xf0)
+    value = value | (dur << 4)
     #print("set_tap_dur")
-    #print(reg)
-    self.write_reg(self.REG_INT_DUR,reg)
+    #print(value)
+    self.write_reg(self.REG_INT_DUR,value)
     self.__set_tap_quiet(2);
     self.__set_tap_shock(2);
     
@@ -569,26 +569,26 @@ class DFRobot_LIS2DW12(object):
     @param quiet quiet time
   '''
   def __set_tap_quiet(self,quiet):
-    reg = self.read_reg(self.REG_INT_DUR)
-    reg = reg & (~0x0C)
+    value = self.read_reg(self.REG_INT_DUR)
+    value = value & (~0x0C)
     quiet = quiet & 0x03
-    reg = reg | (quiet<<2)
+    value = value | (quiet<<2)
     #print("set_tap_quiet")
-    #print(reg)
-    self.write_reg(self.REG_INT_DUR,reg)
+    #print(value)
+    self.write_reg(self.REG_INT_DUR,value)
   
   '''
     @brief Set the maximum time of an over-threshold signal detection to be recognized as a tap event.
     @param shock  shock time
   '''
   def __set_tap_shock(self,shock):
-    reg = self.read_reg(self.REG_INT_DUR)
-    reg = reg & (~0x03)
+    value = self.read_reg(self.REG_INT_DUR)
+    value = value & (~0x03)
     shock = shock & 0x03
-    reg = reg | (shock)
+    value = value | (shock)
     #print("set_tap_shock")
-    #print(reg)
-    self.write_reg(self.REG_INT_DUR,reg)
+    #print(value)
+    self.write_reg(self.REG_INT_DUR,value)
   
   '''
     @brief Set the click detection mode
@@ -596,12 +596,12 @@ class DFRobot_LIS2DW12(object):
                      BOTH_SINGLE_DOUBLE //检测单击和双击
   '''
   def set_tap_mode(self,mode):
-    reg = self.read_reg(self.REG_WAKE_UP_THS)
-    reg = reg & (~0x80)
-    reg = reg | (mode << 7)
+    value = self.read_reg(self.REG_WAKE_UP_THS)
+    value = value & (~0x80)
+    value = value | (mode << 7)
     #print("set_tap_mode")
-    #print(reg)
-    self.write_reg(self.REG_WAKE_UP_THS,reg)
+    #print(value)
+    self.write_reg(self.REG_WAKE_UP_THS,value)
 
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
@@ -611,12 +611,12 @@ class DFRobot_LIS2DW12(object):
                     DEGREES_50   50°
   '''
   def set_6d_threshold(self,degree):
-    reg = self.read_reg(self.REG_TAP_THS_X)
-    reg = reg & (~0x60)
-    reg = reg | (degree << 5)
+    value = self.read_reg(self.REG_TAP_THS_X)
+    value = value & (~0x60)
+    value = value | (degree << 5)
     #print("set_6d_threshold")
-    #print(reg)
-    self.write_reg(self.REG_TAP_THS_X,reg)
+    #print(value)
+    self.write_reg(self.REG_TAP_THS_X,value)
     self.__set_6d_feed_data(1)
     
   '''
@@ -626,36 +626,36 @@ class DFRobot_LIS2DW12(object):
                   SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
   '''
   def set_int2_event(self,event):
-    reg1 = self.read_reg(self.REG_CTRL_REG4)
-    reg2 = self.read_reg(self.REG_CTRL_REG5)
-    reg3 = self.read_reg(self.REG_CTRL_REG7)
-    reg3 = reg3 & (~0x20)
-    reg3 = reg3 | 0x20
-    reg2 = reg2 | event
-    #print(reg2)
-    #print(reg3)
-    self.write_reg(self.REG_CTRL_REG5,reg2)
-    self.write_reg(self.REG_CTRL_REG7,reg3)
+    value1 = self.read_reg(self.REG_CTRL_REG4)
+    value2 = self.read_reg(self.REG_CTRL_REG5)
+    value3 = self.read_reg(self.REG_CTRL_REG7)
+    value3 = value3 & (~0x20)
+    value3 = value3 | 0x20
+    value2 = value2 | event
+    #print(value2)
+    #print(value3)
+    self.write_reg(self.REG_CTRL_REG5,value2)
+    self.write_reg(self.REG_CTRL_REG7,value3)
 
   '''
     @brief Set 6d filtered data source
-    @param data 0: ODR/2 low pass filtered data sent to 6D interrupt function (default)
+    @param data 0: RATE/2 low pass filtered data sent to 6D interrupt function (default)
                 1: LPF2 output data sent to 6D interrupt function)
   '''
   def __set_6d_feed_data(self,data):
-    reg = self.read_reg(self.REG_CTRL_REG7)
-    reg = reg & (~1)
-    reg = reg | data
-    print(reg)
-    self.write_reg(self.REG_CTRL_REG7,reg)
+    value = self.read_reg(self.REG_CTRL_REG7)
+    value = value & (~1)
+    value = value | data
+    #print(value)
+    self.write_reg(self.REG_CTRL_REG7,value)
   '''
     @brief Read the acceleration in the x direction
     @return Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_x(self):
-    reg1 = self.read_reg(self.REG_OUT_X_L)
-    reg2 = self.read_reg(self.REG_OUT_X_L+1)
-    acc_x = np.int8(reg2)*256 + np.int8(reg1)
+    value1 = self.read_reg(self.REG_OUT_X_L)
+    value2 = self.read_reg(self.REG_OUT_X_L+1)
+    acc_x = np.int8(value2)*256 + np.int8(value1)
     acc_x = acc_x * self.__range
     return acc_x
 
@@ -664,9 +664,9 @@ class DFRobot_LIS2DW12(object):
     @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_y(self):
-    reg1 = self.read_reg(self.REG_OUT_Y_L)
-    reg2 = self.read_reg(self.REG_OUT_Y_L+1)
-    acc_y = np.int8(reg2)*256 + np.int8(reg1)
+    value1 = self.read_reg(self.REG_OUT_Y_L)
+    value2 = self.read_reg(self.REG_OUT_Y_L+1)
+    acc_y = np.int8(value2)*256 + np.int8(value1)
     acc_y = acc_y * self.__range
     return acc_y
 
@@ -675,9 +675,9 @@ class DFRobot_LIS2DW12(object):
     @return Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
   def read_acc_z(self):
-    reg1 = self.read_reg(self.REG_OUT_Z_L)
-    reg2 = self.read_reg(self.REG_OUT_Z_L+1)
-    acc_z = np.int8(reg2)*256 + np.int8(reg1)
+    value1 = self.read_reg(self.REG_OUT_Z_L)
+    value2 = self.read_reg(self.REG_OUT_Z_L+1)
+    acc_z = np.int8(value2)*256 + np.int8(value1)
     acc_z = acc_z * self.__range
     return acc_z
   
@@ -686,8 +686,8 @@ class DFRobot_LIS2DW12(object):
     @return True(产生运动)/False(传感器未运动)
   '''
   def act_detect(self):
-    reg = self.read_reg(self.REG_WAKE_UP_SRC)
-    if(reg & 0x08) > 0:
+    value = self.read_reg(self.REG_WAKE_UP_SRC)
+    if(value & 0x08) > 0:
       return True
     else:
       return False
@@ -697,8 +697,8 @@ class DFRobot_LIS2DW12(object):
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
   def free_fall_detect(self):
-    reg = self.read_reg(self.REG_WAKE_UP_SRC)
-    if(reg & 0x20) > 0:
+    value = self.read_reg(self.REG_WAKE_UP_SRC)
+    if(value & 0x20) > 0:
       return True
     return False
     
@@ -707,8 +707,8 @@ class DFRobot_LIS2DW12(object):
     @return True(a change in position is detected)/False(no event detected)
   '''
   def ia_6d_detect(self):
-    reg = self.read_reg(self.REG_SIXD_SRC)
-    if(reg & 0x40) > 0:
+    value = self.read_reg(self.REG_SIXD_SRC)
+    if(value & 0x40) > 0:
       return True
     else:
       return False
@@ -723,21 +723,21 @@ class DFRobot_LIS2DW12(object):
                Z_UP     #Z is now up
   '''
   def get_orient(self):
-   reg = self.read_reg(self.REG_SIXD_SRC)
-   if(reg & 0x1) > 0:
-     return self.X_DOWN
-   elif(reg & 0x2) > 0:
-     return self.X_UP
-   elif(reg & 0x4) > 0:
-     return self.Y_DOWN
-   elif(reg & 0x8) > 0:
-     return self.Y_UP
-   elif(reg & 0x10) > 0:
-     return self.Z_DOWN
-   elif(reg & 0x20) > 0:
-     return self.Z_UP
-   else:
-     return 0xff
+   value = self.read_reg(self.REG_SIXD_SRC)
+   orient = 0xff
+   if(value & 0x1) > 0:
+     orient =  self.X_DOWN
+   elif(value & 0x2) > 0:
+     orient =  self.X_UP
+   elif(value & 0x4) > 0:
+     orient =  self.Y_DOWN
+   elif(value & 0x8) > 0:
+     orient =  self.Y_UP
+   elif(value & 0x10) > 0:
+     orient =  self.Z_DOWN
+   elif(value & 0x20) > 0:
+     orient =  self.Z_UP
+   return orient
      
   '''
     @brief 点击检测
@@ -746,14 +746,14 @@ class DFRobot_LIS2DW12(object):
               NO_CLICK,          #没有点击产生
   '''
   def tap_detect(self):
-   reg = self.read_reg(self.REG_TAP_SRC)
-   #print(reg)
-   if(reg & 0x20) > 0:
-     return self.SINGLE_CLICK
-   elif(reg & 0x10) > 0:
-     return self.DOUBLE_CLICK
-   else:
-     return 0XFF
+   value = self.read_reg(self.REG_TAP_SRC)
+   #print(value)
+   tap = 0XFF
+   if(value & 0x20) > 0:
+     tap = self.SINGLE_CLICK
+   elif(value & 0x10) > 0:
+     tap = self.DOUBLE_CLICK
+   return tap
    #Wakeup event detection status on X-axis
 
   '''
@@ -766,22 +766,23 @@ class DFRobot_LIS2DW12(object):
                 DIR_Z_DOWN #在Z 负方向发生的点击事件
   '''
   def get_tap_direction(self):
-   reg = self.read_reg(self.REG_TAP_SRC)
-   #print(reg)
-   positive = reg & 0x08
-   if(reg & 0x4)>0 and positive > 0:
-     return self.DIR_X_UP
-   elif(reg & 0x4)>0 and positive == 0:
-     return self.DIR_X_DOWN
-   elif(reg & 0x2)>0 and positive > 0:
-     return self.DIR_Y_UP
-   elif(reg & 0x2)>0 and positive == 0:
-     return self.DIR_Y_DOWN
-   elif(reg & 0x1)>0 and positive > 0:
-     return self.DIR_Z_UP
-   elif(reg & 0x1)>0 and positive == 0:
-     return self.DIR_Z_DOWN
-   return 0XFF
+   value = self.read_reg(self.REG_TAP_SRC)
+   #print(value)
+   direction = 0XFF
+   positive = value & 0x08
+   if(value & 0x4)>0 and positive > 0:
+     direction = self.DIR_X_UP
+   elif(value & 0x4)>0 and positive == 0:
+     direction = self.DIR_X_DOWN
+   elif(value & 0x2)>0 and positive > 0:
+     direction = self.DIR_Y_UP
+   elif(value & 0x2)>0 and positive == 0:
+     direction = self.DIR_Y_DOWN
+   elif(value & 0x1)>0 and positive > 0:
+     direction = elf.DIR_Z_UP
+   elif(value & 0x1)>0 and positive == 0:
+     direction = self.DIR_Z_DOWN
+   return direction
   '''
     @brief 唤醒的运动方向检测
     @return    DIR_X  #X方向的运动唤醒芯片
@@ -790,15 +791,15 @@ class DFRobot_LIS2DW12(object):
                eDirError,
   '''
   def get_wake_up_dir(self):
-    reg = self.read_reg(self.REG_WAKE_UP_SRC)
-    if(reg & 0x01) > 0:
-      return self.DIR_Z
-    elif(reg & 0x02) > 0:
-      return self.DIR_Y
-    elif(reg & 0x04) > 0:
-      return self.DIR_X
-    else:
-      return 0xFF
+    value = self.read_reg(self.REG_WAKE_UP_SRC)
+    direction = 0xFF
+    if(value & 0x01) > 0:
+      direction = self.DIR_Z
+    elif(value & 0x02) > 0:
+      direction = self.DIR_Y
+    elif(value & 0x04) > 0:
+      direction = self.DIR_X
+    return direction
 
 class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):
