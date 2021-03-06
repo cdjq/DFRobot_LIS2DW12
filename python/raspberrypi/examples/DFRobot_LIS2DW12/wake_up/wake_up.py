@@ -2,7 +2,7 @@
 """
    @file wake_up.py
    @brief 当x,y,z中某个方向的加速度大于设置好的阈值时,芯片会产生wake-up事件，通过
-   @访问芯片寄存器可以知道是从哪一个方向的运动唤醒了芯片
+   @n 访问芯片寄存器可以知道是从哪一个方向的运动唤醒了芯片
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -79,6 +79,7 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_400HZ          
         RATE_800HZ          
         RATE_1K6HZ          
+        SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
 
@@ -117,6 +118,12 @@ Set the interrupt source of the int1 pin:
       IA6D  = 0x80        #6D recognition is routed to INT1 pad
 '''
 acce.set_int1_event(acce.WAKEUP)
+'''
+Set the interrupt source of the int2 pin:
+                  SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
+                  SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
+'''
+#acce.set_int2_event(acce.SLEEP_CHANGE):
 time.sleep(0.1)
 
 while True:

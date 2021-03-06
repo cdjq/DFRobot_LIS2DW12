@@ -130,6 +130,7 @@ acce.set_int1_event(acce.WAKEUP)
         RATE_400HZ          
         RATE_800HZ          
         RATE_1K6HZ          
+        SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
 time.sleep(0.1)

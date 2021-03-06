@@ -118,6 +118,12 @@ Set the interrupt source of the int1 pin:
       IA6D  = 0x80        #6D recognition is routed to INT1 pad
 '''
 acce.set_int1_event(acce.WAKEUP)
+'''
+Set the interrupt source of the int2 pin:
+                  SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
+                  SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
+'''
+#acce.set_int2_event(acce.SLEEP_CHANGE):
 time.sleep(0.1)
 
 while True:

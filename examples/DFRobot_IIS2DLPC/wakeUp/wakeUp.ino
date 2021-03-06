@@ -124,7 +124,7 @@ void setup(void){
   acce.setWakeUpThreshold(/*threshold = */0.5);
   
   /**！
-    Set the interrupt source of the int1 pin:
+    Set the interrupt event of the int1 pin:
     eDoubleTap(Double click)
     eFreeFall(Free fall)
     eWakeUp(wake)
@@ -133,6 +133,12 @@ void setup(void){
   */
   acce.setInt1Event(DFRobot_LIS2DW12::eWakeUp);
   
+  /**！
+    Set the interrupt event of the int1 pin:
+       eSleepChange = 0x40,/<Sleep change status routed to INT2 pad>/
+       eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
+  */
+  //acce.setInt2Event(DFRobot_LIS2DW12::eSleepChange);
   delay(100);
 }
 
