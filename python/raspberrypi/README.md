@@ -103,7 +103,7 @@ python get_acceleration.py
     
   '''
     @brief Set power mode
-    @param mode 16 power modes to choose from
+    @param mode  power modes to choose from
                HIGH_PERFORMANCE_14BIT                   = 0X04#High-Performance Mode
                CONT_LOWPWR4_14BIT                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
                CONT_LOWPWR3_14BIT                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
