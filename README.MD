@@ -96,7 +96,7 @@ To use this library, first download the library file, paste it into the \Arduino
   
   /**
    * @brief Set power mode
-   * @param mode  16 power modes to choose from
+   * @param mode   power modes to choose from
                  eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
                  eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
                  eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
