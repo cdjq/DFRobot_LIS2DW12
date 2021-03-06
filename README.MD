@@ -131,6 +131,7 @@ To use this library, first download the library file, paste it into the \Arduino
                   eRate_400hz       
                   eRate_800hz       
                   eRate_1k6hz       
+                  eSetSwTrig        <软件触发单次测量>
    */
   void setDataRate(eRate_t rate);
   
@@ -355,6 +356,11 @@ To use this library, first download the library file, paste it into the \Arduino
                eDirError,
    */
   eWakeUpDir_t getWakeUpDir();
+  
+  /**
+   * @brief In Single data conversion on demand mode,请求测量一次数据
+   */
+  void demandData()
 
 
 ```

@@ -355,7 +355,10 @@ python get_acceleration.py
   '''
   get_wake_up_dir(self):
 
-
+  '''
+    @brief In Single data conversion on demand mode,请求测量一次数据
+  '''
+  demand_data(self):
 
 
 ```
@@ -364,12 +367,12 @@ python get_acceleration.py
 
 MCU                | Work Well    | Work Wrong   | Untested    | Remarks
 ------------------ | :----------: | :----------: | :---------: | -----
-raspberry pi 3             |      √         |            |             | 
+Raspberry Pi             |      √         |            |             | 
        
 
 ## History
 
-- data 2021-1-26
+- data 2021-3-5
 - version V1.0
 
 

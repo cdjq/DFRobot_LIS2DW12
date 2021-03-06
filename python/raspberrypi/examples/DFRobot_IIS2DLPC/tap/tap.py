@@ -78,6 +78,7 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_400HZ          
         RATE_800HZ          
         RATE_1K6HZ          
+        SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_800HZ)
 
@@ -129,7 +130,7 @@ while True:
     tap = False
     #点击检测
     event = acce.tap_detect()
-    #点击方向的源头检测
+    #点击的源头检测
     direction = acce.get_tap_direction()
     if event == acce.SINGLE_CLICK:
       print ("Tap Detected :")

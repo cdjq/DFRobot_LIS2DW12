@@ -19,7 +19,8 @@
  * @param pWire I2c controller
  * @param addr  I2C address(0x18/0x19)
  */
-DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
+//DFRobot_LIS2DW12_I2C acce(&Wire,0x19);
+DFRobot_LIS2DW12_I2C acce;
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_LIS2DW12_SPI构造对象
 #if defined(ESP32) || defined(ESP8266)
@@ -77,6 +78,13 @@ void setup(void){
     唤醒持续时间
     dur (0 ~ 31)
     time = dur * (1/Rate)(unit:s)
+    |                                  参数与时间之间的线性关系的示例                                                        |
+    |------------------------------------------------------------------------------------------------------------------------|
+    |                |                     |                          |                          |                           |
+    |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+    |------------------------------------------------------------------------------------------------------------------------|
+    |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+    |------------------------------------------------------------------------------------------------------------------------|
    */
   acce.setWakeUpDur(/*dur = */2);
   
@@ -137,6 +145,7 @@ void setup(void){
                eRate_400hz         
                eRate_800hz         
                eRate_1k6hz         
+               eSetSwTrig        <软件触发单次测量>
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
   delay(100);

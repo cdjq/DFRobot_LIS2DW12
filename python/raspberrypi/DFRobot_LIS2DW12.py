@@ -100,9 +100,9 @@ class DFRobot_LIS2DW12(object):
   '''
   Data collection rate
   '''
-  RATE_OFF            = 0X00
-  RATE_1HZ6_LP_ONLY   = 0X01
-  RATE_12HZ5          = 0X02
+  RATE_OFF            = 0X00  #测量关闭
+  RATE_1HZ6_LP_ONLY   = 0X01  #1.6hz
+  RATE_12HZ5          = 0X02  #12.5hz
   RATE_25HZ           = 0X03
   RATE_50HZ           = 0X04
   RATE_100HZ          = 0X05
@@ -110,7 +110,8 @@ class DFRobot_LIS2DW12(object):
   RATE_400HZ          = 0X07
   RATE_800HZ          = 0X08
   RATE_1K6HZ          = 0X09
-
+  SETSWTRIG           = 0X12  #软件触发单次测量
+  
   '''
     Motion detection mode
   '''
@@ -800,6 +801,14 @@ class DFRobot_LIS2DW12(object):
     elif(value & 0x04) > 0:
       direction = self.DIR_X
     return direction
+
+  '''
+    @brief In Single data conversion on demand mode,请求测量一次数据
+  '''
+  def demand_data(self):
+    value = self.read_reg(self.REG_CTRL_REG3)
+    value = value | 1
+    self.write_reg(self.REG_CTRL_REG3,value)
 
 class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12): 
   def __init__(self ,bus ,addr):

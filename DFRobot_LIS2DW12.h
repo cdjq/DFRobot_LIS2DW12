@@ -16,7 +16,7 @@
 
 #include <Wire.h>
 #include <SPI.h>
-#define ENABLE_DBG
+//#define ENABLE_DBG
 
 #ifdef ENABLE_DBG
 #define DBG(...) {Serial.print("["); Serial.print(__FUNCTION__); Serial.print("(): "); Serial.print(__LINE__); Serial.print(" ] "); Serial.println(__VA_ARGS__);}
@@ -136,6 +136,7 @@ typedef enum {
   eRate_400hz          = 0x07,
   eRate_800hz          = 0x08,
   eRate_1k6hz          = 0x09,
+  eSetSwTrig           = 0x12,/**<软件触发单次测量>*/
 } eRate_t;
 
 /**
@@ -309,6 +310,7 @@ public:
                   eRate_400hz       
                   eRate_800hz       
                   eRate_1k6hz       
+                  eSetSwTrig        <软件触发单次测量>
    */
   void setDataRate(eRate_t rate);
   
@@ -533,7 +535,11 @@ public:
                eDirError,
    */
   eWakeUpDir_t getWakeUpDir();
-
+  
+  /**
+   * @brief In Single data conversion on demand mode,请求测量一次数据
+   */
+  void demandData();
 protected:
 
   /**

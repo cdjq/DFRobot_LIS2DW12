@@ -1,6 +1,10 @@
 /**！
  * @file getAcceleration.ino
  * @brief Get the acceleration in x, y, z directions,测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
+ * @n 本示例默认地选用连续测量模式测量数据，加速度数据会根据测量速率不停地测量，
+ * @n 还可使用单次按需求转换模式  1.需要在setPowerMode()函数中选用适合的转换模式
+ * @n                             2.然后在setDataRate()函数填入eSetSwTrig参数
+ * @n                             3.使用demandData()函数请求测量一次数据
  * @n 在使用SPI时片选引脚可以通过 LIS2DW12_CS 的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -19,7 +23,8 @@
  * @param pWire I2c controller
  * @param addr  I2C address(0x18/0x19)
  */
-DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
+//DFRobot_LIS2DW12_I2C acce(&Wire,0x19);
+DFRobot_LIS2DW12_I2C acce;
 
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_LIS2DW12_SPI构造对象
@@ -40,7 +45,7 @@ DFRobot_LIS2DW12_I2C acce/*(&Wire,0x19)*/;
 void setup(void){
 
   Serial.begin(9600);
-  while(acce.begin()){
+  while(!acce.begin()){
      delay(1000);
      Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
@@ -64,6 +69,7 @@ void setup(void){
                eRate_400hz         
                eRate_800hz         
                eRate_1k6hz         
+               eSetSwTrig        <软件触发单次测量>
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_50hz);
   
@@ -116,10 +122,12 @@ void setup(void){
   */
   acce.setPowerMode(DFRobot_LIS2DW12::eContLowPwrLowNoise2_14bit);
   
-  delay(1000);
+  delay(100);
 }
 
 void loop(void){
+    //在单次按需求转化模式下,请求测量一次数据
+    //acce.demandData();
     //测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
     Serial.print("Acceleration x: ");
     //Read the acceleration in the x direction

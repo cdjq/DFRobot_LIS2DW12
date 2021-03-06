@@ -54,7 +54,7 @@ getOrient	KEYWORD2
 tapDetect	KEYWORD2
 getTapDirection	KEYWORD2
 getWakeUpDir	KEYWORD2
-
+demandData	KEYWORD2
 
 
 #######################################

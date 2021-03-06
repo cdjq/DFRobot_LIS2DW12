@@ -26,7 +26,8 @@
  * @param pWire I2c controller
  * @param addr  I2C address(0x18/0x19)
  */
-DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
+//FRobot_IIS2DLPC_I2C acce(&Wire,0x19);
+DFRobot_IIS2DLPC_I2C acce;
 
 
 //当你使用SPI通信时,使用下面这段程序,使用DFRobot_IIS2DLPC_SPI构造对象
@@ -47,7 +48,7 @@ DFRobot_IIS2DLPC_I2C acce/*(&Wire,0x19)*/;
 void setup(void){
 
   Serial.begin(9600);
-  while(acce.begin()){
+  while(!acce.begin()){
      delay(1000);
      Serial.println("通信失败，请检查连线是否准确,使用I2C通信时检查地址是否设置准确");
   }
@@ -100,6 +101,7 @@ void setup(void){
                eRate_400hz         
                eRate_800hz         
                eRate_1k6hz         
+               eSetSwTrig        <软件触发单次测量>
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
   

@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 """
    @file free_fall.py
-   @brief  Sensor module free fall detection,通过set_free_fall_Dur()函数设置自由落体时间,调节检测的灵敏度,自由落体时间越短,自由落体时间越容易发生
+   @brief  Sensor module free fall detection,通过set_free_fall_Dur()函数设置自由落体时间,调节检测的灵敏度,自由落体时间越短,自由落体事件越容易发生
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -72,6 +72,7 @@ acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
     RATE_400HZ          
     RATE_800HZ          
     RATE_1K6HZ          
+    SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_100HZ);
 '''

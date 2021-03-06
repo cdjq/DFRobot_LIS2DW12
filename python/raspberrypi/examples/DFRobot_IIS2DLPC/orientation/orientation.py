@@ -83,6 +83,7 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_400HZ          
         RATE_800HZ          
         RATE_1K6HZ          
+        SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
 '''

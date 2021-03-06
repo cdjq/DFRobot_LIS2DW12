@@ -2,6 +2,10 @@
 """
    @file get_acceleration.py
    @brief Get the acceleration in x, y, z directions,测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
+   @n 本示例默认地选用连续测量模式测量数据，加速度数据会根据测量速率不停地测量，
+   @n 还可使用单次按需求转换模式  1.需要在set_power_mode()函数中选用适合的转换模式
+   @n                             2.然后在set_data_rate()函数填入SETSWTRIG参数
+   @n                             3.使用demandData()函数请求测量一次数据
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -58,6 +62,7 @@ acce.contin_refresh(True)
     RATE_400HZ          
     RATE_800HZ          
     RATE_1K6HZ          
+    SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
 
@@ -101,6 +106,8 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE2_14BIT);
 time.sleep(0.1)
 
 while True:
+    #在单次按需求转化模式下,请求测量一次数据
+    acce.demand_data()
     #Get the acceleration in the three directions of xyz
     #测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
     time.sleep(0.3)

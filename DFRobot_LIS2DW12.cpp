@@ -115,7 +115,13 @@ void DFRobot_LIS2DW12::setDataRate(eRate_t rate){
   writeReg(REG_CTRL_REG3,&value, 1);
   return ;
 }
-
+void DFRobot_LIS2DW12::demandData(){
+  uint8_t value;
+  readReg(REG_CTRL_REG3,&value, 1);
+  value = value | 1; 
+  DBG(value);
+  writeReg(REG_CTRL_REG3,&value, 1);
+}
 void DFRobot_LIS2DW12::setRange(eRange_t range){
   uint8_t value = 0;
   readReg(REG_CTRL_REG6,&value,1);

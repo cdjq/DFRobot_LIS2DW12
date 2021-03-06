@@ -83,6 +83,7 @@ acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
     RATE_400HZ          
     RATE_800HZ          
     RATE_1K6HZ          
+    SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_100HZ);
 '''
@@ -119,8 +120,6 @@ acce.set_free_fall_Dur(dur = 6)
 acce.set_int1_event(acce.FREEFALL)
 #lock interrupt
 acce.lock_interrupt(True);
-
-
 time.sleep(0.1)
 
 while True:
