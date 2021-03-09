@@ -86,50 +86,51 @@ python get_acceleration.py
   
   '''
     @brief Set the filter processing mode
-    @param path  Three modes of filtering
-                LPF        = 0x00  Low pass filter
-                HPF        = 0x10 High pass filter
+    @param path path of filtering
+                LPF          #Low pass filter
+                HPF          #High pass filter
   '''
   set_filter_path(self,path):
 
   '''
     @brief Set the  bandwidth of the data
-    @param bw   RATE_DIV_2     = 0  ODR/2 (up to ODR = 800 Hz, 400 Hz when ODR = 1600 Hz)
-                RATE_DIV_4     = 1  ODR/4 (High Power/Low power)
-                RATE_DIV_10    = 2  ODR/10 (HP/LP)
-                RATE_DIV_20    = 3  ODR/20 (HP/LP)
+    @param bw bandwidth
+                RATE_DIV_2   #RATE/2 (up to RATE = 800 Hz, 400 Hz when RATE = 1600 Hz)
+                RATE_DIV_4   #RATE/4 (High Power/Low power)
+                RATE_DIV_10  #RATE/10 (HP/LP)
+                RATE_DIV_20  #RATE/20 (HP/LP)
   '''
   set_filter_bandwidth(self,bw):
     
   '''
     @brief Set power mode
-    @param mode  power modes to choose from
-               HIGH_PERFORMANCE_14BIT                   = 0X04#High-Performance Mode
-               CONT_LOWPWR4_14BIT                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
-               CONT_LOWPWR3_14BIT                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
-               CONT_LOWPWR2_14BIT                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
-               CONT_LOWPWR1_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
-               SING_LELOWPWR4_14BIT                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
-               SING_LELOWPWR3_14BIT                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
-               SING_LELOWPWR2_14BIT                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
-               SING_LELOWPWR1_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
-               HIGHP_ERFORMANCELOW_NOISE_14BIT           = 0X14#High-Performance Mode,Low-noise enabled
-               CONT_LOWPWRLOWNOISE4_14BIT              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE3_14BIT              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE2_14BIT              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE1_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
-               SINGLE_LOWPWRLOWNOISE4_14BIT            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
-               SINGLE_LOWPWRLOWNOISE3_14BIT            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
-               SINGLE_LOWPWRLOWNOISE2_14BIT            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
-               SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
+    @param mode 16 power modes to choose from
+               HIGH_PERFORMANCE_14BIT          #High-Performance Mode
+               CONT_LOWPWR4_14BIT              #Continuous measurement,Low-Power Mode 4(14-bit resolution)
+               CONT_LOWPWR3_14BIT              #Continuous measurement,Low-Power Mode 3(14-bit resolution)
+               CONT_LOWPWR2_14BIT              #Continuous measurement,Low-Power Mode 2(14-bit resolution)
+               CONT_LOWPWR1_12BIT              #Continuous measurement,Low-Power Mode 1(12-bit resolution)
+               SING_LELOWPWR4_14BIT            #Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
+               SING_LELOWPWR3_14BIT            #Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
+               SING_LELOWPWR2_14BIT            #Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
+               SING_LELOWPWR1_12BIT            #Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
+               HIGHP_ERFORMANCELOW_NOISE_14BIT #High-Performance Mode,Low-noise enabled
+               CONT_LOWPWRLOWNOISE4_14BIT      #Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE3_14BIT      #Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE2_14BIT      #Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
+               CONT_LOWPWRLOWNOISE1_12BIT      #Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
+               SINGLE_LOWPWRLOWNOISE4_14BIT    #Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
+               SINGLE_LOWPWRLOWNOISE3_14BIT    #Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
+               SINGLE_LOWPWRLOWNOISE2_14BIT    #Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
+               SINGLE_LOWPWRLOWNOISE1_12BIT    #Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
   set_power_mode(self,mode):
     
   '''
     @brief Set data measurement rate
-    @param rate rate(g)
+    @param rate rate
                  RATE_OFF          #测量关闭
-                 RATE_1HZ6_LP_ONLY #1.6hz
+                 RATE_1HZ6         #1.6hz,仅在低功耗模式下使用
                  RATE_12HZ5        #12.5hz
                  RATE_25HZ         
                  RATE_50HZ         
@@ -143,7 +144,7 @@ python get_acceleration.py
     
   '''
      @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
-     @param dur duration(0 ~ 3)
+     @param dur duration,范围:0~31
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -159,18 +160,18 @@ python get_acceleration.py
   '''
     @brief Set the interrupt source of the int1 pin
     @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int1 pin
-              DOUBLE_TAP = 0x08   #Double-tap recognition is routed to INT1 pad
-              FREEFALL = 0x10     #Free-fall recognition is routed to INT1 pad
-              WAKEUP = 0x20 #Wakeup recognition is routed to INT1 pad
-              SINGLE_TAP = 0x40   #Single-tap recognition is routed to INT1 pad.
-              IA6D  = 0x80     #6D recognition is routed to INT1 pad
+              DOUBLE_TAP    #双击事件
+              FREEFALL      #自由落体事件
+              WAKEUP        #唤醒事件
+              SINGLE_TAP    #单击事件
+              IA6D          #在正面朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件
     
   '''
   set_int1_event(self,event):
     
   '''
      @brief Set the wake-up duration
-     @param dur duration(0 ~ 3)
+     @param dur duration,范围:0~3
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -184,27 +185,29 @@ python get_acceleration.py
   
   '''
     @brief Sets the mode of motion detection
-    @param mode   NO_DETECTION        = 0 #No detection
-                   DETECT_ACT          = 1 #Detect movement
-                   DETECT_STATMOTION   = 3 #Detect Motion
+    @param mode  mode of motion detection
+                   NO_DETECTION       #No detection
+                   DETECT_ACT         #Detect movement
+                   DETECT_STATMOTION  #Detect Motion
   '''
   set_act_mode(self,mode):
 
   '''
     @brief Set the wake-up Threshold
-    @param th unit(g),数值是在量程之内
+    @param th threshold unit:g,数值是在量程之内
   '''
   set_wakeup_threshold(self,th):
     
   '''
-    @brief lock interrupt
-    @param enable  Latched Interrupt. Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
-     function source signals and interrupts routed to pins (wakeup, single/double-tap).
+    @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
+    @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
+    @param enable  true lock interrupt.
+                    false pulsed interrupt
   '''
   lock_interrupt(self,enable):
     
   '''
-    @brief set to detect click events in the Z direction
+    @brief Set to detect click events in the Z direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   enable_tap_detection_on_z(self, enable):
@@ -244,7 +247,7 @@ python get_acceleration.py
    @brief Duration of maximum time gap for double-tap recognition. When double-tap 
    @n recognition is enabled, this register expresses the maximum time between two 
    @n successive detected taps to determine a double-tap event.
-   @param dur duration(0 ~ 3)
+   @param dur  duration,范围:0~15
    @n time = dur * (1/rate)(unit:s)
    |                                  参数与时间之间的线性关系的示例                                                        |
    |------------------------------------------------------------------------------------------------------------------------|
@@ -258,25 +261,26 @@ python get_acceleration.py
   
   '''
     @brief Set the click detection mode
-    @param mode      ONLY_SINGLE   //检测单击
+    @param mode  点击检测模式
+                     ONLY_SINGLE   //检测单击
                      BOTH_SINGLE_DOUBLE //检测单击和双击
   '''
   set_tap_mode(self,mode):
 
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-    @param degree   DEGREES_80   80°
-                    DEGREES_70   70°
-                    DEGREES_60   60°
-                    DEGREES_50   50°
+    @param degree   DEGREES_80   #80°
+                    DEGREES_70   #70°
+                    DEGREES_60   #60°
+                    DEGREES_50   #50°
   '''
   set_6d_threshold(self,degree):
     
   '''
     @brief 选择在中断2引脚产生的中断事件
     @param event  Several interrupt events, after setting, when an event is generated, a level transition will be generated on the int2 pin
-                  SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
-                  SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
+                  SLEEP_CHANGE  #Enable routing of SLEEP_STATE on INT2 pad
+                  SLEEP_STATE   #0x80 Sleep change status routed to INT2 pad
   '''
   set_int2_event(self,event):
   

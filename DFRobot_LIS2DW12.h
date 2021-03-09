@@ -12,7 +12,7 @@
 
 #ifndef DFROBOT_LIS2DW12_H
 #define DFROBOT_LIS2DW12_H
- #include "Arduino.h"
+#include "Arduino.h"
 
 #include <Wire.h>
 #include <SPI.h>
@@ -50,7 +50,7 @@ public:
   #define REG_OUT_Y_H      0x2B     /*The high point of the Y-axis acceleration register*/
   #define REG_OUT_Z_L      0x2C     /*The low order of the Z-axis acceleration register*/
   #define REG_OUT_Z_H      0x2D     /*The high point of the Z-axis acceleration register*/
-  #define REG_WAKE_UP_DUR  0x35   
+  #define REG_WAKE_UP_DUR  0x35     /*Wakeup and sleep duration configuration register*/
   #define REG_FREE_FALL    0x36     /*Free fall event register*/
   #define REG_STATUS_DUP   0x37     /*Interrupt event status register*/
   #define REG_WAKE_UP_SRC  0x38     /*Wakeup source register*/
@@ -70,28 +70,29 @@ public:
 
 
 /**
-   Power mode
+   Power mode,传感器测量加速度数据的模式有了两种 1.Continuous measurement 这种模式传感器会不停地测量数据然后放在数据寄存器
+                                                 2.Single data conversion on demand mode，这种模式下，传感器只有接收到外部请求才会测量一次数据
 */
 typedef enum{
   
-  eHighPerformance_14bit                   = 0x04,/**<High-Performance Mode,14-bit resolution>*/
+  eHighPerformance_14bit                  = 0x04,/**<High-Performance Mode,14-bit resolution>*/
   eContLowPwr4_14bit                      = 0x03,/**<Continuous measurement,Low-Power Mode 4(14-bit resolution)>*/
   eContLowPwr3_14bit                      = 0x02,/**<Continuous measurement,Low-Power Mode 3(14-bit resolution)>*/
   eContLowPwr2_14bit                      = 0x01,/**<Continuous measurement,Low-Power Mode 2(14-bit resolution)>*/
-  eContLowPwr1_12bit                  = 0x00,/**<Continuous measurement,Low-Power Mode 1(12-bit resolution)>*/
+  eContLowPwr1_12bit                      = 0x00,/**<Continuous measurement,Low-Power Mode 1(12-bit resolution)>*/
   eSingleLowPwr4_14bit                    = 0x0b,/**<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>*/
   eSingleLowPwr3_14bit                    = 0x0a,/**<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>*/
   eSingleLowPwr2_14bit                    = 0x09,/**<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>*/
-  eSingleLowPwr1_12bit                = 0x08,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>*/
-  eHighPerformanceLowNoise_14bit           = 0x14,/**<High-Performance Mode,Low-noise enabled,14-bit resolution>*/
+  eSingleLowPwr1_12bit                    = 0x08,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>*/
+  eHighPerformanceLowNoise_14bit          = 0x14,/**<High-Performance Mode,Low-noise enabled,14-bit resolution>*/
   eContLowPwrLowNoise4_14bit              = 0x13,/**<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>*/
   eContLowPwrLowNoise3_14bit              = 0x12,/**<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>*/
   eContLowPwrLowNoise2_14bit              = 0x11,/**<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>*/
-  eContLowPwrLowNoise1_12bit          = 0x10,/**<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>*/
+  eContLowPwrLowNoise1_12bit              = 0x10,/**<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>*/
   eSingleLowPwrLowNoise4_14bit            = 0x1b,/**<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>*/
   eSingleLowPwrLowNoise3_14bit            = 0x1a,/**<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>*/
   eSingleLowPwrLowNoise2_14bit            = 0x19,/**<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>*/
-  eSingleLowLowNoisePwr1_12bit        = 0x18,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>*/
+  eSingleLowPwrLowNoise1_12bit            = 0x18,/**<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>*/
 }ePowerMode_t;
 
 /**
@@ -119,7 +120,7 @@ typedef enum {
   eRateDiv_2     = 0,/**<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>*/
   eRateDiv_4     = 1,/**<Rate/4 (High Power/Low power)>*/
   eRateDiv_10    = 2,/**<Rate/10 (HP/LP)>*/
-  eRateDiv_20    = 3,/**< Rate/20 (HP/LP)>*/
+  eRateDiv_20    = 3,/**<Rate/20 (HP/LP)>*/
 }eBWfilter_t;
 
 /**
@@ -127,7 +128,7 @@ typedef enum {
 */
 typedef enum {
   eRate_0hz            = 0x00,/**<测量关闭>*/
-  eRate_1hz6_lp_only   = 0x01,/**<1.6hz>*/
+  eRate_1hz6           = 0x01,/**<1.6hz,仅在低功耗模式下使用>*/
   eRate_12hz5          = 0x02,/**<12.5hz>*/
   eRate_25hz           = 0x03,
   eRate_50hz           = 0x04,
@@ -144,21 +145,19 @@ typedef enum {
 */
 typedef enum {
   eNoDetection        = 0,/**<No detection>*/
-  eDetectAct     = 1,/**<Detect movement,the chip automatically 
-goes to 12.5 Hz rate in the low-power mode>*/
-  eDetectStatMotion   = 3,/**<Detect Motion, the chip detects acceleration below a fixed threshold but 
-does not change either rate or operating mode>*/
+  eDetectAct          = 1,/**<Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode>*/
+  eDetectStatMotion   = 3,/**<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode>*/
 } eActDetect_t;
 
 /**
   Interrupt source 1 trigger event setting
 */
 typedef enum{
-  eDoubleTap   = 0x08,/**< Double-tap recognition is routed to INT1 pad>*/
-  eFreeFall     = 0x10,/**< Free-fall recognition is routed to INT1 pad>*/
-  eWakeUp = 0x20,/**<Wakeup recognition is routed to INT1 pad>*/
-  eSingleTap   = 0x40,/**<Single-tap recognition is routed to INT1 pad.>*/
-  e6D      = 0x80,/**<6D recognition is routed to INT1 pad>*/
+  eDoubleTap    = 0x08,/**<双击事件>*/
+  eFreeFall     = 0x10,/**<自由落体事件>*/
+  eWakeUp       = 0x20,/**<唤醒事件>*/
+  eSingleTap    = 0x40,/**<单击事件>*/
+  e6D           = 0x80,/**<在正面朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件>*/
 }eInt1Event_t;
 
 /**
@@ -200,13 +199,13 @@ typedef enum {
   which direction is tap event detected
 */
 typedef enum {
-  eDirXUp = 0,  /**<从 X 正方向发生的点击事件>*/
+  eDirXUp   = 0,/**<从 X 正方向发生的点击事件>*/
   eDirXDown = 1,/**<从 X 负方向发生的点击事件>*/
-  eDirYUp = 2,/**<从 Y 正方向发生的点击事件>*/
+  eDirYUp   = 2,/**<从 Y 正方向发生的点击事件>*/
   eDirYDown = 3,/**<从 Y 负方向发生的点击事件>*/
-  eDirZUp = 4,/**<从 Z 正方向发生的点击事件>*/
+  eDirZUp   = 4,/**<从 Z 正方向发生的点击事件>*/
   eDirZDown = 5,/**<从 Z 负方向发生的点击事件>*/
-  eDirNone = 6,
+  eDirNone  = 6,
 }eTapDir_t;
 
 /**
@@ -216,19 +215,20 @@ typedef enum {
   eDirX = 0,/**<X方向的运动唤醒芯片>*/
   eDirY = 1,/**<Y方向的运动唤醒芯片>*/
   eDirZ = 2,/**<Z方向的运动唤醒芯片>*/
-  eDirError =4,
+  eDirError =4,/**<方向检测错误>*/
+  eDirError =4,/**<方向检测错误>*/
 }eWakeUpDir_t;
 
 /**
   orientation
 */
 typedef enum {
-  eXDown = 0,/**<X is now down>*/
-  eXUp  = 1 ,/**<X is now up>*/
-  eYDown = 2 ,/**<Y is now down>*/
-  eYUp = 3 , /**<Y is now up>*/
+  eXDown = 0 , /**<X is now down>*/
+  eXUp   = 1 , /**<X is now up>*/
+  eYDown = 2 , /**<Y is now down>*/
+  eYUp   = 3 , /**<Y is now up>*/
   eZDown = 4 , /**<Z is now down>*/
-  eZUp = 5 , /**<Z is now up>*/
+  eZUp   = 5 , /**<Z is now up>*/
 } eOrient_t;
 public:
   DFRobot_LIS2DW12();
@@ -266,43 +266,45 @@ public:
 
   /**
    * @brief Set the  bandwidth of the data
-   * @param bw   eRateDiv_2     = 0,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
-                 eRateDiv_4     = 1,/<Rate/4 (High Power/Low power)>*
-                 eRateDiv_10    = 2,/<Rate/10 (HP/LP)>/
-                 eRateDiv_20    = 3,/< Rate/20 (HP/LP)>/
+   * @param bw bandwidth
+                 eRateDiv_2  ,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
+                 eRateDiv_4  ,/<Rate/4 (High Power/Low power)>*
+                 eRateDiv_10 ,/<Rate/10 (HP/LP)>/
+                 eRateDiv_20 ,/< Rate/20 (HP/LP)>/
    */
   void setFilterBandwidth(eBWfilter_t bw);
   
   /**
-   * @brief Set power mode
+   * @brief Set power mode,传感器测量加速度数据的模式有了两种 1.Continuous measurement 这种模式传感器会不停地测量数据然后放在数据寄存器
+   * @n                                                       2.Single data conversion on demand mode,这种模式下，传感器只有接受到外部请求才会测量一次数据
    * @param mode  power modes to choose from
-                 eHighPerformance_14bit                   = 0x04,/<High-Performance Mode,14-bit resolution>/
-                 eContLowPwr4_14bit                      = 0x03,/<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
-                 eContLowPwr3_14bit                      = 0x02,/<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
-                 eContLowPwr2_14bit                      = 0x01,/<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
-                 eContLowPwr1_12bit                  = 0x00,/<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
-                 eSingleLowPwr4_14bit                    = 0x0b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
-                 eSingleLowPwr3_14bit                    = 0x0a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
-                 eSingleLowPwr2_14bit                    = 0x09,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
-                 eSingleLowPwr1_12bit                = 0x08,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
-                 eHighPerformanceLowNoise_14bit           = 0x14,/<High-Performance Mode,Low-noise enabled,14-bit resolution>/
-                 eContLowPwrLowNoise4_14bit              = 0x13,/<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise3_14bit              = 0x12,/<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise2_14bit              = 0x11,/<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
-                 eContLowPwrLowNoise1_12bit          = 0x10,/<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
-                 eSingleLowPwrLowNoise4_14bit            = 0x1b,/<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
-                 eSingleLowPwrLowNoise3_14bit            = 0x1a,/<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
-                 eSingleLowPwrLowNoise2_14bit            = 0x19,/<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
-                 eSingleLowLowNoisePwr1_12bit        = 0x18,/<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
-                  */
+                  eHighPerformance_14bit         /<High-Performance Mode,14-bit resolution>/
+                  eContLowPwr4_14bit             /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
+                  eContLowPwr3_14bit             /<Continuous measurement,Low-Power Mode 3(14-bit resolution)>/
+                  eContLowPwr2_14bit             /<Continuous measurement,Low-Power Mode 2(14-bit resolution)/
+                  eContLowPwr1_12bit             /<Continuous measurement,Low-Power Mode 1(12-bit resolution)>/
+                  eSingleLowPwr4_14bit           /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)>/
+                  eSingleLowPwr3_14bit           /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution)>/
+                  eSingleLowPwr2_14bit           /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)>/
+                  eSingleLowPwr1_12bit           /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)>/
+                  eHighPerformanceLowNoise_14bit /<High-Performance Mode,Low-noise enabled,14-bit resolution>/
+                  eContLowPwrLowNoise4_14bit     /<Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)>/
+                  eContLowPwrLowNoise3_14bit     /<Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)>/
+                  eContLowPwrLowNoise2_14bit     /<Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)>/
+                  eContLowPwrLowNoise1_12bit     /<Continuous measurement,Low-Power Mode 1(12-bit resolution,Low-noise enabled)>/
+                  eSingleLowPwrLowNoise4_14bit   /<Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled>/
+                  eSingleLowPwrLowNoise3_14bit   /<Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled>/
+                  eSingleLowPwrLowNoise2_14bit   /<Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled>/
+                  eSingleLowPwrLowNoise1_12bit   /<Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled>/
+   */
   void setPowerMode(ePowerMode_t mode);
   
   /**
    * @brief Chip data collection rate setting
-   * @param rate  0-1600hz selection
-                  eRate_0hz            <测量关闭>
-                  eRate_1hz6_lp_only   <1.6hz>
-                  eRate_12hz5          <12.5hz>
+   * @param rate  加速度测量频率,0-1600hz selection
+                  eRate_0hz            /<测量关闭>/
+                  eRate_1hz6           /<1.6hz,仅在低功耗模式下使用>/
+                  eRate_12hz5          /<12.5hz>/
                   eRate_25hz        
                   eRate_50hz        
                   eRate_100hz       
@@ -310,18 +312,18 @@ public:
                   eRate_400hz       
                   eRate_800hz       
                   eRate_1k6hz       
-                  eSetSwTrig        <软件触发单次测量>
+                  eSetSwTrig        /<软件触发单次测量>/
    */
   void setDataRate(eRate_t rate);
   
   /**
    * @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
-   * @param dur duration(0 ~ 3)
+   * @param dur 自由落体样本数,范围：0~31
    * @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -331,11 +333,11 @@ public:
   /**
    * @brief 选择在中断1引脚产生的中断事件
    * @param event  中断事件,当此事件产生会在中断1引脚产生电平跳变
-               eDoubleTap   = 0x08,/< Double-tap recognition is routed to INT1 pad>/
-               eFreeFall     = 0x10,/< Free-fall recognition is routed to INT1 pad>/
-               eWakeUp = 0x20,/<Wakeup recognition is routed to INT1 pad>/
-               eSingleTap   = 0x40,/<Single-tap recognition is routed to INT1 pad.>/
-               e6D      = 0x80,/<6D recognition is routed to INT1 pad>/
+                   eDoubleTap    = 0x08,/<双击事件>/
+                   eFreeFall     = 0x10,/<自由落体事件>/
+                   eWakeUp       = 0x20,/<唤醒事件>/
+                   eSingleTap    = 0x40,/<单击事件>/
+                   e6D           = 0x80,/<在 正面 朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件>/
    */
   void setInt1Event(eInt1Event_t event);
   
@@ -357,12 +359,12 @@ public:
   
   /**
    * @brief Set the wake-up duration
-   * @param dur duration(0 ~ 3)
+   * @param dur duration,范围：0~3
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -370,8 +372,8 @@ public:
   void setWakeUpDur(uint8_t dur);
 
   /**
-   * @brief Set the wake-up Threshold
-   * @param th unit(mg),数值是在量程之内
+   * @brief Set the wake-up threshold
+   * @param th threshold ,unit:mg,数值是在量程之内
    */
   void setWakeUpThreshold(float th);
   
@@ -386,7 +388,8 @@ public:
   
   /**
    * @brief Set the range
-   * @param range  e2_g     = 2, /<±2g>/
+   * @param range 量程
+                   e2_g     = 2, /<±2g>/
                    e4_g     = 4, /<±4g>/
                    e8_g     = 8, /<±8g>/
                    e16_g    = 16, /< ±16g>/
@@ -433,12 +436,12 @@ public:
    * @brief Duration of maximum time gap for double-tap recognition. When double-tap 
    * @n recognition is enabled, this register expresses the maximum time between two 
    * @n successive detected taps to determine a double-tap event.
-   * @param dur duration(0 ~ 3)
+   * @param dur duration,范围:0~15
    * @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -447,17 +450,18 @@ public:
   
   /**
    * @brief Set the click detection mode
-   * @param mode     eOnlySingle   //检测单击
-                     eBothSingleDouble //检测单击和双击
+   * @param mode 点击检测模式
+                     eOnlySingle   /<检测单击>/
+                     eBothSingleDouble /<检测单击和双击>/
    */
   void setTapMode(sTapMode_t mode);
 
   /**
    * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
-   * @param degree   eDegrees80   (80°)
-                     eDegrees70   (70°)
-                     eDegrees60   (60°)
-                     eDegrees50   (50°)
+   * @param degree   eDegrees80   /<80°>/
+                     eDegrees70   /<70°>/
+                     eDegrees60   /<60°>/
+                     eDegrees50   /<50°>/
    */
   void set6DThreshold(e6DTh_t degree);
 
@@ -465,19 +469,19 @@ public:
    * @brief Read the acceleration in the x direction
    * @return  Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  int32_t readAccX();
+  int16_t readAccX();
   
   /**
    * @brief Read the acceleration in the y direction
    * @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  int32_t readAccY();
+  int16_t readAccY();
   
   /**
    * @brief Read the acceleration in the z direction
    * @return  Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过setRange()函数设置
    */
-  int32_t readAccZ();
+  int16_t readAccZ();
   
   /**
    * @brief 检测是否有运动产生
@@ -532,7 +536,7 @@ public:
    * @return   eDirX    /<X方向的运动唤醒芯片>/
                eDirY    /<Y方向的运动唤醒芯片>/
                eDirZ    /<Z方向的运动唤醒芯片>/
-               eDirError,
+               eDirError,/<检测错误>/
    */
   eWakeUpDir_t getWakeUpDir();
   

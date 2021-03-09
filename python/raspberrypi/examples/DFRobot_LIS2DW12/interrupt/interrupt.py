@@ -51,30 +51,30 @@ acce.soft_reset()
 acce.contin_refresh(True)
 '''
    Set power mode:
-               HIGH_PERFORMANCE_14BIT                   = 0X04#High-Performance Mode
-               CONT_LOWPWR4_14BIT                      = 0X03#Continuous measurement,Low-Power Mode 4(14-bit resolution)
-               CONT_LOWPWR3_14BIT                      = 0X02#Continuous measurement,Low-Power Mode 3(14-bit resolution)
-               CONT_LOWPWR2_14BIT                      = 0X01#Continuous measurement,Low-Power Mode 2(14-bit resolution)
-               CONT_LOWPWR1_12BIT                  = 0X00#Continuous measurement,Low-Power Mode 1(12-bit resolution)
-               SING_LELOWPWR4_14BIT                    = 0X0B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
-               SING_LELOWPWR3_14BIT                    = 0X0A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
-               SING_LELOWPWR2_14BIT                    = 0X09#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
-               SING_LELOWPWR1_12BIT                = 0X08#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
-               HIGHP_ERFORMANCELOW_NOISE_14BIT           = 0X14#High-Performance Mode,Low-noise enabled
-               CONT_LOWPWRLOWNOISE4_14BIT              = 0X13#Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE3_14BIT              = 0X12#Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE2_14BIT              = 0X11#Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
-               CONT_LOWPWRLOWNOISE1_12BIT          = 0X10#Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
-               SINGLE_LOWPWRLOWNOISE4_14BIT            = 0X1B#Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
-               SINGLE_LOWPWRLOWNOISE3_14BIT            = 0X1A#Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
-               SINGLE_LOWPWRLOWNOISE2_14BIT            = 0X19#Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
-               SINGLE_LOWLOWNOISEPWR1_12BIT        = 0X18#Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
+     HIGH_PERFORMANCE_14BIT           #High-Performance Mode
+     CONT_LOWPWR4_14BIT               #Continuous measurement,Low-Power Mode 4(14-bit resolution)
+     CONT_LOWPWR3_14BIT               #Continuous measurement,Low-Power Mode 3(14-bit resolution)
+     CONT_LOWPWR2_14BIT               #Continuous measurement,Low-Power Mode 2(14-bit resolution)
+     CONT_LOWPWR1_12BIT               #Continuous measurement,Low-Power Mode 1(12-bit resolution)
+     SING_LELOWPWR4_14BIT             #Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution)
+     SING_LELOWPWR3_14BIT             #Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution
+     SING_LELOWPWR2_14BIT             #Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution)
+     SING_LELOWPWR1_12BIT             #Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution)
+     HIGHP_ERFORMANCELOW_NOISE_14BIT  #High-Performance Mode,Low-noise enabled
+     CONT_LOWPWRLOWNOISE4_14BIT       #Continuous measurement,Low-Power Mode 4(14-bit resolution,Low-noise enabled)
+     CONT_LOWPWRLOWNOISE3_14BIT       #Continuous measurement,Low-Power Mode 3(14-bit resolution,Low-noise enabled)
+     CONT_LOWPWRLOWNOISE2_14BIT       #Continuous measurement,Low-Power Mode 2(14-bit resolution,Low-noise enabled)
+     CONT_LOWPWRLOWNOISE1_12BIT       #Continuous measurement,Low-Power Mode 1(14-bit resolution,Low-noise enabled)
+     SINGLE_LOWPWRLOWNOISE4_14BIT     #Single data conversion on demand mode,Low-Power Mode 4(14-bit resolution),Low-noise enabled
+     SINGLE_LOWPWRLOWNOISE3_14BIT     #Single data conversion on demand mode,Low-Power Mode 3(14-bit resolution),Low-noise enabled
+     SINGLE_LOWPWRLOWNOISE2_14BIT     #Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
+     SINGLE_LOWPWRLOWNOISE1_12BIT     #Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
 '''
 acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
 '''
     Set the sensor data collection rate:
     RATE_OFF            #测量关闭
-    RATE_1HZ6_LP_ONLY   #1.6hz
+    RATE_1HZ6           #1.6hz,仅在低功耗模式下使用
     RATE_12HZ5          #12.5hz
     RATE_25HZ           
     RATE_50HZ           
@@ -87,16 +87,16 @@ acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
 '''
 acce.set_data_rate(acce.RATE_100HZ);
 '''
-  Set the measurement range：
-               RANGE_2G     #/**<±2g>*/
-               RANGE_4G     #/**<±4g>*/
-               RANGE_8G     #/**<±8g>*/
-               RANGE_16G    #/**< ±16g>*/
+   Set the measurement range
+               RANGE_2G     #±2g
+               RANGE_4G     #±4g
+               RANGE_8G     #±8g
+               RANGE_16G    #±16g
 '''
 acce.set_range(acce.RANGE_2G)
 '''
   设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件:
-     dur duration(0 ~ 3)
+     dur duration(0 ~ 31)
      time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -106,16 +106,15 @@ acce.set_range(acce.RANGE_2G)
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
 '''
-acce.set_free_fall_Dur(dur = 6)
+acce.set_free_fall_Dur(dur = 0x06)
+
 '''
   Set the interrupt source of the int1 pin:
-              DOUBLE_TAP = 0x08   #Double-tap recognition is routed to INT1 pad
-              FREEFALL = 0x10     #Free-fall recognition is routed to INT1 pad
-              WAKEUP = 0x20 #Wakeup recognition is routed to INT1 pad
-              SINGLE_TAP = 0x40   #Single-tap recognition is routed to INT1 pad.
-              IA6D  = 0x80     #6D recognition is routed to INT1 pad
-
-
+          DOUBLE_TAP(Double click)
+          FREEFALL(Free fall)
+          WAKEUP(wake)
+          SINGLE_TAP(single-Click)
+          IA6D(Orientation change check)
 '''
 acce.set_int1_event(acce.FREEFALL)
 #lock interrupt

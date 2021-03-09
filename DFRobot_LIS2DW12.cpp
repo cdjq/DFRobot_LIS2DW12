@@ -438,13 +438,13 @@ void DFRobot_LIS2DW12::set6dFeedData(uint8_t data)
   return;
 }
 
-int32_t DFRobot_LIS2DW12::readAccX(){
+int16_t DFRobot_LIS2DW12::readAccX(){
   uint8_t sensorData[2];
   readReg(REG_OUT_X_L,sensorData,2);
   int16_t a = ((int16_t)sensorData[1])*256+(int16_t)sensorData[0];
   return a*_range;
 }
-int32_t DFRobot_LIS2DW12::readAccY(){
+int16_t DFRobot_LIS2DW12::readAccY(){
 
   uint8_t sensorData[2];
   readReg(REG_OUT_Y_L,sensorData,2);
@@ -453,7 +453,7 @@ int32_t DFRobot_LIS2DW12::readAccY(){
   
 }
 
-int32_t DFRobot_LIS2DW12::readAccZ(){
+int16_t DFRobot_LIS2DW12::readAccZ(){
   uint8_t sensorData[2];
   readReg(REG_OUT_Z_L,sensorData,2);
   int16_t a = ((int16_t)sensorData[1])*256+(int16_t)sensorData[0];
