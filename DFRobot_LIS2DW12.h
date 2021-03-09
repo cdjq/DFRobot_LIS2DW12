@@ -216,7 +216,6 @@ typedef enum {
   eDirY = 1,/**<Y方向的运动唤醒芯片>*/
   eDirZ = 2,/**<Z方向的运动唤醒芯片>*/
   eDirError =4,/**<方向检测错误>*/
-  eDirError =4,/**<方向检测错误>*/
 }eWakeUpDir_t;
 
 /**
@@ -348,14 +347,6 @@ public:
                  eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
    */
   void setInt2Event(eInt2Event_t event);
-  
-  /**
-   * @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
-     @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
-   * @param enable  true lock interrupt.
-                    false pulsed interrupt
-   */
-  void lockInterrupt(bool enable);
   
   /**
    * @brief Set the wake-up duration
@@ -598,6 +589,14 @@ private:
    * @param dur  duration
    */
   void setActSleepDur(uint8_t dur);
+
+  /**
+   * @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
+     @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
+   * @param enable  true lock interrupt.
+                    false pulsed interrupt
+   */
+  void lockInterrupt(bool enable);
 };
 
 class DFRobot_IIS2DLPC_I2C : public DFRobot_LIS2DW12{

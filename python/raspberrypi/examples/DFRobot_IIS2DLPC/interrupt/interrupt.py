@@ -117,8 +117,6 @@ acce.set_free_fall_Dur(dur = 0x06)
           IA6D(Orientation change check)
 '''
 acce.set_int1_event(acce.FREEFALL)
-#lock interrupt
-acce.lock_interrupt(True);
 time.sleep(0.1)
 
 while True:

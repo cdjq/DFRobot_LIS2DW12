@@ -171,14 +171,6 @@ To use this library, first download the library file, paste it into the \Arduino
   void setInt2Event(eInt2Event_t event);
   
   /**
-   * @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
-     @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
-   * @param enable  true lock interrupt.
-                    false pulsed interrupt
-   */
-  void lockInterrupt(bool enable);
-  
-  /**
    * @brief Set the wake-up duration
    * @param dur duration,范围：0~3
      @n time = dur * (1/rate)(unit:s)

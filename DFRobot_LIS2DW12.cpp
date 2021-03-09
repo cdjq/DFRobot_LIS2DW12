@@ -202,7 +202,10 @@ void DFRobot_LIS2DW12::setInt1Event(eInt1Event_t event){
   writeReg(REG_CTRL_REG4,&value1,1);
   writeReg(REG_CTRL_REG7,&value3,1);
 
-
+  if(event == eFreeFall){
+    lockInterrupt(true);
+   
+  }
 }
 void DFRobot_LIS2DW12::setWakeUpDur(uint8_t dur){
 

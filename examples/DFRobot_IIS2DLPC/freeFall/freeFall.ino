@@ -110,6 +110,7 @@ void setup(void){
     |------------------------------------------------------------------------------------------------------------------------|
     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
     |------------------------------------------------------------------------------------------------------------------------|
+  */
   acce.setFreeFallDur(/*dur = */3);
   
   /**！
@@ -121,8 +122,6 @@ void setup(void){
     e6D(Orientation change check)
   */
   acce.setInt1Event(DFRobot_LIS2DW12::eFreeFall);
-  //lock interrupt
-  acce.lockInterrupt(true);
   delay(100);
 }
 

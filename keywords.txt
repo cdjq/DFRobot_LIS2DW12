@@ -81,11 +81,11 @@ eHighPerformanceLowNoise_14bit	LITERAL1
 eContLowPwrLowNoise4_14bit	LITERAL1
 eContLowPwrLowNoise3_14bit	LITERAL1
 eContLowPwrLowNoise2_14bit	LITERAL1
-eContLowPwrLowNoise_12bit	LITERAL1
+eContLowPwrLowNoise1_12bit	LITERAL1
 eSingleLowPwrLowNoise4_14bit	LITERAL1
 eSingleLowPwrLowNoise3_14bit	LITERAL1
 eSingleLowPwrLowNoise2_14bit	LITERAL1
-eSingleLowLowNoisePwr1_12bit	LITERAL1
+eSingleLowPwrLowNoise1_12bit	LITERAL1
 
 e2_g	LITERAL1
 e4_g	LITERAL1

@@ -93,7 +93,7 @@ void setup(void){
   /**！
     Set the sensor data collection rate:
                eRate_0hz           /<测量关闭>/
-               eRate_1hz6_lp_only  /<1.6hz>/
+               eRate_1hz6          /<1.6hz,仅在低功耗模式下使用>/
                eRate_12hz5         /<12.5hz>/
                eRate_25hz          
                eRate_50hz          

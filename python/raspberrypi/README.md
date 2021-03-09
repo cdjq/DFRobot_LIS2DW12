@@ -199,14 +199,6 @@ python get_acceleration.py
   set_wakeup_threshold(self,th):
     
   '''
-    @brief lock interrupt Switches between latched ('1'-logic) and pulsed ('0'-logic) mode for 
-    @n function source signals and interrupts routed to pins (wakeup, single/double-tap).
-    @param enable  true lock interrupt.
-                    false pulsed interrupt
-  '''
-  lock_interrupt(self,enable):
-    
-  '''
     @brief Set to detect click events in the Z direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''

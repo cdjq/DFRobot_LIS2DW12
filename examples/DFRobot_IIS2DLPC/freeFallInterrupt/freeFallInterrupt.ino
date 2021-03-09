@@ -81,6 +81,7 @@ void setup(void){
   attachInterrupt(/*Interrupt No*/0,interEvent,CHANGE);//Open the external interrupt 0, connect INT1/2 to the digital pin of the main control: 
      //UNO(2), Mega2560(2), Leonardo(3), microbit(P0).
   #endif
+  
   //Chip soft reset
   acce.softReset();
   //Set whether to collect data continuously
@@ -158,8 +159,6 @@ void setup(void){
     e6D(Orientation change check)
   */
   acce.setInt1Event(DFRobot_LIS2DW12::eFreeFall);
-  //lock interrupt
-  acce.lockInterrupt(true);
   delay(100);
 }
 

@@ -402,7 +402,8 @@ class DFRobot_LIS2DW12(object):
     value1 = value1 | event
     self.write_reg(self.REG_CTRL_REG4,value1)
     self.write_reg(self.REG_CTRL_REG7,value3)
-    
+    if event == FREEFALL:
+      __lock_interrupt(True)
   '''
      @brief Set the wake-up duration
      @param dur  duration,范围:0~3
@@ -459,7 +460,7 @@ class DFRobot_LIS2DW12(object):
     @param enable  true lock interrupt.
                     false pulsed interrupt
   '''
-  def lock_interrupt(self,enable):
+  def __lock_interrupt(self,enable):
     value = self.read_reg(self.REG_CTRL_REG3)
     value = value & (~0x10)
     value = value | (enable << 4)
