@@ -109,7 +109,7 @@ class DFRobot_LIS2DW12(object):
   RATE_200HZ          = 0X06
   RATE_400HZ          = 0X07
   RATE_800HZ          = 0X08
-  RATE_1K6HZ          = 0X09
+  RATE_1600HZ          = 0X09
   SETSWTRIG           = 0X12  #软件触发单次测量
   
   '''
@@ -329,7 +329,7 @@ class DFRobot_LIS2DW12(object):
                  RATE_200HZ        
                  RATE_400HZ        
                  RATE_800HZ          
-                 RATE_1K6HZ          
+                 RATE_1600HZ          
                  SETSWTRIG         #软件触发单次测量
   '''
   def set_data_rate(self, rate):

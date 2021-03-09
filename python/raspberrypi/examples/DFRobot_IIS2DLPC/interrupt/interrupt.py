@@ -82,7 +82,7 @@ acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
     RATE_200HZ          
     RATE_400HZ          
     RATE_800HZ          
-    RATE_1K6HZ          
+    RATE_1600HZ          
     SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_100HZ);
@@ -98,7 +98,7 @@ acce.set_range(acce.RANGE_2G)
   设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件:
      dur duration(0 ~ 31)
      time = dur * (1/rate)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                                        |
+     |                                    参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
      |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |

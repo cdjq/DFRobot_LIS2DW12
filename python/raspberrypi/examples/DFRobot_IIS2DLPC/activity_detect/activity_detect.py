@@ -62,7 +62,7 @@ acce.set_filter_bandwidth(acce.RATE_DIV_4)
   Set the wake-up duration:
      dur duration(0 ~ 3)
      time = dur * (1/rate)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                                        |
+     |                                    参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
      |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
@@ -128,7 +128,7 @@ acce.set_int1_event(acce.WAKEUP)
         RATE_200HZ          
         RATE_400HZ          
         RATE_800HZ          
-        RATE_1K6HZ          
+        RATE_1600HZ          
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)

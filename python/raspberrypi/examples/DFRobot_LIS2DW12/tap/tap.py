@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 """
    @file tap.py
-   @brief Single click and double click detection,点击模块，或者点击模块附件的桌面都可以触发点击事件
+   @brief Single tap and double tap detection,点击模块，或者点击模块附件的桌面都可以触发点击事件
    @n 可以通过set_tap_mode()函数选择只检测单击，或单击和双击同时检测
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
@@ -78,7 +78,7 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_200HZ          
         RATE_400HZ          
         RATE_800HZ          
-        RATE_1K6HZ          
+        RATE_1600HZ          
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_800HZ)
@@ -99,7 +99,7 @@ acce.set_tap_threshold_on_z(0.5)
    双击的两次点击之间的间隔时间：
    dur duration(0 ~ 15)
    time = dur * (1/rate)(unit:s)
-   |                                  参数与时间之间的线性关系的示例                                                        |
+   |                                    参数与时间之间的线性关系的示例                                                        |
    |------------------------------------------------------------------------------------------------------------------------|
    |                |                     |                          |                          |                           |
    |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |

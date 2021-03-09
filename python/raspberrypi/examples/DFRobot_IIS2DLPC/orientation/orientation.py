@@ -82,7 +82,7 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_200HZ          
         RATE_400HZ          
         RATE_800HZ          
-        RATE_1K6HZ          
+        RATE_1600HZ          
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
@@ -111,12 +111,12 @@ while True:
     #time.sleep(0.01)
     if acce.ia_6d_detect() == True:
       '''
-        X_DOWN = 0 #/**<X is now down>*/
-        X_UP  = 1 #/**<X is now up>*/
-        Y_DOWN = 2 #/**<Y is now down>*/
-        Y_UP = 3  #/**<Y is now up>*/
-        Z_DOWN = 4  #/**<Z is now down>*/
-        Z_UP = 5  #/**<Z is now up>*/
+        X_DOWN = 0  #X is now down>
+        X_UP  = 1   #X is now up
+        Y_DOWN = 2  #Y is now down
+        Y_UP = 3    #Y is now up
+        Z_DOWN = 4  #Z is now down
+        Z_UP = 5    #Z is now up
       '''
       orient = acce.get_orient()
       if orient == acce.X_DOWN:

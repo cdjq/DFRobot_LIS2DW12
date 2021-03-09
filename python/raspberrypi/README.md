@@ -138,7 +138,8 @@ python get_acceleration.py
                  RATE_200HZ        
                  RATE_400HZ        
                  RATE_800HZ          
-                 RATE_1K6HZ          
+                 RATE_1600HZ          
+                 SETSWTRIG         #软件触发单次测量
   '''
   set_data_rate(self, rate):
     
