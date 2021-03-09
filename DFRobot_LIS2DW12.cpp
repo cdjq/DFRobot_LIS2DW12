@@ -519,11 +519,11 @@ DFRobot_LIS2DW12::eTap_t DFRobot_LIS2DW12::tapDetect()
   uint8_t value;
   readReg(REG_TAP_SRC,&value,1);
   if((value & 0x20) > 0){
-     return eSingleClick;
+     return eSTap;
   } else if((value & 0x10) > 0){
-     return eDoubleClick;
+     return eDTap;
   } else {
-    return eNoClick;
+    return eNoTap;
   }
 }
 DFRobot_LIS2DW12::eTapDir_t DFRobot_LIS2DW12::getTapDirection()

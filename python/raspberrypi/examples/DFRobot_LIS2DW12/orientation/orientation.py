@@ -34,7 +34,7 @@ import time
 I2C_BUS         = 0x01             #default use I2C1
 #ADDRESS_0       = 0x18             #传感器地址0
 ADDRESS_1       = 0x19             #传感器地址1
-acce = DFRobot_LIS2DW12_I2C(I2C_BUS ,ADDRESS_1)
+acce = DFRobot_IIS2DLPC_I2C(I2C_BUS ,ADDRESS_1)
 
 #Chip initialization
 acce.begin()

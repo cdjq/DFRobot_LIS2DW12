@@ -169,11 +169,11 @@ typedef enum{
 }eInt2Event_t;
 
 /**
-  Click detection mode
+  tap detection mode
 */
 typedef enum {
-  eOnlySingle          = 0,/**<Only detect click events.>*/
-  eBothSingleDouble    = 1,/**<Both single-click and double-click events are detected.>*/
+  eOnlySingle          = 0,/**<Only detect tap events.>*/
+  eBothSingleDouble    = 1,/**<Both single-tap and double-tap events are detected.>*/
 } sTapMode_t;
 
 /**
@@ -187,12 +187,12 @@ typedef enum {
 } e6DTh_t;
 
 /**
-  Click or double click
+  tap or double tap
 */
 typedef enum {
-  eSingleClick  = 0 ,/**<single click>*/
-  eDoubleClick      ,/**<double click>*/
-  eNoClick,
+  eSTap  = 0 ,/**<single tap>*/
+  eDTap      ,/**<double tap>*/
+  eNoTap,
 } eTap_t;
 
 /**
@@ -388,37 +388,37 @@ public:
   void setRange(eRange_t range);
   
   /**
-   * @brief enable detect click events in the Z direction
+   * @brief enable detect tap events in the Z direction
    * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnZ(bool enable);
   
   /**
-   * @brief enable detect click events in the Y direction
+   * @brief enable detect tap events in the Y direction
    * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnY(bool enable);
 
   /**
-   * @brief enable detect click events in the X direction
+   * @brief enable detect tap events in the X direction
    * @param enable ture(使能点击检测)\false(禁用点击检测)
    */
   void enableTapDetectionOnX(bool enable);
 
   /**
-   * @brief Set the click threshold in the X direction
+   * @brief Set the tap threshold in the X direction
    * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
   void setTapThresholdOnX(float th);
   
   /**
-   * @brief Set the click threshold in the Y direction
+   * @brief Set the tap threshold in the Y direction
    * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
   void setTapThresholdOnY(float th);
 
   /**
-   * @brief Set the click threshold in the Z direction
+   * @brief Set the tap threshold in the Z direction
    * @param th Threshold(mg),Can only be used in the range of 0~2g
    */
   void setTapThresholdOnZ(float th);
@@ -440,7 +440,7 @@ public:
   void setTapDur(uint8_t dur);
   
   /**
-   * @brief Set the click detection mode
+   * @brief Set the tap detection mode
    * @param mode 点击检测模式
                      eOnlySingle   /<检测单击>/
                      eBothSingleDouble /<检测单击和双击>/
@@ -505,9 +505,9 @@ public:
   
   /**
    * @brief 点击检测
-   * @return   eSingleClick       /<Single click>/
-               eDoubleClick       /<double click>/
-               eNoClick,          //没有点击产生
+   * @return   eSTap       /<Single Tap>/
+               eDTap       /<double Tap>/
+               eNoTap,          //没有点击产生
                 */
   eTap_t tapDetect();
   

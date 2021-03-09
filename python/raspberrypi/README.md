@@ -149,7 +149,7 @@ python get_acceleration.py
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -176,7 +176,7 @@ python get_acceleration.py
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -199,38 +199,38 @@ python get_acceleration.py
   set_wakeup_threshold(self,th):
     
   '''
-    @brief Set to detect click events in the Z direction
+    @brief Set to detect tap events in the Z direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   enable_tap_detection_on_z(self, enable):
   
   '''
-    @brief Set to detect click events in the Y direction
+    @brief Set to detect tap events in the Y direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   enable_tap_detection_on_y(self, enable):
 
     
   '''
-    @brief Set to detect click events in the X direction
+    @brief Set to detect tap events in the X direction
     @param enable Ture(使能点击检)\False(禁用点击检)
   '''
   enable_tap_detection_on_x(self, enable):
 
   '''
-    @brief Set the click threshold in the X direction
+    @brief Set the tap threshold in the X direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_x(self,th):
   
   '''
-    @brief Set the click threshold in the Y direction
+    @brief Set the tap threshold in the Y direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_y(self,th):
     
   '''
-    @brief Set the click threshold in the Z direction
+    @brief Set the tap threshold in the Z direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   set_tap_threshold_on_z(self,th):
@@ -244,7 +244,7 @@ python get_acceleration.py
    |                                  参数与时间之间的线性关系的示例                                                        |
    |------------------------------------------------------------------------------------------------------------------------|
    |                |                     |                          |                          |                           |
-   |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+   |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
    |------------------------------------------------------------------------------------------------------------------------|
    |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
    |------------------------------------------------------------------------------------------------------------------------|
@@ -252,7 +252,7 @@ python get_acceleration.py
   set_tap_dur(self,dur):
   
   '''
-    @brief Set the click detection mode
+    @brief Set the tap detection mode
     @param mode  点击检测模式
                      ONLY_SINGLE   //检测单击
                      BOTH_SINGLE_DOUBLE //检测单击和双击
@@ -325,9 +325,9 @@ python get_acceleration.py
      
   '''
     @brief 点击检测
-    @return   SINGLE_CLICK       #single click
-              DOUBLE_CLICK       #double click
-              NO_CLICK,          #没有点击产生
+    @return   S_TAP       #single tap
+              D_TAP       #double tap
+              NO_TAP,          #没有点击产生
   '''
   tap_detect(self):
 

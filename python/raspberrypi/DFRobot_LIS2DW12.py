@@ -49,6 +49,7 @@ class DFRobot_LIS2DW12(object):
   REG_INT_DUR    =  0x33      #Interrupt duration register
   REG_WAKE_UP_THS = 0x34      #Wakeup threshold register
   SPI_READ_BIT   =  0X80     # bit 0: RW bit. When 0, the data DI(7:0) is written into the device. When 1, the data DO(7:0) from the device is read.
+  ID = 0X44
   __range =  0.061
   __range_d = 0
   
@@ -136,11 +137,11 @@ class DFRobot_LIS2DW12(object):
 
   
   '''
-  Click or double click
+  tap or double tap
   '''
-  SINGLE_CLICK  = 0  #single Click
-  DOUBLE_CLICK  = 1  #double click
-  NO_CLICK      = 2  #no click
+  S_TAP  = 0  #single tap
+  D_TAP  = 1  #double tap
+  NO_TAP      = 2  #no tap
   
   #which direction is tap event detected
   DIR_X_UP   = 0 #在X 正方向发生的点击事件
@@ -157,9 +158,9 @@ class DFRobot_LIS2DW12(object):
   
   ERROR = 0XFF
   
-  #Click detection mode
-  ONLY_SINGLE          = 0 #Only detect click events.
-  BOTH_SINGLE_DOUBLE   = 1 #Both single-click and double-click events are detected.
+  #tap detection mode
+  ONLY_SINGLE          = 0 #Only detect tap events.
+  BOTH_SINGLE_DOUBLE   = 1 #Both single-tap and double-tap events are detected.
 
   '''
   位置检测
@@ -185,7 +186,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def begin(self):
     identifier = self.read_reg(self.REG_CARD_ID)
-    if identifier == 0x44:
+    if identifier == ID:
       return True
     else:
       return False
@@ -259,9 +260,7 @@ class DFRobot_LIS2DW12(object):
     #print(value)
     self.write_reg(self.REG_CTRL_REG6,value)
     value = self.read_reg(self.REG_CTRL_REG7)
-    enable = (path & 0x10)
-    if(enable > 0):
-      enable = 1
+    
     value = value &(~(1<<4))
     value = value | enable << 4
     #print(value)
@@ -331,6 +330,7 @@ class DFRobot_LIS2DW12(object):
                  RATE_400HZ        
                  RATE_800HZ          
                  RATE_1K6HZ          
+                 SETSWTRIG         #软件触发单次测量
   '''
   def set_data_rate(self, rate):
     value = self.read_reg(self.REG_CTRL_REG1)
@@ -354,7 +354,7 @@ class DFRobot_LIS2DW12(object):
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -411,7 +411,7 @@ class DFRobot_LIS2DW12(object):
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -467,7 +467,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_CTRL_REG3,value)
     
   '''
-    @brief Set to detect click events in the Z direction
+    @brief Set to detect tap events in the Z direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_z(self, enable):
@@ -479,7 +479,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_Z,value)
   
   '''
-    @brief Set to detect click events in the Y direction
+    @brief Set to detect tap events in the Y direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
   def enable_tap_detection_on_y(self, enable):
@@ -491,7 +491,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_Z,value)
     
   '''
-    @brief Set to detect click events in the X direction
+    @brief Set to detect tap events in the X direction
     @param enable Ture(使能点击检)\False(禁用点击检)
   '''
   def enable_tap_detection_on_x(self, enable):
@@ -503,7 +503,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_Z,value)
 
   '''
-    @brief Set the click threshold in the X direction
+    @brief Set the tap threshold in the X direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_x(self,th):
@@ -517,7 +517,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_X,value)
   
   '''
-    @brief Set the click threshold in the Y direction
+    @brief Set the tap threshold in the Y direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_y(self,th):
@@ -530,7 +530,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_TAP_THS_Y,value)
     
   '''
-    @brief Set the click threshold in the Z direction
+    @brief Set the tap threshold in the Z direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
   def set_tap_threshold_on_z(self,th):
@@ -548,13 +548,13 @@ class DFRobot_LIS2DW12(object):
    @n successive detected taps to determine a double-tap event.
    @param dur  duration,范围:0~15
    @n time = dur * (1/rate)(unit:s)
-   |                                  参数与时间之间的线性关系的示例                                                        |
-   |------------------------------------------------------------------------------------------------------------------------|
-   |                |                     |                          |                          |                           |
-   |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
-   |------------------------------------------------------------------------------------------------------------------------|
-   |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
-   |------------------------------------------------------------------------------------------------------------------------|
+    |                                  参数与时间之间的线性关系的示例                                                        |
+    |------------------------------------------------------------------------------------------------------------------------|
+    |                |                     |                          |                          |                           |
+    |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
+    |------------------------------------------------------------------------------------------------------------------------|
+    |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+    |------------------------------------------------------------------------------------------------------------------------|
   '''
   def set_tap_dur(self,dur):
     value = self.read_reg(self.REG_INT_DUR)
@@ -594,7 +594,7 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_INT_DUR,value)
   
   '''
-    @brief Set the click detection mode
+    @brief Set the tap detection mode
     @param mode  点击检测模式
                      ONLY_SINGLE   //检测单击
                      BOTH_SINGLE_DOUBLE //检测单击和双击
@@ -745,18 +745,18 @@ class DFRobot_LIS2DW12(object):
      
   '''
     @brief 点击检测
-    @return   SINGLE_CLICK       #single click
-              DOUBLE_CLICK       #double click
-              NO_CLICK,          #没有点击产生
+    @return   S_TAP       #single tap
+              D_TAP       #double tap
+              NO_TAP,     #没有点击产生
   '''
   def tap_detect(self):
    value = self.read_reg(self.REG_TAP_SRC)
    #print(value)
-   tap = ERROR
+   tap = NO_TAP
    if(value & 0x20) > 0:
-     tap = self.SINGLE_CLICK
+     tap = self.S_TAP
    elif(value & 0x10) > 0:
-     tap = self.DOUBLE_CLICK
+     tap = self.D_TAP
    return tap
    #Wakeup event detection status on X-axis
 

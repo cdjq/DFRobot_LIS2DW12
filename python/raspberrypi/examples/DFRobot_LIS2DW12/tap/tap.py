@@ -83,11 +83,11 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
 '''
 acce.set_data_rate(acce.RATE_800HZ)
 
-#Enable click detection in the X direction
+#Enable tap detection in the X direction
 acce.enable_tap_detection_on_z(True)
-#Enable click detection in Y direction
+#Enable tap detection in Y direction
 acce.enable_tap_detection_on_y(True)
-#Enable click detection in the Z direction
+#Enable tap detection in the Z direction
 acce.enable_tap_detection_on_x(True)
 #The threshold setting in the X direction is similar to the sensitivity of detection, the larger the value, the less sensitive (0~31)
 acce.set_tap_threshold_on_x(0.5)
@@ -102,7 +102,7 @@ acce.set_tap_threshold_on_z(0.5)
    |                                  参数与时间之间的线性关系的示例                                                        |
    |------------------------------------------------------------------------------------------------------------------------|
    |                |                     |                          |                          |                           |
-   |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+   |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
    |------------------------------------------------------------------------------------------------------------------------|
    |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
    |------------------------------------------------------------------------------------------------------------------------|
@@ -110,7 +110,7 @@ acce.set_tap_threshold_on_z(0.5)
 acce.set_tap_dur(dur = 3)
 
 '''
-  Set the click detection mode:
+  Set the tap detection mode:
       ONLY_SINGLE   //检测单击
       BOTH_SINGLE_DOUBLE //检测单击和双击
 '''
@@ -118,10 +118,10 @@ acce.set_tap_mode(acce.BOTH_SINGLE_DOUBLE)
 
 '''
   Set the interrupt source of the int1 pin:
-          DOUBLE_TAP(Double click)
+          DOUBLE_TAP(Double tap)
           FREEFALL(Free fall)
           WAKEUP(wake)
-          SINGLE_TAP(single-Click)
+          SINGLE_TAP(single-tap)
           IA6D(Orientation change check)
 '''
 acce.set_int1_event(acce.DOUBLE_TAP)
@@ -133,25 +133,25 @@ while True:
     event = acce.tap_detect()
     #点击的源头检测
     direction = acce.get_tap_direction()
-    if event == acce.SINGLE_CLICK:
+    if event == acce.S_TAP:
       print ("Tap Detected :")
       tap = True
-    elif event == acce.DOUBLE_CLICK:
+    elif event == acce.D_TAP:
       print ("Double Tap Detected :")
       tap = True
     if tap == True:
       if direction == acce.DIR_X_UP:
-        print("Click it in the positive direction of x")
+        print("tap it in the positive direction of x")
       elif direction == acce.DIR_X_DOWN:
-        print("Click it in the negative direction of x")
+        print("tap it in the negative direction of x")
       elif direction == acce.DIR_Y_UP:
-        print("Click it in the positive direction of y")
+        print("tap it in the positive direction of y")
       elif direction == acce.DIR_Y_DOWN:
-        print("Click it in the negative direction of y")
+        print("tap it in the negative direction of y")
       elif direction == acce.DIR_Z_UP:
-        print("Click it in the positive direction of z")
+        print("tap it in the positive direction of z")
       elif direction == acce.DIR_Z_DOWN:
-        print("Click it in the negative direction of z")
+        print("tap it in the negative direction of z")
       tap = False
       
 

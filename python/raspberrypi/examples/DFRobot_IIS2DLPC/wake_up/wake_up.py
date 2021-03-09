@@ -96,7 +96,7 @@ acce.set_filter_path(acce.LPF)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -120,8 +120,8 @@ Set the interrupt source of the int1 pin:
 acce.set_int1_event(acce.WAKEUP)
 '''
 Set the interrupt source of the int2 pin:
-                  SLEEP_CHANGE = 0x40 Enable routing of SLEEP_STATE on INT2 pad
-                  SLEEP_STATE  = 0x80 Sleep change status routed to INT2 pad
+                  SLEEP_CHANGE # Enable routing of SLEEP_STATE on INT2 pad
+                  SLEEP_STATE  #Sleep change status routed to INT2 pad
 '''
 #acce.set_int2_event(acce.SLEEP_CHANGE):
 time.sleep(0.1)

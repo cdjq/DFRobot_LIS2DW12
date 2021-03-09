@@ -92,7 +92,7 @@ acce.set_range(acce.RANGE_2G)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
-     |   frequen      |Data rate = 25 Hz    |   Data rate = 100 Hz     |  Data rate = 400 Hz      |   Data rate = 800 Hz      |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
      |------------------------------------------------------------------------------------------------------------------------|
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -108,8 +108,6 @@ acce.set_free_fall_Dur(dur = 0x06)
           IA6D(Orientation change check)
 '''
 acce.set_int1_event(acce.FREEFALL)
-#lock interrupt
-acce.lock_interrupt(True);
 time.sleep(0.1)
 
 while True:

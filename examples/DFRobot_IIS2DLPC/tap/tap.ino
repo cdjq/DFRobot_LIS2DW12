@@ -99,11 +99,11 @@ void setup(void){
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_800hz);
   
-  //Enable click detection in the X direction
+  //Enable tap detection in the X direction
   acce.enableTapDetectionOnZ(true);
-  //Enable click detection in Y direction
+  //Enable tap detection in Y direction
   acce.enableTapDetectionOnY(true);
-  //Enable click detection in the Z direction
+  //Enable tap detection in the Z direction
   acce.enableTapDetectionOnX(true);
   //The threshold setting in the X direction 
   //Threshold(mg),Can only be used in the range of ±2g
@@ -129,18 +129,18 @@ void setup(void){
   acce.setTapDur(/*dur=*/3);
   
   /**！
-    Set click detection mode:
-    eOnlySingle(single click)
-    eBothSingleDouble(Single click and double click)
+    Set tap detection mode:
+    eOnlySingle(single tap)
+    eBothSingleDouble(Single tap and double tap)
   */
   acce.setTapMode(DFRobot_LIS2DW12::eBothSingleDouble);
   
   /**！
     Set the interrupt source of the int1 pin:
-    eDoubleTap(Double click)
+    eDoubleTap(Double tap)
     eFreeFall(Free fall)
     eWakeUp(wake)
-    eSingleTap(single-Click)
+    eSingleTap(single-tap)
     e6D(Orientation change check)
   */
   acce.setInt1Event(DFRobot_LIS2DW12::eDoubleTap);
@@ -149,32 +149,32 @@ void setup(void){
 }
 
 void loop(void){
-  //Click detected
+  //tap detected
   DFRobot_LIS2DW12:: eTap_t tapEvent = acce.tapDetect();
   //点击的源头检测
   DFRobot_LIS2DW12::eTapDir_t dir = acce.getTapDirection();
   uint8_t tap = 0;
-  if(tapEvent  == DFRobot_LIS2DW12::eSingleClick){
-      Serial.print("single click Detected :");
+  if(tapEvent  == DFRobot_LIS2DW12::eSTap){
+      Serial.print("single tap Detected :");
       tap = 1;
   }
-  if(tapEvent  == DFRobot_LIS2DW12::eDoubleClick){  
+  if(tapEvent  == DFRobot_LIS2DW12::eDTap){  
       Serial.print("Double Tap Detected :");
       tap = 1;
   }
   if(tap == 1){
       if(dir == DFRobot_LIS2DW12::eDirXUp){
-        Serial.println("Click it in the positive direction of x");
+        Serial.println("tap it in the positive direction of x");
       }else if(dir == DFRobot_LIS2DW12::eDirXDown){
-        Serial.println("Click it in the negative direction of x");
+        Serial.println("tap it in the negative direction of x");
       }else if(dir == DFRobot_LIS2DW12::eDirYUp){
-        Serial.println("Click it in the positive direction of y");
+        Serial.println("tap it in the positive direction of y");
       }else if(dir == DFRobot_LIS2DW12::eDirYDown){
-        Serial.println("Click it in the negative direction of y");
+        Serial.println("tap it in the negative direction of y");
       }else if(dir == DFRobot_LIS2DW12::eDirZUp){
-        Serial.println("Click it in the positive direction of z");
+        Serial.println("tap it in the positive direction of z");
       }else if(dir == DFRobot_LIS2DW12::eDirZDown){
-        Serial.println("Click it in the negative direction of z");
+        Serial.println("tap it in the negative direction of z");
       }
       tap = 0;
   }
