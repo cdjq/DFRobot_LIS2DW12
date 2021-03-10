@@ -147,7 +147,7 @@ python get_acceleration.py
      @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
      @param dur duration,范围:0~31
      @n time = dur * (1/rate)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                                        |
+     |                                  参数与时间之间的线性关系的示例                                                           |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
      |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
@@ -155,7 +155,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  set_free_fall_Dur(self,dur):
+  set_free_fall_dur(self,dur):
 
   
   '''
@@ -175,7 +175,7 @@ python get_acceleration.py
      @n 然后便会继续休眠,以12.5hz的频率采集数据
      @param dur  duration,范围:0~3
      @n time = dur * (1/rate)(unit:s)
-     |                                  参数与时间之间的线性关系的示例                                                        |
+     |                                  参数与时间之间的线性关系的示例                                                           |
      |------------------------------------------------------------------------------------------------------------------------|
      |                |                     |                          |                          |                           |
      |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
@@ -244,7 +244,7 @@ python get_acceleration.py
    @n successive detected taps to determine a double-tap event.
    @param dur  duration,范围:0~15
    @n time = dur * (1/rate)(unit:s)
-   |                                  参数与时间之间的线性关系的示例                                                        |
+   |                                  参数与时间之间的线性关系的示例                                                           |
    |------------------------------------------------------------------------------------------------------------------------|
    |                |                     |                          |                          |                           |
    |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
@@ -324,7 +324,7 @@ python get_acceleration.py
                Z_DOWN   #Z is now down
                Z_UP     #Z is now up
   '''
-  get_orient(self):
+  get_oriention(self):
      
   '''
     @brief 点击检测,能检测是发生的双击,还是单击
