@@ -136,9 +136,9 @@ python get_acceleration.py
                  RATE_50HZ         
                  RATE_100HZ        
                  RATE_200HZ        
-                 RATE_400HZ        
-                 RATE_800HZ          
-                 RATE_1600HZ          
+                 RATE_400HZ        #仅在High-Performance mode下使用
+                 RATE_800HZ        #仅在High-Performance mode下使用
+                 RATE_1600HZ       #仅在High-Performance mode下使用
                  SETSWTRIG         #软件触发单次测量
   '''
   set_data_rate(self, rate):
@@ -171,8 +171,9 @@ python get_acceleration.py
   set_int1_event(self,event):
     
   '''
-     @brief Set the wake-up duration
-     @param dur duration,范围:0~3
+     @brief 设置唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时间以正常速率采集数据
+     @n 然后便会继续休眠,以12.5hz的频率采集数据
+     @param dur  duration,范围:0~3
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
      |------------------------------------------------------------------------------------------------------------------------|
@@ -185,17 +186,18 @@ python get_acceleration.py
   set_wakeup_dur(self,dur):
   
   '''
-    @brief Sets the mode of motion detection
-    @param mode  mode of motion detection
-                   NO_DETECTION       #No detection
-                   DETECT_ACT         #Detect movement
-                   DETECT_STATMOTION  #Detect Motion
+    @brief 设置运动检测的模式,第一种模式不会去检测模块是否在运动，第二种模式在设置后芯片会以较低的频率测量数据,以降低功耗
+    @n 在检测到运动后会恢复到正常频率,第三种只会检测模块是否处于睡眠状态
+    @param mode 运动检测模式
+                NO_DETECTION         #No detection
+                DETECT_ACT           #Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode
+                DETECT_STATMOTION    #Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode
   '''
   set_act_mode(self,mode):
 
   '''
-    @brief Set the wake-up Threshold
-    @param th threshold unit:g,数值是在量程之内
+    @brief Set the wake-up threshold,某个方向的加速度大于此值时,会触发wake-up事件
+    @param th threshold ,unit:mg,数值是在量程之内
   '''
   set_wakeup_threshold(self,th):
     
@@ -253,13 +255,13 @@ python get_acceleration.py
   set_tap_dur(self,dur):
   
   '''
-    @brief Set the tap detection mode
+    @brief Set the tap detection mode,检测单击和单击,双击都检测
     @param mode  点击检测模式
-                     ONLY_SINGLE   //检测单击
-                     BOTH_SINGLE_DOUBLE //检测单击和双击
+                     ONLY_SINGLE        #检测单击
+                     BOTH_SINGLE_DOUBLE #检测单击和双击
   '''
   set_tap_mode(self,mode):
-
+  
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
     @param degree   DEGREES_80   #80°
@@ -299,19 +301,19 @@ python get_acceleration.py
     @brief 检测是否有运动产生
     @return True(产生运动)/False(传感器未运动)
   '''
-  act_detect(self):
+  act_detected(self):
       
   '''
     @brief 自由落体运动检测
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
-  free_fall_detect(self):
+  free_fall_detected(self):
     
   '''
-    @brief Source of change in position portrait/landscape/face-up/face-down.
+    @brief 芯片在正面朝上/朝下/朝左/朝右/朝前/朝后的状态发生改变.
     @return True(a change in position is detected)/False(no event detected)
   '''
-  ia_6d_detect(self):
+  ori_change_detected(self):
       
   '''
   @brief 获取传感器现在的位置
@@ -325,10 +327,10 @@ python get_acceleration.py
   get_orient(self):
      
   '''
-    @brief 点击检测
+    @brief 点击检测,能检测是发生的双击,还是单击
     @return   S_TAP       #single tap
               D_TAP       #double tap
-              NO_TAP,          #没有点击产生
+              NO_TAP,     #没有点击产生
   '''
   tap_detect(self):
 

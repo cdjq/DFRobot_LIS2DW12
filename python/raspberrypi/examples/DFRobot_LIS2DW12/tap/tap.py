@@ -76,9 +76,9 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_50HZ           
         RATE_100HZ          
         RATE_200HZ          
-        RATE_400HZ          
-        RATE_800HZ          
-        RATE_1600HZ          
+        RATE_400HZ          #仅在High-Performance mode下使用
+        RATE_800HZ          #仅在High-Performance mode下使用
+        RATE_1600HZ         #仅在High-Performance mode下使用
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_800HZ)

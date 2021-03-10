@@ -91,13 +91,14 @@ To use this library, first download the library file, paste it into the \Arduino
                  eRateDiv_2  ,/<Rate/2 (up to Rate = 800 Hz, 400 Hz when Rate = 1600 Hz)>/
                  eRateDiv_4  ,/<Rate/4 (High Power/Low power)>*
                  eRateDiv_10 ,/<Rate/10 (HP/LP)>/
-                 eRateDiv_20 ,/< Rate/20 (HP/LP)>/
+                 eRateDiv_20 ,/<Rate/20 (HP/LP)>/
    */
-  void setFilterBandwidth(eBWfilter_t bw);
+  void setFilterBandwidth(eBWFilter_t bw);
   
   /**
-   * @brief Set power mode,传感器测量加速度数据的模式有了两种 1.Continuous measurement 这种模式传感器会不停地测量数据然后放在数据寄存器
-   * @n                                                       2.Single data conversion on demand mode,这种模式下，传感器只有接受到外部请求才会测量一次数据
+   * @brief Set power mode,传感器测量加速度数据的模式有了两种 
+   * @n       1.Continuous measurement 这种模式传感器会不停地测量数据然后放在数据寄存器
+   * @n       2.Single data conversion on demand mode,这种模式下，传感器只有接受到外部请求才会测量一次数据
    * @param mode  power modes to choose from
                   eHighPerformance_14bit         /<High-Performance Mode,14-bit resolution>/
                   eContLowPwr4_14bit             /<Continuous measurement,Low-Power Mode 4(14-bit resolution)>/
@@ -130,15 +131,15 @@ To use this library, first download the library file, paste it into the \Arduino
                   eRate_50hz        
                   eRate_100hz       
                   eRate_200hz       
-                  eRate_400hz       
-                  eRate_800hz       
-                  eRate_1k6hz       
-                  eSetSwTrig        /<软件触发单次测量>/
+                  eRate_400hz         /<仅在High-Performance mode下使用>/
+                  eRate_800hz         /<仅在High-Performance mode下使用>/
+                  eRate_1k6hz         /<仅在High-Performance mode下使用>/
+                  eSetSwTrig          /<软件触发单次测量>/
    */
   void setDataRate(eRate_t rate);
   
   /**
-   * @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
+   * @brief 设置自由落体时间,也可以称作自由落体样本个数,只有产生足够多的自由落体样本,才会产生自由落体事件
    * @param dur 自由落体样本数,范围：0~31
    * @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
@@ -158,20 +159,21 @@ To use this library, first download the library file, paste it into the \Arduino
                    eFreeFall     = 0x10,/<自由落体事件>/
                    eWakeUp       = 0x20,/<唤醒事件>/
                    eSingleTap    = 0x40,/<单击事件>/
-                   e6D           = 0x80,/<在 正面 朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件>/
+                   e6D           = 0x80,/<在正面朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件>/
    */
   void setInt1Event(eInt1Event_t event);
   
   /**
    * @brief 选择在中断2引脚产生的中断事件
    * @param event 中断事件,当此事件产生会在中断2引脚产生电平跳变
-                 eSleepChange = 0x40,/<Sleep change status routed to INT2 pad>/
-                 eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
+                  eSleepChange = 0x40,/<Sleep change status routed to INT2 pad>/
+                  eSleepState  = 0x80,/<Enable routing of SLEEP_STATE on INT2 pad>/
    */
   void setInt2Event(eInt2Event_t event);
   
   /**
-   * @brief Set the wake-up duration
+   * @brief 设置唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时间以正常速率采集数据
+   * @n 然后便会继续休眠,以12.5hz的频率采集数据
    * @param dur duration,范围：0~3
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
@@ -185,17 +187,18 @@ To use this library, first download the library file, paste it into the \Arduino
   void setWakeUpDur(uint8_t dur);
 
   /**
-   * @brief Set the wake-up threshold
+   * @brief Set the wake-up threshold,某个方向的加速度大于此值时,会触发wake-up事件
    * @param th threshold ,unit:mg,数值是在量程之内
    */
   void setWakeUpThreshold(float th);
   
   /**
-   * @brief Sets the mode of motion detection
+   * @brief 设置运动检测的模式,第一种模式不会去检测模块是否在运动，第二种模式在设置后芯片会以较低的频率测量数据,以降低功耗
+   * @n 在检测到运动后会恢复到正常频率,第三种只会检测模块是否处于睡眠状态
    * @param mode 运动检测模式
-                eNoDetection        = 0,/<No detection>/
-                eDetectAct     = 1,/<Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode>/
-                eDetectStatMotion   = 3,/<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode>/
+                eNoDetection         /<No detection>/
+                eDetectAct           /<Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode>/
+                eDetectStatMotion    /<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode>/
    */
   void setActMode(eActDetect_t mode);
   
@@ -262,12 +265,12 @@ To use this library, first download the library file, paste it into the \Arduino
   void setTapDur(uint8_t dur);
   
   /**
-   * @brief Set the tap detection mode
+   * @brief Set the tap detection mode,检测单击和单击,双击都检测
    * @param mode 点击检测模式
                      eOnlySingle   /<检测单击>/
                      eBothSingleDouble /<检测单击和双击>/
    */
-  void setTapMode(sTapMode_t mode);
+  void setTapMode(eTapMode_t mode);
 
   /**
    * @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
@@ -300,19 +303,19 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief 检测是否有运动产生
    * @return true(产生运动)/false(传感器未运动)
    */
-  bool actDetect();
+  bool actDetected();
   
   /**
-   * @brief 自由落体运动检测
+   * @brief 检测是否有自由落体运动发生
    * @return true(检测到自由落体运动)/false(未检测到自由落体运动)
    */
-  bool freeFallDetect();
+  bool freeFallDetected();
   
   /**
-   * @brief Source of change in position portrait/landscape/face-up/face-down.
+   * @brief 芯片在正面朝上/朝下/朝左/朝右/朝前/朝后的状态发生改变
    * @return true(a change in position is detected)/false(no event detected)
    */
-  bool ia6DDetect();
+  bool oriChangeDetected();
   
   /**
    * @brief 获取传感器现在的位置
@@ -323,13 +326,13 @@ To use this library, first download the library file, paste it into the \Arduino
                 eZDown  /<Z is now down>/
                 eZUp    /<Z is now up>/
    */
-  eOrient_t getOrient();
+  eOrient_t getOriention();
   
   /**
-   * @brief 点击检测
+   * @brief 点击检测,能检测是发生的双击,还是单击
    * @return   eSTap       /<Single Tap>/
                eDTap       /<double Tap>/
-               eNoTap,          //没有点击产生
+               eNoTap,     //没有点击产生
                 */
   eTap_t tapDetect();
   

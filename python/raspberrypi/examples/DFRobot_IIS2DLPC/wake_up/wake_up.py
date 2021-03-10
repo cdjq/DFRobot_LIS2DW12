@@ -3,6 +3,8 @@
    @file wake_up.py
    @brief 当x,y,z中某个方向的加速度大于设置好的阈值时,芯片会产生wake-up事件，通过
    @n 访问芯片寄存器可以知道是从哪一个方向的运动唤醒了芯片
+   @n 本示例中需要使用setWakeUpThreshold()设置唤醒持续时间,当芯片被唤醒后,芯片会持续一段时间才进入睡眠状态
+   @n 还会使用setWakeUpDur()设置threshold,当加速度的变化大于此值时,会触发eWakeUp事件
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -76,9 +78,9 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_50HZ           
         RATE_100HZ          
         RATE_200HZ          
-        RATE_400HZ          
-        RATE_800HZ          
-        RATE_1600HZ          
+        RATE_400HZ          #仅在High-Performance mode下使用
+        RATE_800HZ          #仅在High-Performance mode下使用
+        RATE_1600HZ         #仅在High-Performance mode下使用
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
@@ -128,7 +130,7 @@ time.sleep(0.1)
 
 while True:
     #Motion detected
-    act = acce.act_detect()
+    act = acce.act_detected()
     if act == True:
       print("Wake-Up event on:")
       #唤醒的运动方向检测

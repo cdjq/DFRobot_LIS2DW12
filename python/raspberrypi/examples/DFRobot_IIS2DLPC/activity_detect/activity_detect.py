@@ -2,6 +2,9 @@
 """
    @file activity_detect.py
    @brief Motion detection,可以检测到模块是否在移动
+   @n 使用此功能,需先进入低功耗模式,然后调用setActMode(),使芯片进入睡眠模式,此种状态下测量速率为12.5hz
+   @n 当检测到某个方向的加速度变化大于阈值时测量速率会提升到设置的正常速率，阈值大小通过setWakeUpThreshold()函数设置
+   @n 但如果停止运动即三个方向加速度的变化小于阈值芯片会在一段时间后进入进入睡模式,这个持续的时间由setWakeUpDur()函数设置
    @n 在使用SPI时,片选引脚时可以通过改变RASPBERRY_PIN_CS的值修改
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -22,7 +25,7 @@ import time
 #acce = DFRobot_IIS2DLPC_SPI(RASPBERRY_PIN_CS)
 
 #如果你想要应IIC驱动此模块，打开下面三行的注释，并通过I2C连接好模块和树莓派
-#可通过板子上的拨码开关（gravity版本）或SDO引脚（Breakout版本）切换I2C地址
+#可通过板子上的拨码开关（gravity版本）或SDO引脚（breakout版本）切换I2C地址
 I2C_BUS         = 0x01             #default use I2C1
 #ADDRESS_0       = 0x18             #传感器地址0
 ADDRESS_1       = 0x19             #传感器地址1
@@ -59,7 +62,8 @@ acce.set_filter_path(acce.LPF)
 acce.set_filter_bandwidth(acce.RATE_DIV_4)
 
 '''
-  Set the wake-up duration:
+      唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时
+    间以正常速率采集数据,然后便会继续休眠,以12.5hz的频率采集数据
      dur duration(0 ~ 3)
      time = dur * (1/rate)(unit:s)
      |                                    参数与时间之间的线性关系的示例                                                        |
@@ -72,7 +76,7 @@ acce.set_filter_bandwidth(acce.RATE_DIV_4)
 '''
 acce.set_wakeup_dur(dur = 6)
 
-#Set wakeup threshold,unit:g
+#Set wakeup threshold,当加速度的变化大于此值时,会触发eWakeUp事件,unit:mg
 #数值是在量程之内
 acce.set_wakeup_threshold(2)
 
@@ -102,8 +106,8 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
 '''
     Set the mode of motion detection:
                  NO_DETECTION      #No detection
-                 DETECT_ACT        #Detect movement
-                 DETECT_STATMOTION #Detect Motion
+                 DETECT_ACT        #设置此模式,芯片的速率会降为12.5hz,并且在eWakeUp事件产生后,变为正常测量频率
+                 DETECT_STATMOTION #此模式,仅能检测芯片是否处于睡眠模式,而不改变测量频率和电源模式,一直以正常测量频率测量数据
 '''
 acce.set_act_mode(acce.DETECT_ACT)
 
@@ -126,9 +130,9 @@ acce.set_int1_event(acce.WAKEUP)
         RATE_50HZ           
         RATE_100HZ          
         RATE_200HZ          
-        RATE_400HZ          
-        RATE_800HZ          
-        RATE_1600HZ          
+        RATE_400HZ          #仅在High-Performance mode下使用
+        RATE_800HZ          #仅在High-Performance mode下使用
+        RATE_1600HZ         #仅在High-Performance mode下使用
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
@@ -136,7 +140,7 @@ time.sleep(0.1)
 
 while True:
     #Motion detected
-    act = acce.act_detect()
+    act = acce.act_detected()
     if act == True:
       print("Activity Detected")
     time.sleep(0.3)

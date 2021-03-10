@@ -1,6 +1,7 @@
 /**！
  * @file freeFall.ino
- * @brief Sensor module free fall detection,通过setFrDur()函数设置自由落体时间,调节检测的灵敏度,自由落体时间越短,自由落体时间越容易发生
+ * @brief Sensor module free fall detection,通过setFrDur()函数设置自由落体时间,调节检测的灵敏度,
+ * @n 自由落体时间越短,自由落体事件越容易被检测到
  * @n 在使用SPI时片选引脚可以通过 LIS2DW12_CS 的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -83,10 +84,10 @@ void setup(void){
                eRate_50hz          
                eRate_100hz         
                eRate_200hz         
-               eRate_400hz         
-               eRate_800hz         
-               eRate_1k6hz         
-               eSetSwTrig        <软件触发单次测量>
+               eRate_400hz       /<仅在High-Performance mode下使用>/
+               eRate_800hz       /<仅在High-Performance mode下使用>/
+               eRate_1k6hz       /<仅在High-Performance mode下使用>/
+               eSetSwTrig        /<软件触发单次测量>/
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_100hz);
   
@@ -126,9 +127,8 @@ void setup(void){
 }
 
 void loop(void){
-
    //Free fall event is detected
-   if(acce.freeFallDetect()){
+   if(acce.freeFallDetected()){
       Serial.println("free fall detected");
       delay(300);
    }

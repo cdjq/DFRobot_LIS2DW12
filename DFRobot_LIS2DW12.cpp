@@ -17,6 +17,7 @@ DFRobot_LIS2DW12::DFRobot_LIS2DW12(){
 bool DFRobot_LIS2DW12::begin(void){
   uint8_t identifier = 0;
   readReg(REG_CARD_ID,&identifier,1);
+  DBG(identifier);
   if(identifier == 0x44){
     return true;
   } else {
@@ -69,7 +70,7 @@ void DFRobot_LIS2DW12::setFilterPath(ePath_t path){
   return ;
 }
 
-void DFRobot_LIS2DW12::setFilterBandwidth(eBWfilter_t bw){
+void DFRobot_LIS2DW12::setFilterBandwidth(eBWFilter_t bw){
 
   uint8_t value;
   readReg(REG_CTRL_REG6,&value, 1);
@@ -378,7 +379,7 @@ void DFRobot_LIS2DW12::setTapShock(uint8_t shock)
   return;
 }
 
-void DFRobot_LIS2DW12::setTapMode(sTapMode_t mode)
+void DFRobot_LIS2DW12::setTapMode(eTapMode_t mode)
 {
 
   uint8_t value;
@@ -463,7 +464,7 @@ int16_t DFRobot_LIS2DW12::readAccZ(){
   DBG(_range);
   return a*_range;
 }
-bool DFRobot_LIS2DW12::actDetect()
+bool DFRobot_LIS2DW12::actDetected()
 {
   uint8_t value;
   readReg(REG_WAKE_UP_SRC,&value,1);
@@ -474,7 +475,7 @@ bool DFRobot_LIS2DW12::actDetect()
   }
 }
 
-bool DFRobot_LIS2DW12::freeFallDetect()
+bool DFRobot_LIS2DW12::freeFallDetected()
 {
   uint8_t value;
   readReg(REG_WAKE_UP_SRC,&value,1);
@@ -485,7 +486,7 @@ bool DFRobot_LIS2DW12::freeFallDetect()
   }
 }
 
-bool DFRobot_LIS2DW12::ia6DDetect()
+bool DFRobot_LIS2DW12::oriChangeDetected()
 {
   uint8_t value;
   readReg(REG_SIXD_SRC,&value,1);
@@ -496,7 +497,7 @@ bool DFRobot_LIS2DW12::ia6DDetect()
   }
 }
 
-DFRobot_LIS2DW12::eOrient_t DFRobot_LIS2DW12::getOrient()
+DFRobot_LIS2DW12::eOrient_t DFRobot_LIS2DW12::getOriention()
 {
   uint8_t value;
   readReg(REG_SIXD_SRC,&value,1);

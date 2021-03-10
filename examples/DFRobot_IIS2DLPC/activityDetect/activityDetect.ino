@@ -1,6 +1,9 @@
 /**！
  * @file activityDetect.ino
  * @brief Motion detection,可以检测到模块是否在移动
+ * @n 使用此功能,需先进入低功耗模式,然后调用setActMode(),使芯片进入睡眠模式,此种状态下测量速率为12.5hz
+ * @n 当检测到某个方向的加速度变化大于阈值时测量速率会提升到设置的正常速率，阈值大小通过setWakeUpThreshold()函数设置
+ * @n 但如果停止运动即三个方向加速度的变化小于阈值芯片会在一段时间后进入进入睡模式,这个持续的时间由setWakeUpDur()函数设置
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -77,7 +80,8 @@ void setup(void){
   acce.setFilterBandwidth(DFRobot_LIS2DW12::eRateDiv_4);
   
   /**
-    唤醒持续时间
+      唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时
+    间以正常速率采集数据,然后便会继续休眠,以12.5hz的频率采集数据
     dur (0 ~ 3)
     time = dur * (1/Rate)(unit:s)
     |                                  参数与时间之间的线性关系的示例                                                          |
@@ -90,7 +94,7 @@ void setup(void){
    */
   acce.setWakeUpDur(/*dur = */2);
   
-  //Set wakeup threshold,unit:mg
+  //Set wakeup threshold,当加速度的变化大于此值时,会触发eWakeUp事件,unit:mg
   //数值是在量程之内
   acce.setWakeUpThreshold(/*threshold = */0.2);
   
@@ -119,9 +123,9 @@ void setup(void){
   
   /**！
     Set the mode of motion detection:
-    eNoDetection     /<No detection>/
-    eDetectAct     /<Detect movement,the chip automatically goes to 12.5 Hz ODR in the low-power mode>/
-    eDetectStatMotion  /<Detect Motion, the chip detects acceleration below a fixed threshold but does not change either ODR or operating mode>/
+    eNoDetection       /<No detection>/
+    eDetectAct         /<设置此模式,芯片的速率会降为12.5hz,并且在eWakeUp事件产生后,变为正常测量频率>/
+    eDetectStatMotion  /<此模式,仅能检测芯片是否处于睡眠模式,而不改变测量频率和电源模式,一直以正常测量频率测量数据>/
   */
   acce.setActMode(DFRobot_LIS2DW12::eDetectAct);
   
@@ -129,7 +133,7 @@ void setup(void){
     Set the interrupt source of the int1 pin:
     eDoubleTap(Double click)
     eFreeFall(Free fall)
-    eWakeUp(wake)
+    eWakeUp(wake up)
     eSingleTap(single-Click)
     e6D(Orientation change check)
   */
@@ -144,10 +148,10 @@ void setup(void){
                eRate_50hz          
                eRate_100hz         
                eRate_200hz         
-               eRate_400hz         
-               eRate_800hz         
-               eRate_1k6hz         
-               eSetSwTrig        <软件触发单次测量>
+               eRate_400hz       /<仅在High-Performance mode下使用>/
+               eRate_800hz       /<仅在High-Performance mode下使用>/
+               eRate_1k6hz       /<仅在High-Performance mode下使用>/
+               eSetSwTrig        /<软件触发单次测量>/
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
   delay(100);
@@ -155,7 +159,7 @@ void setup(void){
 
 void loop(void){
    //Motion detected
-   if(acce.actDetect()){
+   if(acce.actDetected()){
      Serial.println("Activity Detected");
      delay(100);
    }

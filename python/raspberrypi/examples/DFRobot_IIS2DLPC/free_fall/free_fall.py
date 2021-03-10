@@ -63,17 +63,17 @@ acce.contin_refresh(True)
 acce.set_power_mode(acce.CONT_LOWPWR4_14BIT);
 '''
     Set the sensor data collection rate:
-    RATE_OFF            #测量关闭
-    RATE_1HZ6           #1.6hz,仅在低功耗模式下使用
-    RATE_12HZ5          #12.5hz
-    RATE_25HZ           
-    RATE_50HZ           
-    RATE_100HZ          
-    RATE_200HZ          
-    RATE_400HZ          
-    RATE_800HZ          
-    RATE_1600HZ          
-    SETSWTRIG           #软件触发单次测量
+        RATE_OFF            #测量关闭
+        RATE_1HZ6           #1.6hz,仅在低功耗模式下使用
+        RATE_12HZ5          #12.5hz
+        RATE_25HZ           
+        RATE_50HZ           
+        RATE_100HZ          
+        RATE_200HZ          
+        RATE_400HZ          #仅在High-Performance mode下使用
+        RATE_800HZ          #仅在High-Performance mode下使用
+        RATE_1600HZ         #仅在High-Performance mode下使用
+        SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_100HZ);
 '''
@@ -111,7 +111,7 @@ time.sleep(0.1)
 
 while True:
     #Free fall event is detected
-    free_fall = acce.free_fall_detect()
+    free_fall = acce.free_fall_detected()
     if free_fall == True:
       print("free fall detected")
       time.sleep(0.3)

@@ -80,9 +80,9 @@ acce.set_power_mode(acce.CONT_LOWPWRLOWNOISE1_12BIT)
         RATE_50HZ           
         RATE_100HZ          
         RATE_200HZ          
-        RATE_400HZ          
-        RATE_800HZ          
-        RATE_1600HZ          
+        RATE_400HZ          #仅在High-Performance mode下使用
+        RATE_800HZ          #仅在High-Performance mode下使用
+        RATE_1600HZ         #仅在High-Performance mode下使用
         SETSWTRIG           #软件触发单次测量
 '''
 acce.set_data_rate(acce.RATE_200HZ)
@@ -109,7 +109,7 @@ time.sleep(0.1)
 while True:
     #Get the acceleration in the three directions of xyz
     #time.sleep(0.01)
-    if acce.ia_6d_detect() == True:
+    if acce.ori_change_detected() == True:
       '''
         X_DOWN = 0  #X is now down>
         X_UP  = 1   #X is now up
@@ -118,7 +118,7 @@ while True:
         Z_DOWN = 4  #Z is now down
         Z_UP = 5    #Z is now up
       '''
-      orient = acce.get_orient()
+      orient = acce.get_oriention()
       if orient == acce.X_DOWN:
         print("X is now down")
       elif orient == acce.X_UP:

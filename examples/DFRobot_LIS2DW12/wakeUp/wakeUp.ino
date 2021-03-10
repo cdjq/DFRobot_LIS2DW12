@@ -1,7 +1,9 @@
 /**！
  * @file wakeUp.ino
  * @brief 当x,y,z中某个方向的加速度大于设置好的阈值时,芯片会产生wake-up事件，通过
- * @访问芯片可以知道是从哪一个方向的运动唤醒了芯片
+ * @n 访问芯片寄存器可以知道是从哪一个方向的运动唤醒了芯片
+ * @n 本示例中需要使用setWakeUpThreshold()设置唤醒持续时间,当芯片被唤醒后,芯片会持续一段时间才进入睡眠状态
+ * @n 还会使用setWakeUpDur()设置threshold,当加速度的变化大于此值时,会触发eWakeUp事件
  * @n 在使用SPI时片选引脚可以通过 LIS2DW12_CS 的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -91,10 +93,10 @@ void setup(void){
                eRate_50hz          
                eRate_100hz         
                eRate_200hz         
-               eRate_400hz         
-               eRate_800hz         
-               eRate_1k6hz         
-               eSetSwTrig        <软件触发单次测量>
+               eRate_400hz       /<仅在High-Performance mode下使用>/
+               eRate_800hz       /<仅在High-Performance mode下使用>/
+               eRate_1k6hz       /<仅在High-Performance mode下使用>/
+               eSetSwTrig        /<软件触发单次测量>/
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_200hz);
   
@@ -106,7 +108,7 @@ void setup(void){
   acce.setFilterPath(DFRobot_LIS2DW12::eLPF);
   
   /**
-   唤醒持续时间
+    唤醒持续时间,当芯片被唤醒后,芯片会持续一段时间才进入睡眠状态
     dur (0 ~ 3)
     time = dur * (1/Rate)(unit:s)
     |                                  参数与时间之间的线性关系的示例                                                          |
@@ -118,7 +120,8 @@ void setup(void){
     |------------------------------------------------------------------------------------------------------------------------|
    */
   acce.setWakeUpDur(/*dur =*/2);
-  //Set wakeup threshold,unit:mg
+  
+  //Set wakeup threshold,当加速度的变化大于此值时,会触发eWakeUp事件,unit:mg
   //数值是在量程之内
   acce.setWakeUpThreshold(/*threshold = */0.5);
   
@@ -144,7 +147,7 @@ void setup(void){
 void loop(void){
 
    //Wake-up event detected
-   if(acce.actDetect()){
+   if(acce.actDetected()){
      Serial.println("Wake-Up event on");
      //唤醒的运动方向检测
      DFRobot_LIS2DW12::eWakeUpDir_t dir  = acce.getWakeUpDir();

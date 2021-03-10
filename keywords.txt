@@ -47,10 +47,10 @@ set6DThreshold	KEYWORD2
 readAccX	KEYWORD2
 readAccY	KEYWORD2
 readAccZ	KEYWORD2
-actDetect	KEYWORD2
-freeFallDetect	KEYWORD2
-ia6DDetect	KEYWORD2
-getOrient	KEYWORD2
+actDetected	KEYWORD2
+freeFallDetected	KEYWORD2
+oriChangeDetected	KEYWORD2
+getOriention	KEYWORD2
 tapDetect	KEYWORD2
 getTapDirection	KEYWORD2
 getWakeUpDir	KEYWORD2
@@ -160,3 +160,7 @@ eYDown	LITERAL1
 eYUp	LITERAL1
 eZDown	LITERAL1
 eZUp	LITERAL1
+eTapDir_t	LITERAL1
+eWakeUpDir_t	LITERAL1
+eOrient_t	LITERAL1
+eTap_t	LITERAL1

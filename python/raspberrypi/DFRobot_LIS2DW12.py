@@ -48,7 +48,7 @@ class DFRobot_LIS2DW12(object):
   REG_TAP_THS_Z  =  0x32      #Threshold for tap recognition @ FS = ±2 g on Z direction
   REG_INT_DUR    =  0x33      #Interrupt duration register
   REG_WAKE_UP_THS = 0x34      #Wakeup threshold register
-  SPI_READ_BIT   =  0X80     # bit 0: RW bit. When 0, the data DI(7:0) is written into the device. When 1, the data DO(7:0) from the device is read.
+  SPI_READ_BIT   =  0X80      # bit 0: RW bit. When 0, the data DI(7:0) is written into the device. When 1, the data DO(7:0) from the device is read.
   ID = 0X44
   __range =  0.061
   __range_d = 0
@@ -107,9 +107,9 @@ class DFRobot_LIS2DW12(object):
   RATE_50HZ           = 0X04
   RATE_100HZ          = 0X05
   RATE_200HZ          = 0X06
-  RATE_400HZ          = 0X07
-  RATE_800HZ          = 0X08
-  RATE_1600HZ          = 0X09
+  RATE_400HZ          = 0X07  #仅在High-Performance mode下使用
+  RATE_800HZ          = 0X08  #仅在High-Performance mode下使用
+  RATE_1600HZ         = 0X09  #仅在High-Performance mode下使用
   SETSWTRIG           = 0X12  #软件触发单次测量
   
   '''
@@ -186,7 +186,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def begin(self):
     identifier = self.read_reg(self.REG_CARD_ID)
-    if identifier == ID:
+    if identifier == self.ID:
       return True
     else:
       return False
@@ -327,9 +327,9 @@ class DFRobot_LIS2DW12(object):
                  RATE_50HZ         
                  RATE_100HZ        
                  RATE_200HZ        
-                 RATE_400HZ        
-                 RATE_800HZ          
-                 RATE_1600HZ          
+                 RATE_400HZ        #仅在High-Performance mode下使用
+                 RATE_800HZ        #仅在High-Performance mode下使用
+                 RATE_1600HZ       #仅在High-Performance mode下使用
                  SETSWTRIG         #软件触发单次测量
   '''
   def set_data_rate(self, rate):
@@ -402,10 +402,11 @@ class DFRobot_LIS2DW12(object):
     value1 = value1 | event
     self.write_reg(self.REG_CTRL_REG4,value1)
     self.write_reg(self.REG_CTRL_REG7,value3)
-    if event == FREEFALL:
-      __lock_interrupt(True)
+    if event == self.FREEFALL:
+      self.__lock_interrupt(True)
   '''
-     @brief Set the wake-up duration
+     @brief 设置唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时间以正常速率采集数据
+     @n 然后便会继续休眠,以12.5hz的频率采集数据
      @param dur  duration,范围:0~3
      @n time = dur * (1/rate)(unit:s)
      |                                  参数与时间之间的线性关系的示例                                                        |
@@ -424,11 +425,12 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_WAKE_UP_DUR,value)
 
   '''
-    @brief Sets the mode of motion detection
-    @param mode  mode of motion detection
-                   NO_DETECTION       #No detection
-                   DETECT_ACT         #Detect movement
-                   DETECT_STATMOTION  #Detect Motion
+    @brief 设置运动检测的模式,第一种模式不会去检测模块是否在运动，第二种模式在设置后芯片会以较低的频率测量数据,以降低功耗
+    @n 在检测到运动后会恢复到正常频率,第三种只会检测模块是否处于睡眠状态
+    @param mode 运动检测模式
+                NO_DETECTION         #No detection
+                DETECT_ACT           #Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode
+                DETECT_STATMOTION    #Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode
   '''
   def set_act_mode(self,mode):
     value1 = self.read_reg(self.REG_WAKE_UP_THS)
@@ -443,8 +445,8 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_WAKE_UP_DUR,value2)
 
   '''
-    @brief Set the wake-up Threshold
-    @param th threshold unit:g,数值是在量程之内
+    @brief Set the wake-up threshold,某个方向的加速度大于此值时,会触发wake-up事件
+    @param th threshold ,unit:mg,数值是在量程之内
   '''
   def set_wakeup_threshold(self,th):
     th1 = (float(th)/self.__range_d) * 64
@@ -594,10 +596,10 @@ class DFRobot_LIS2DW12(object):
     self.write_reg(self.REG_INT_DUR,value)
   
   '''
-    @brief Set the tap detection mode
+    @brief Set the tap detection mode,检测单击和单击,双击都检测
     @param mode  点击检测模式
-                     ONLY_SINGLE   //检测单击
-                     BOTH_SINGLE_DOUBLE //检测单击和双击
+                     ONLY_SINGLE        #检测单击
+                     BOTH_SINGLE_DOUBLE #检测单击和双击
   '''
   def set_tap_mode(self,mode):
     value = self.read_reg(self.REG_WAKE_UP_THS)
@@ -689,7 +691,7 @@ class DFRobot_LIS2DW12(object):
     @brief 检测是否有运动产生
     @return True(产生运动)/False(传感器未运动)
   '''
-  def act_detect(self):
+  def act_detected(self):
     value = self.read_reg(self.REG_WAKE_UP_SRC)
     if(value & 0x08) > 0:
       return True
@@ -700,17 +702,17 @@ class DFRobot_LIS2DW12(object):
     @brief 自由落体运动检测
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
-  def free_fall_detect(self):
+  def free_fall_detected(self):
     value = self.read_reg(self.REG_WAKE_UP_SRC)
     if(value & 0x20) > 0:
       return True
     return False
     
   '''
-    @brief Source of change in position portrait/landscape/face-up/face-down.
+    @brief 芯片在正面朝上/朝下/朝左/朝右/朝前/朝后的状态发生改变.
     @return True(a change in position is detected)/False(no event detected)
   '''
-  def ia_6d_detect(self):
+  def ori_change_detected(self):
     value = self.read_reg(self.REG_SIXD_SRC)
     if(value & 0x40) > 0:
       return True
@@ -726,9 +728,9 @@ class DFRobot_LIS2DW12(object):
                Z_DOWN   #Z is now down
                Z_UP     #Z is now up
   '''
-  def get_orient(self):
+  def get_oriention(self):
    value = self.read_reg(self.REG_SIXD_SRC)
-   orient = ERROR
+   orient = self.ERROR
    if(value & 0x1) > 0:
      orient =  self.X_DOWN
    elif(value & 0x2) > 0:
@@ -744,7 +746,7 @@ class DFRobot_LIS2DW12(object):
    return orient
      
   '''
-    @brief 点击检测
+    @brief 点击检测,能检测是发生的双击,还是单击
     @return   S_TAP       #single tap
               D_TAP       #double tap
               NO_TAP,     #没有点击产生
@@ -752,7 +754,7 @@ class DFRobot_LIS2DW12(object):
   def tap_detect(self):
    value = self.read_reg(self.REG_TAP_SRC)
    #print(value)
-   tap = NO_TAP
+   tap = self.NO_TAP
    if(value & 0x20) > 0:
      tap = self.S_TAP
    elif(value & 0x10) > 0:
@@ -772,7 +774,7 @@ class DFRobot_LIS2DW12(object):
   def get_tap_direction(self):
    value = self.read_reg(self.REG_TAP_SRC)
    #print(value)
-   direction = ERROR
+   direction = self.ERROR
    positive = value & 0x08
    if(value & 0x4)>0 and positive > 0:
      direction = self.DIR_X_UP
@@ -783,7 +785,7 @@ class DFRobot_LIS2DW12(object):
    elif(value & 0x2)>0 and positive == 0:
      direction = self.DIR_Y_DOWN
    elif(value & 0x1)>0 and positive > 0:
-     direction = elf.DIR_Z_UP
+     direction = self.DIR_Z_UP
    elif(value & 0x1)>0 and positive == 0:
      direction = self.DIR_Z_DOWN
    return direction
@@ -796,7 +798,7 @@ class DFRobot_LIS2DW12(object):
   '''
   def get_wake_up_dir(self):
     value = self.read_reg(self.REG_WAKE_UP_SRC)
-    direction = ERROR
+    direction = self.ERROR
     if(value & 0x01) > 0:
       direction = self.DIR_Z
     elif(value & 0x02) > 0:

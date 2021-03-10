@@ -119,10 +119,10 @@ void setup(void){
                eRate_50hz          
                eRate_100hz         
                eRate_200hz         
-               eRate_400hz         
-               eRate_800hz         
-               eRate_1k6hz         
-               eSetSwTrig        <软件触发单次测量>
+               eRate_400hz       /<仅在High-Performance mode下使用>/
+               eRate_800hz       /<仅在High-Performance mode下使用>/
+               eRate_1k6hz       /<仅在High-Performance mode下使用>/
+               eSetSwTrig        /<软件触发单次测量>/
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_100hz);
   
@@ -166,7 +166,7 @@ void loop(void){
    
    if(intFlag == 1){
    //Free fall event is detected
-   if(acce.freeFallDetect()){
+   if(acce.freeFallDetected()){
       Serial.println("free fall detected");
       delay(300);
    }

@@ -1,6 +1,6 @@
 /**！
  * @file tap.ino
- * @brief Single click and double click detection,点击模块，或者点击模块附件的桌面都可以触发点击事件
+ * @brief Single tap and double tap detection,点击模块，或者点击模块附件的桌面都可以触发点击事件
  * @n 可以通过setTapMode()函数选择只检测单击，或单击和双击同时检测
  * @n 在使用SPI时,片选引脚 可以通过改变宏IIS2DLPC_CS的值修改
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
@@ -92,10 +92,10 @@ void setup(void){
                eRate_50hz          
                eRate_100hz         
                eRate_200hz         
-               eRate_400hz         
-               eRate_800hz         
-               eRate_1k6hz         
-               eSetSwTrig        <软件触发单次测量>
+               eRate_400hz       /<仅在High-Performance mode下使用>/
+               eRate_800hz       /<仅在High-Performance mode下使用>/
+               eRate_1k6hz       /<仅在High-Performance mode下使用>/
+               eSetSwTrig        /<软件触发单次测量>/
   */
   acce.setDataRate(DFRobot_LIS2DW12::eRate_800hz);
   
@@ -130,18 +130,18 @@ void setup(void){
   
   /**！
     Set tap detection mode:
-    eOnlySingle(single tap)
-    eBothSingleDouble(Single tap and double tap)
+       eOnlySingle(single tap)
+       eBothSingleDouble(Single tap and double tap)
   */
   acce.setTapMode(DFRobot_LIS2DW12::eBothSingleDouble);
   
   /**！
     Set the interrupt source of the int1 pin:
-    eDoubleTap(Double tap)
-    eFreeFall(Free fall)
-    eWakeUp(wake)
-    eSingleTap(single-tap)
-    e6D(Orientation change check)
+      eDoubleTap(Double tap)
+      eFreeFall(Free fall)
+      eWakeUp(wake)
+      eSingleTap(single-tap)
+      e6D(Orientation change check)
   */
   acce.setInt1Event(DFRobot_LIS2DW12::eDoubleTap);
 
