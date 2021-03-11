@@ -52,25 +52,25 @@ python get_acceleration.py
 ```python
 
   '''
-    @brief Initialize the function
-    @return True(初始化成功)/Fasle(初始化失败)
+     @brief Initialize the function
+     @return True(初始化成功)/Fasle(初始化失败)
   '''
   begin(self):
   
   '''
-    @brief Get chip id
-    @return 8 bit serial number
+     @brief Get chip id
+     @return 8 bit serial number
   '''
   get_id(self):
 
   '''
-    @brief Software reset to restore the value of all registers to the default value
+     @brief Software reset to restore the value of all registers to the default value
   '''
   soft_reset(self):
     
   '''
-    @brief Set the measurement range
-    @param range Range(g)
+     @brief Set the measurement range
+     @param range Range(g)
                  RANGE_2G     #±2g
                  RANGE_4G     #±4g
                  RANGE_8G     #±8g
@@ -79,8 +79,8 @@ python get_acceleration.py
   set_range(self,range_r):
     
   '''
-    @brief Choose whether to continuously let the chip collect data
-    @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
+     @brief Choose whether to continuously let the chip collect data
+     @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
   '''
   contin_refresh(self,enable):
   
@@ -103,8 +103,8 @@ python get_acceleration.py
   set_filter_bandwidth(self,bw):
     
   '''
-    @brief Set power mode
-    @param mode 16 power modes to choose from
+     @brief Set power mode
+     @param mode 16 power modes to choose from
                HIGH_PERFORMANCE_14BIT          #High-Performance Mode
                CONT_LOWPWR4_14BIT              #Continuous measurement,Low-Power Mode 4(14-bit resolution)
                CONT_LOWPWR3_14BIT              #Continuous measurement,Low-Power Mode 3(14-bit resolution)
@@ -127,8 +127,8 @@ python get_acceleration.py
   set_power_mode(self,mode):
     
   '''
-    @brief Set data measurement rate
-    @param rate rate
+     @brief Set data measurement rate
+     @param rate rate
                  RATE_OFF          #测量关闭
                  RATE_1HZ6         #1.6hz,仅在低功耗模式下使用
                  RATE_12HZ5        #12.5hz
@@ -239,18 +239,18 @@ python get_acceleration.py
   set_tap_threshold_on_z(self,th):
     
   '''
-   @brief Duration of maximum time gap for double-tap recognition. When double-tap 
-   @n recognition is enabled, this register expresses the maximum time between two 
-   @n successive detected taps to determine a double-tap event.
-   @param dur  duration,范围:0~15
-   @n time = dur * (1/rate)(unit:s)
-   |                                  参数与时间之间的线性关系的示例                                                           |
-   |------------------------------------------------------------------------------------------------------------------------|
-   |                |                     |                          |                          |                           |
-   |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
-   |------------------------------------------------------------------------------------------------------------------------|
-   |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
-   |------------------------------------------------------------------------------------------------------------------------|
+     @brief Duration of maximum time gap for double-tap recognition. When double-tap 
+     @n recognition is enabled, this register expresses the maximum time between two 
+     @n successive detected taps to determine a double-tap event.
+     @param dur  duration,范围:0~15
+     @n time = dur * (1/rate)(unit:s)
+     |                                  参数与时间之间的线性关系的示例                                                           |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |                |                     |                          |                          |                           |
+     |  Data rate     |       25 Hz         |         100 Hz           |          400 Hz          |         = 800 Hz          |
+     |------------------------------------------------------------------------------------------------------------------------|
+     |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
+     |------------------------------------------------------------------------------------------------------------------------|
   '''
   set_tap_dur(self,dur):
   
