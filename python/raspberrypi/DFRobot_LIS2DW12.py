@@ -843,7 +843,7 @@ class DFRobot_IIS2DLPC_I2C(DFRobot_LIS2DW12):
     return rslt
     
 class DFRobot_IIS2DLPC_SPI(DFRobot_LIS2DW12): 
-  def __init__(self ,cs, bus = 0, dev = 0,speed = 100000):
+  def __init__(self ,cs, bus = 0, dev = 0,speed = 1000000):
     super(DFRobot_IIS2DLPC_SPI, self).__init__()
     self.__cs = cs
     GPIO.setup(self.__cs, GPIO.OUT)
@@ -903,7 +903,7 @@ class DFRobot_LIS2DW12_I2C(DFRobot_LIS2DW12):
     return rslt
     
 class DFRobot_LIS2DW12_SPI(DFRobot_LIS2DW12): 
-  def __init__(self ,cs, bus = 0, dev = 0,speed = 1000000):
+  def __init__(self ,cs, bus = 0, dev = 0,speed = 10000000):
     super(DFRobot_LIS2DW12_SPI, self).__init__()
     self.__cs = cs
     GPIO.setup(self.__cs, GPIO.OUT)
