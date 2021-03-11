@@ -50,7 +50,6 @@ python get_acceleration.py
 ## Methods
 
 ```python
-
   '''
      @brief Initialize the function
      @return True(初始化成功)/Fasle(初始化失败)
