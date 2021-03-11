@@ -81,7 +81,7 @@ python get_acceleration.py
      @brief Choose whether to continuously let the chip collect data
      @param enable  true(continuous update)/false( output registers not updated until MSB and LSB read)
   '''
-  contin_refresh(self,enable):
+  def contin_refresh(self,enable):
   
   '''
     @brief Set the filter processing mode
@@ -89,7 +89,7 @@ python get_acceleration.py
                 LPF          #Low pass filter
                 HPF          #High pass filter
   '''
-  set_filter_path(self,path):
+  def set_filter_path(self,path):
 
   '''
     @brief Set the  bandwidth of the data
@@ -99,7 +99,7 @@ python get_acceleration.py
                 RATE_DIV_10  #RATE/10 (HP/LP)
                 RATE_DIV_20  #RATE/20 (HP/LP)
   '''
-  set_filter_bandwidth(self,bw):
+  def set_filter_bandwidth(self,bw):
     
   '''
      @brief Set power mode
@@ -123,7 +123,7 @@ python get_acceleration.py
                SINGLE_LOWPWRLOWNOISE2_14BIT    #Single data conversion on demand mode,Low-Power Mode 2(14-bit resolution),Low-noise enabled
                SINGLE_LOWPWRLOWNOISE1_12BIT    #Single data conversion on demand mode,Low-Power Mode 1(12-bit resolution),Low-noise enabled
   '''
-  set_power_mode(self,mode):
+  def set_power_mode(self,mode):
     
   '''
      @brief Set data measurement rate
@@ -140,7 +140,7 @@ python get_acceleration.py
                  RATE_1600HZ       #仅在High-Performance mode下使用
                  SETSWTRIG         #软件触发单次测量
   '''
-  set_data_rate(self, rate):
+  def set_data_rate(self, rate):
     
   '''
      @brief 设置自由落体时间,也可以称作自由落体样本个数，只有产生足够多的自由落体样本，才会产生自由落体事件
@@ -154,7 +154,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  set_free_fall_dur(self,dur):
+  def set_free_fall_dur(self,dur):
 
   
   '''
@@ -167,7 +167,7 @@ python get_acceleration.py
               IA6D          #在正面朝上/朝下/朝左/朝右/朝前/朝后 的状态发生改变的事件
     
   '''
-  set_int1_event(self,event):
+  def set_int1_event(self,event):
     
   '''
      @brief 设置唤醒持续时间,在setActMode()函数使用eDetectAct的检测模式时,芯片在被唤醒后,会持续一段时间以正常速率采集数据
@@ -182,7 +182,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  set_wakeup_dur(self,dur):
+  def set_wakeup_dur(self,dur):
   
   '''
     @brief 设置运动检测的模式,第一种模式不会去检测模块是否在运动，第二种模式在设置后芯片会以较低的频率测量数据,以降低功耗
@@ -192,50 +192,50 @@ python get_acceleration.py
                 DETECT_ACT           #Detect movement,the chip automatically goes to 12.5 Hz rate in the low-power mode
                 DETECT_STATMOTION    #Detect Motion, the chip detects acceleration below a fixed threshold but does not change either rate or operating mode
   '''
-  set_act_mode(self,mode):
+  def set_act_mode(self,mode):
 
   '''
     @brief Set the wake-up threshold,某个方向的加速度大于此值时,会触发wake-up事件
     @param th threshold ,unit:mg,数值是在量程之内
   '''
-  set_wakeup_threshold(self,th):
+  def set_wakeup_threshold(self,th):
     
   '''
     @brief Set to detect tap events in the Z direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
-  enable_tap_detection_on_z(self, enable):
+  def enable_tap_detection_on_z(self, enable):
   
   '''
     @brief Set to detect tap events in the Y direction
     @param enable Ture(使能点击检测\False(禁用点击检测)
   '''
-  enable_tap_detection_on_y(self, enable):
+  def enable_tap_detection_on_y(self, enable):
 
     
   '''
     @brief Set to detect tap events in the X direction
     @param enable Ture(使能点击检)\False(禁用点击检)
   '''
-  enable_tap_detection_on_x(self, enable):
+  def enable_tap_detection_on_x(self, enable):
 
   '''
     @brief Set the tap threshold in the X direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
-  set_tap_threshold_on_x(self,th):
+  def set_tap_threshold_on_x(self,th):
   
   '''
     @brief Set the tap threshold in the Y direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
-  set_tap_threshold_on_y(self,th):
+  def set_tap_threshold_on_y(self,th):
     
   '''
     @brief Set the tap threshold in the Z direction
     @param th Threshold(g),Can only be used in the range of ±2g
   '''
-  set_tap_threshold_on_z(self,th):
+  def set_tap_threshold_on_z(self,th):
     
   '''
      @brief Duration of maximum time gap for double-tap recognition. When double-tap 
@@ -251,7 +251,7 @@ python get_acceleration.py
      |   time         |dur*(1s/25)= dur*40ms|  dur*(1s/100)= dur*10ms  |  dur*(1s/400)= dur*2.5ms |  dur*(1s/800)= dur*1.25ms |
      |------------------------------------------------------------------------------------------------------------------------|
   '''
-  set_tap_dur(self,dur):
+  def set_tap_dur(self,dur):
   
   '''
     @brief Set the tap detection mode,检测单击和单击,双击都检测
@@ -259,7 +259,7 @@ python get_acceleration.py
                      ONLY_SINGLE        #检测单击
                      BOTH_SINGLE_DOUBLE #检测单击和双击
   '''
-  set_tap_mode(self,mode):
+  def set_tap_mode(self,mode):
   
   '''
     @brief Set Thresholds for 4D/6D，当转动的阈值大于指定角度时,就发生方向转变的事件
@@ -268,7 +268,7 @@ python get_acceleration.py
                     DEGREES_60   #60°
                     DEGREES_50   #50°
   '''
-  set_6d_threshold(self,degree):
+  def set_6d_threshold(self,degree):
     
   '''
     @brief 选择在中断2引脚产生的中断事件
@@ -276,43 +276,43 @@ python get_acceleration.py
                   SLEEP_CHANGE  #Enable routing of SLEEP_STATE on INT2 pad
                   SLEEP_STATE   #0x80 Sleep change status routed to INT2 pad
   '''
-  set_int2_event(self,event):
+  def set_int2_event(self,event):
   
   '''
     @brief Read the acceleration in the x direction
     @return Acceleration data from x(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  read_acc_x(self):
+  def read_acc_x(self):
 
   '''
     @brief Read the acceleration in the y direction
     @return  Acceleration data from y(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  read_acc_y(self):
+  def read_acc_y(self):
 
   '''
     @brief Read the acceleration in the z direction
     @return Acceleration data from z(mg),测量的量程为±2g,±4g,±8g或±16g,通过set_range()函数设置
   '''
-  read_acc_z(self):
+  def read_acc_z(self):
   
   '''
     @brief 检测是否有运动产生
     @return True(产生运动)/False(传感器未运动)
   '''
-  act_detected(self):
+  def act_detected(self):
       
   '''
     @brief 自由落体运动检测
     @return True(检测到自由落体运动)/False(未检测到自由落体运动)
   '''
-  free_fall_detected(self):
+  def free_fall_detected(self):
     
   '''
     @brief 芯片在正面朝上/朝下/朝左/朝右/朝前/朝后的状态发生改变.
     @return True(a change in position is detected)/False(no event detected)
   '''
-  ori_change_detected(self):
+  def ori_change_detected(self):
       
   '''
      @brief 获取传感器现在的位置
@@ -323,7 +323,7 @@ python get_acceleration.py
                Z_DOWN   #Z is now down
                Z_UP     #Z is now up
   '''
-  get_oriention(self):
+  def get_oriention(self):
      
   '''
     @brief 点击检测,能检测是发生的双击,还是单击
@@ -331,7 +331,7 @@ python get_acceleration.py
               D_TAP       #double tap
               NO_TAP,     #没有点击产生
   '''
-  tap_detect(self):
+  def tap_detect(self):
 
   '''
     @brief 点击方向的源头检测
@@ -342,7 +342,7 @@ python get_acceleration.py
                 DIR_Z_UP   #在Z 正方向发生的点击事件
                 DIR_Z_DOWN #在Z 负方向发生的点击事件
   '''
-  get_tap_direction(self):
+  def get_tap_direction(self):
    
   '''
     @brief 唤醒的运动方向检测
@@ -351,12 +351,12 @@ python get_acceleration.py
                DIR_Z  #Z方向的运动唤醒芯片
                eDirError,
   '''
-  get_wake_up_dir(self):
+  def get_wake_up_dir(self):
 
   '''
     @brief In Single data conversion on demand mode,请求测量一次数据
   '''
-  demand_data(self):
+  def demand_data(self):
 ```
 
 ## Compatibility
