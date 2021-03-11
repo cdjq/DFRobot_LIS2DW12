@@ -358,8 +358,6 @@ python get_acceleration.py
     @brief In Single data conversion on demand mode,请求测量一次数据
   '''
   demand_data(self):
-
-
 ```
 
 ## Compatibility
