@@ -316,8 +316,8 @@ python get_acceleration.py
   ori_change_detected(self):
       
   '''
-  @brief 获取传感器现在的位置
-  @return      X_DOWN   #X is now down
+     @brief 获取传感器现在的位置
+     @return      X_DOWN   #X is now down
                X_UP     #X is now up
                Y_DOWN   #Y is now down
                Y_UP     #Y is now up
