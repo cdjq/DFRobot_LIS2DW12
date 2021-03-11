@@ -54,18 +54,18 @@ python get_acceleration.py
      @brief Initialize the function
      @return True(初始化成功)/Fasle(初始化失败)
   '''
-  begin(self):
+  def begin(self):
   
   '''
      @brief Get chip id
      @return 8 bit serial number
   '''
-  get_id(self):
+  def get_id(self):
 
   '''
      @brief Software reset to restore the value of all registers to the default value
   '''
-  soft_reset(self):
+  def soft_reset(self):
     
   '''
      @brief Set the measurement range
@@ -75,7 +75,7 @@ python get_acceleration.py
                  RANGE_8G     #±8g
                  RANGE_16G    #±16g
   '''
-  set_range(self,range_r):
+  def set_range(self,range_r):
     
   '''
      @brief Choose whether to continuously let the chip collect data
